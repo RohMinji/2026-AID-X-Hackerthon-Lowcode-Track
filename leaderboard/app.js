@@ -223,7 +223,10 @@
     stopRotation();
     restartCountdownVisual();
     if (state.paused) return;
-    state.rotateTimer = setInterval(next, state.rotateMs);
+    state.rotateTimer = setInterval(() => {
+      next();
+      restartCountdownVisual();
+    }, state.rotateMs);
   }
 
   function stopRotation() {
