@@ -15,9 +15,6 @@ permissions:
   contents: read
   pages: write
   id-token: write
-  # lets configure-pages create the Pages site itself (enablement: true
-  # below) since this repo has never had Pages turned on
-  administration: write
 
 concurrency:
   group: pages
@@ -35,8 +32,6 @@ jobs:
 
       - name: Configure Pages
         uses: actions/configure-pages@v5
-        with:
-          enablement: true
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
