@@ -1,0 +1,144 @@
+{
+  "event": {
+    "name": "2026 AID-X 에이전트 개발 해커톤",
+    "updated_at": "2026-08-27T09:00:00+09:00",
+    "note": "채점 에이전트가 자동으로 갱신하는 라이브 리더보드입니다"
+  },
+  "criteria": [
+    { "key": "functionality", "label": "기능 완성도", "max": 30 },
+    { "key": "technical", "label": "기술 구현", "max": 25 },
+    { "key": "creativity", "label": "창의성", "max": 20 },
+    { "key": "usability", "label": "사용성", "max": 15 },
+    { "key": "presentation", "label": "발표", "max": 10 }
+  ],
+  "teams": [
+    {
+      "team": "Team 01",
+      "agent": "AutoPilot GPT",
+      "members": ["김민준", "이서연", "박도윤"],
+      "scores": { "functionality": 27, "technical": 22, "creativity": 18, "usability": 13, "presentation": 9 },
+      "comment": "안정적인 워크플로우 자동화, 예외 처리가 인상적",
+      "submitted_at": "2026-08-27T08:40:00+09:00"
+    },
+    {
+      "team": "Team 02",
+      "agent": "CodeWeaver",
+      "members": ["최지우", "정하은"],
+      "scores": { "functionality": 25, "technical": 24, "creativity": 17, "usability": 12, "presentation": 8 },
+      "comment": "코드 생성 품질이 우수함",
+      "submitted_at": "2026-08-27T08:42:00+09:00"
+    },
+    {
+      "team": "Team 03",
+      "agent": "InsightBot",
+      "members": ["강수아", "윤지호", "장예린"],
+      "scores": { "functionality": 26, "technical": 21, "creativity": 19, "usability": 14, "presentation": 9 },
+      "comment": "데이터 분석 리포트 자동 생성 완성도 높음",
+      "submitted_at": "2026-08-27T08:45:00+09:00"
+    },
+    {
+      "team": "Team 04",
+      "agent": "TaskMate",
+      "members": ["임서준", "한지민"],
+      "scores": { "functionality": 22, "technical": 19, "creativity": 15, "usability": 11, "presentation": 7 },
+      "comment": "기본 기능은 안정적으로 동작",
+      "submitted_at": "2026-08-27T08:47:00+09:00"
+    },
+    {
+      "team": "Team 05",
+      "agent": "FlowSmith",
+      "members": ["조은우", "배수빈", "오하람"],
+      "scores": { "functionality": 24, "technical": 20, "creativity": 16, "usability": 12, "presentation": 8 },
+      "comment": "저코드 플로우 구성이 직관적",
+      "submitted_at": "2026-08-27T08:49:00+09:00"
+    },
+    {
+      "team": "Team 06",
+      "agent": "QuickAgent",
+      "members": ["신동현", "권나윤"],
+      "scores": { "functionality": 20, "technical": 18, "creativity": 14, "usability": 10, "presentation": 7 },
+      "comment": "속도는 빠르나 예외 처리 보완 필요",
+      "submitted_at": "2026-08-27T08:50:00+09:00"
+    },
+    {
+      "team": "Team 07",
+      "agent": "DocuMind",
+      "members": ["백승호", "노유진", "구본준"],
+      "scores": { "functionality": 23, "technical": 19, "creativity": 17, "usability": 13, "presentation": 8 },
+      "comment": "문서 요약/검색 정확도가 높음",
+      "submitted_at": "2026-08-27T08:52:00+09:00"
+    },
+    {
+      "team": "Team 08",
+      "agent": "SupportGenie",
+      "members": ["문지안", "홍시우"],
+      "scores": { "functionality": 21, "technical": 17, "creativity": 15, "usability": 12, "presentation": 7 },
+      "comment": "고객 응대 시나리오 커버리지 양호",
+      "submitted_at": "2026-08-27T08:54:00+09:00"
+    },
+    {
+      "team": "Team 09",
+      "agent": "ScheduleGuru",
+      "members": ["서지훈", "황유나", "안태윤"],
+      "scores": { "functionality": 19, "technical": 16, "creativity": 13, "usability": 10, "presentation": 6 },
+      "comment": "일정 조율 로직은 동작하나 UI 개선 필요",
+      "submitted_at": "2026-08-27T08:55:00+09:00"
+    },
+    {
+      "team": "Team 10",
+      "agent": "MarketScout",
+      "members": ["유채원", "송민재"],
+      "scores": { "functionality": 18, "technical": 15, "creativity": 16, "usability": 9, "presentation": 6 },
+      "comment": "시장 조사 자동화 아이디어가 참신함",
+      "submitted_at": "2026-08-27T08:57:00+09:00"
+    },
+    {
+      "team": "Team 11",
+      "agent": "ReviewPal",
+      "members": ["표준우", "심지아", "고은성"],
+      "scores": { "functionality": 17, "technical": 14, "creativity": 12, "usability": 9, "presentation": 6 },
+      "comment": "코드 리뷰 코멘트 품질 개선 여지 있음",
+      "submitted_at": "2026-08-27T08:58:00+09:00"
+    },
+    {
+      "team": "Team 12",
+      "agent": "PromptForge",
+      "members": ["남궁현", "차소율"],
+      "scores": { "functionality": 16, "technical": 15, "creativity": 14, "usability": 8, "presentation": 5 },
+      "comment": "프롬프트 체이닝 구조가 실험적",
+      "submitted_at": "2026-08-27T09:00:00+09:00"
+    },
+    {
+      "team": "Team 13",
+      "agent": "LedgerAI",
+      "members": ["곽태민", "설아름", "천도영"],
+      "scores": { "functionality": 15, "technical": 13, "creativity": 11, "usability": 8, "presentation": 5 },
+      "comment": "정산 자동화 초기 버전, 확장성 있음",
+      "submitted_at": "2026-08-27T08:30:00+09:00"
+    },
+    {
+      "team": "Team 14",
+      "agent": "OnboardBuddy",
+      "members": ["염지후", "탁예슬"],
+      "scores": { "functionality": 14, "technical": 12, "creativity": 13, "usability": 9, "presentation": 5 },
+      "comment": "신규 입사자 온보딩 시나리오 구현",
+      "submitted_at": "2026-08-27T08:33:00+09:00"
+    },
+    {
+      "team": "Team 15",
+      "agent": "BugHunter",
+      "members": ["방주원", "선우진", "지민경"],
+      "scores": { "functionality": 12, "technical": 11, "creativity": 9, "usability": 7, "presentation": 4 },
+      "comment": "버그 탐지 정확도 개선 필요",
+      "submitted_at": "2026-08-27T08:35:00+09:00"
+    },
+    {
+      "team": "Team 16",
+      "agent": "MeetingScribe",
+      "members": ["연도현", "피서아"],
+      "scores": { "functionality": 10, "technical": 9, "creativity": 8, "usability": 6, "presentation": 4 },
+      "comment": "회의록 자동 정리 프로토타입 단계",
+      "submitted_at": "2026-08-27T08:20:00+09:00"
+    }
+  ]
+}
