@@ -2,7 +2,7 @@
   const RESULTS_URL = './results.json';
   const POLL_MS = 15000;
   const DEFAULT_ROTATE_MS = 8000;
-  const MAX_ROWS_PER_PAGE = 6;
+  const TARGET_ROWS_PER_PAGE = 7;
   const FLASH_MS = 1600;
 
   const el = (id) => document.getElementById(id);
@@ -17,6 +17,8 @@
   const clockEl = el('clock');
   const fetchStatusEl = el('fetchStatus');
   const teamCountEl = el('teamCount');
+  const countdownTextEl = el('countdownText');
+  const countdownFillEl = el('countdownFill');
 
   const panelTab = el('panelTab');
   const controlPanel = el('controlPanel');
@@ -36,6 +38,8 @@
     currentIndex: 0,
     rotateMs: DEFAULT_ROTATE_MS,
     rotateTimer: null,
+    countdownTimer: null,
+    nextRotateAt: 0,
     paused: false,
     prevRank: new Map(),
     prevTotal: new Map(),
@@ -62,12 +66,18 @@
     clockEl.textContent = new Date().toLocaleTimeString('ko-KR', { hour12: false });
   }
 
-  function paginate(list, maxPerPage) {
+  function paginate(list, targetMax) {
     if (list.length === 0) return [];
-    const pages = Math.ceil(list.length / maxPerPage);
-    const size = Math.ceil(list.length / pages);
+    const pages = Math.ceil(list.length / targetMax);
+    const base = Math.floor(list.length / pages);
+    const remainder = list.length - base * pages;
     const out = [];
-    for (let i = 0; i < list.length; i += size) out.push(list.slice(i, i + size));
+    let idx = 0;
+    for (let p = 0; p < pages; p++) {
+      const size = base + (p === pages - 1 ? remainder : 0);
+      out.push(list.slice(idx, idx + size));
+      idx += size;
+    }
     return out;
   }
 
@@ -90,10 +100,11 @@
   }
 
   function buildScreens(teams) {
-    const screens = [{ type: 'podium' }];
-    const pages = paginate(teams.slice(3), MAX_ROWS_PER_PAGE);
-    pages.forEach((page) => screens.push({ type: 'rank', teams: page }));
-    return screens;
+    // Lowest-ranked group first, working up to the podium last: e.g. for 16
+    // teams the order is 10-16위 -> 4-9위 -> TOP 3, building toward the reveal.
+    const pages = paginate(teams.slice(3), TARGET_ROWS_PER_PAGE);
+    const rankScreens = pages.map((page) => ({ type: 'rank', teams: page })).reverse();
+    return [...rankScreens, { type: 'podium' }];
   }
 
   function medalFor(rank) {
@@ -210,6 +221,7 @@
 
   function startRotation() {
     stopRotation();
+    restartCountdownVisual();
     if (state.paused) return;
     state.rotateTimer = setInterval(next, state.rotateMs);
   }
@@ -217,6 +229,31 @@
   function stopRotation() {
     if (state.rotateTimer) clearInterval(state.rotateTimer);
     state.rotateTimer = null;
+  }
+
+  function restartCountdownVisual() {
+    clearInterval(state.countdownTimer);
+    state.countdownTimer = null;
+
+    if (state.paused) {
+      countdownTextEl.textContent = '일시정지됨';
+      countdownFillEl.style.animation = 'none';
+      return;
+    }
+
+    state.nextRotateAt = Date.now() + state.rotateMs;
+    countdownFillEl.style.animation = 'none';
+    void countdownFillEl.offsetWidth; // force reflow so the animation restarts
+    countdownFillEl.style.animation = `countdownDrain ${state.rotateMs}ms linear forwards`;
+
+    updateCountdownText();
+    state.countdownTimer = setInterval(updateCountdownText, 200);
+  }
+
+  function updateCountdownText() {
+    const remainMs = state.nextRotateAt - Date.now();
+    const remainSec = Math.max(0, Math.ceil(remainMs / 1000));
+    countdownTextEl.textContent = `다음 화면까지 ${remainSec}초`;
   }
 
   async function fetchResults() {
@@ -254,12 +291,15 @@
   panelClose.addEventListener('click', () => { controlPanel.hidden = true; });
   btnPrev.addEventListener('click', () => { prev(); startRotation(); });
   btnNext.addEventListener('click', () => { next(); startRotation(); });
-  btnPodium.addEventListener('click', () => { goTo(0); startRotation(); });
+  btnPodium.addEventListener('click', () => {
+    goTo(state.screens.findIndex((s) => s.type === 'podium'));
+    startRotation();
+  });
   btnPause.addEventListener('click', () => {
     state.paused = !state.paused;
     btnPause.textContent = state.paused ? '재생' : '일시정지';
     btnPause.classList.toggle('active-state', state.paused);
-    if (state.paused) stopRotation(); else startRotation();
+    if (state.paused) { stopRotation(); restartCountdownVisual(); } else { startRotation(); }
   });
   btnRefresh.addEventListener('click', fetchResults);
   rotateRange.addEventListener('input', () => {

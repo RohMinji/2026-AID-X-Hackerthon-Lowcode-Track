@@ -368,10 +368,13 @@ html, body {
   flex: 0 0 auto;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
   gap: 2vw;
   padding: 1vh 3vw 1.6vh;
 }
+
+.footbar > .dots { flex: 0 0 auto; }
+.footbar > .updated { flex: 0 0 auto; }
 
 .dots { display: flex; gap: 0.6vw; }
 
@@ -395,6 +398,43 @@ html, body {
   font-size: clamp(10px, 0.9vw, 15px);
   color: var(--ink-dim);
   font-variant-numeric: tabular-nums;
+}
+
+.countdown {
+  display: flex;
+  align-items: center;
+  gap: 0.8vw;
+}
+
+.countdown-text {
+  font-size: clamp(11px, 1vw, 17px);
+  font-weight: 700;
+  color: var(--ink-dim);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.countdown-track {
+  display: block;
+  width: clamp(100px, 12vw, 220px);
+  height: 0.7vh;
+  min-height: 6px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.12);
+  overflow: hidden;
+}
+
+.countdown-fill {
+  display: block;
+  height: 100%;
+  width: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--accent-2), var(--accent));
+}
+
+@keyframes countdownDrain {
+  from { width: 100%; }
+  to { width: 0%; }
 }
 
 /* ---------------- Hidden control panel ---------------- */
