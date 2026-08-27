@@ -2,7 +2,10 @@ name: Deploy Leaderboard to GitHub Pages
 
 on:
   push:
-    branches: [main]
+    # claude/hackathon-live-leaderboard-px880u is temporarily the repo's
+    # default branch (repo was empty before this PR); keep main too so this
+    # keeps deploying once a conventional main branch takes over.
+    branches: [main, claude/hackathon-live-leaderboard-px880u]
     paths:
       - "leaderboard/**"
       - ".github/workflows/deploy-pages.yml"
