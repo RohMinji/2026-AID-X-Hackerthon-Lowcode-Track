@@ -511,6 +511,26 @@ html, body {
 
 .control-panel input[type="range"] { flex: 1 1 100%; }
 
+.panel-links {
+  justify-content: space-between;
+  border-top: 1px solid var(--border);
+  padding-top: 10px;
+  margin-top: 2px;
+}
+
+.panel-links a {
+  flex: 1;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--accent);
+  text-decoration: none;
+  padding: 6px 8px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+}
+.panel-links a:hover { background: rgba(255,255,255,0.08); }
+
 .panel-status {
   font-size: 12px;
   color: var(--ink-dim);

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>해커톤 관리자</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="dashboard.css" />
+</head>
+<body>
+
+<div class="wrap">
+  <div class="dash-header">
+    <div>
+      <h1>관리자 - 결과 게시</h1>
+      <div class="sub">채점 에이전트가 커밋한 결과를 확인하고, 게시해야 실시간 화면에 반영됩니다.</div>
+    </div>
+    <div class="nav-links">
+      <a href="index.html" target="_blank" rel="noopener">실시간 화면 ↗</a>
+      <a href="status.html" target="_blank" rel="noopener">현황 화면 ↗</a>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>GitHub 게시 권한</h2>
+    <div class="row">
+      <div class="field">
+        <label for="tokenInput">GitHub Personal Access Token (repo 쓰기 권한)</label>
+        <input type="password" id="tokenInput" placeholder="ghp_... (이 브라우저 세션에만 저장됩니다)" autocomplete="off" />
+      </div>
+      <button class="btn-ghost" id="btnSaveToken">저장</button>
+      <button class="btn-ghost" id="btnClearToken">삭제</button>
+    </div>
+    <div class="hint">
+      토큰은 서버에 전송되지 않고 이 브라우저의 세션 저장소에만 보관되며, 탭을 닫으면 사라집니다.
+      게시 버튼을 누르면 이 토큰으로 GitHub API를 직접 호출해 <code>leaderboard/published.json</code>을 커밋합니다.
+      저장소에 대한 쓰기 권한(fine-grained 토큰이면 Contents: Read and write)이 있는 토큰이 필요합니다.
+    </div>
+    <div class="status-msg" id="tokenMsg"></div>
+  </div>
+
+  <div class="card">
+    <div class="row" style="justify-content: space-between;">
+      <h2 style="margin:0;">채점 결과 미리보기 (results.json, 아직 미게시)</h2>
+      <div class="row">
+        <button class="btn-ghost" id="btnReload">새로고침</button>
+        <button class="btn" id="btnPublish">게시하기</button>
+      </div>
+    </div>
+    <div class="hint" id="draftMeta">불러오는 중...</div>
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>예상 순위</th>
+            <th>팀</th>
+            <th>팀원</th>
+            <th class="num">총점</th>
+            <th>게시본 대비 변동</th>
+          </tr>
+        </thead>
+        <tbody id="draftTableBody">
+          <tr><td colspan="5" class="empty-note">불러오는 중...</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="status-msg" id="publishMsg"></div>
+  </div>
+
+  <div class="card" id="revealCard" hidden>
+    <h2>🎉 게시 완료 - 순위 변동</h2>
+    <div class="hint" id="revealMeta"></div>
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>현재 순위</th>
+            <th>팀</th>
+            <th class="num">이전 → 현재 점수</th>
+            <th>변동</th>
+          </tr>
+        </thead>
+        <tbody id="revealTableBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="footer-note">이 페이지는 저장소 쓰기 권한이 있는 진행자만 사용하세요.</div>
+</div>
+
+<script src="shared.js"></script>
+<script src="admin.js"></script>
+</body>
+</html>

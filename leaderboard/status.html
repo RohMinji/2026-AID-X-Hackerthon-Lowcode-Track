@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>해커톤 현황</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="dashboard.css" />
+</head>
+<body>
+
+<div class="wrap">
+  <div class="dash-header">
+    <div>
+      <h1 id="eventName">해커톤 현황</h1>
+      <div class="sub" id="eventNote"></div>
+    </div>
+    <div class="nav-links">
+      <a href="index.html">실시간 화면 ↗</a>
+      <a href="admin.html">관리자 페이지 ↗</a>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="row" style="justify-content: space-between;">
+      <h2 style="margin:0;">전체 순위 (게시된 결과 기준)</h2>
+      <div class="hint" id="updatedAt">마지막 갱신 --</div>
+    </div>
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>순위</th>
+            <th>팀</th>
+            <th>팀원</th>
+            <th class="num">총점</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody">
+          <tr><td colspan="4" class="empty-note">불러오는 중...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="footer-note">15초마다 자동으로 갱신됩니다. 이 화면은 관리자가 게시한 결과만 보여줍니다.</div>
+</div>
+
+<script src="shared.js"></script>
+<script src="status.js"></script>
+</body>
+</html>

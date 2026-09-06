@@ -1,0 +1,175 @@
+/* ==========================================================================
+   Shared "control room" styling for admin.html and status.html - a normal
+   scrolling dashboard, not the fullscreen broadcast board (style.css).
+   ========================================================================== */
+
+:root {
+  --bg-0: #05070f;
+  --bg-1: #0a0f1f;
+  --panel: #10182e;
+  --card: #0d1428;
+  --ink: #eaf0ff;
+  --ink-dim: #9fb0d9;
+  --accent: #35e0ff;
+  --accent-2: #7c5cff;
+  --gold: #ffd25c;
+  --up: #35ffa0;
+  --down: #ff5c7a;
+  --border: rgba(140, 170, 255, 0.18);
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  min-height: 100%;
+  background: linear-gradient(180deg, var(--bg-0) 0%, var(--bg-1) 100%);
+  color: var(--ink);
+  font-family: "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", "Segoe UI", system-ui, sans-serif;
+}
+
+.wrap {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 28px 24px 64px;
+}
+
+.dash-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.dash-header h1 {
+  font-size: clamp(20px, 3vw, 28px);
+  margin: 0;
+}
+
+.dash-header .sub {
+  color: var(--ink-dim);
+  font-size: 13px;
+}
+
+.nav-links { display: flex; gap: 10px; }
+.nav-links a {
+  color: var(--accent);
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 600;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 6px 10px;
+}
+.nav-links a:hover { background: rgba(255,255,255,0.06); }
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 18px 20px;
+  margin-bottom: 20px;
+}
+
+.card h2 {
+  font-size: 16px;
+  margin: 0 0 12px;
+}
+
+.row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1 1 260px;
+}
+.field label { font-size: 12px; color: var(--ink-dim); }
+.field input {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 9px 10px;
+  color: var(--ink);
+  font-size: 13px;
+}
+
+button.btn {
+  background: linear-gradient(90deg, var(--accent-2), var(--accent));
+  color: #06111f;
+  border: none;
+  border-radius: 9px;
+  padding: 10px 18px;
+  font-weight: 700;
+  font-size: 13px;
+  cursor: pointer;
+}
+button.btn:disabled { opacity: 0.4; cursor: not-allowed; }
+button.btn:hover:not(:disabled) { filter: brightness(1.08); }
+
+button.btn-ghost {
+  background: rgba(255,255,255,0.06);
+  color: var(--ink);
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  padding: 10px 16px;
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+}
+button.btn-ghost:hover { background: rgba(255,255,255,0.12); }
+
+.hint { font-size: 12px; color: var(--ink-dim); margin-top: 6px; }
+
+.status-msg { font-size: 13px; margin-top: 10px; padding: 8px 10px; border-radius: 8px; display: none; }
+.status-msg.show { display: block; }
+.status-msg.ok { background: rgba(53,255,160,0.12); color: var(--up); }
+.status-msg.err { background: rgba(255,92,122,0.12); color: var(--down); }
+.status-msg.info { background: rgba(53,224,255,0.1); color: var(--accent); }
+
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th, td {
+  text-align: left;
+  padding: 10px 8px;
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+th { color: var(--ink-dim); font-weight: 600; font-size: 12px; }
+td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+tbody tr:hover { background: rgba(255,255,255,0.03); }
+
+.table-scroll { overflow-x: auto; }
+
+.rank-cell { font-weight: 800; font-size: 15px; }
+.team-cell strong { display: block; }
+.team-cell span { color: var(--accent); font-size: 12px; font-weight: 600; }
+.members-cell { color: var(--ink-dim); font-size: 12px; }
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 2px 7px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 800;
+}
+.badge.up { color: var(--up); background: rgba(53,255,160,0.14); }
+.badge.down { color: var(--down); background: rgba(255,92,122,0.14); }
+.badge.same { color: var(--ink-dim); background: rgba(255,255,255,0.06); }
+.badge.new { color: var(--gold); background: rgba(255,210,92,0.14); }
+
+.medal { font-size: 16px; margin-right: 4px; }
+
+.total-cell { font-weight: 800; font-size: 14px; }
+
+.empty-note { color: var(--ink-dim); font-size: 13px; padding: 12px 0; }
+
+.footer-note {
+  color: var(--ink-dim);
+  font-size: 12px;
+  text-align: center;
+  margin-top: 30px;
+}

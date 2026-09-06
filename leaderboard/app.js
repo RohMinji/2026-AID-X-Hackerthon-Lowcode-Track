@@ -1,5 +1,10 @@
 (() => {
-  const RESULTS_URL = './results.json';
+  const { escapeHtml, fmtDateTime, medalFor, computeStandings } = window.Leaderboard;
+
+  // The live board only ever reads published.json - the snapshot an admin
+  // has reviewed and published from the admin page. results.json (the
+  // scoring agent's raw output) is staged there until someone publishes it.
+  const RESULTS_URL = './published.json';
   const POLL_MS = 15000;
   const DEFAULT_ROTATE_MS = 8000;
   const TARGET_ROWS_PER_PAGE = 7;
@@ -45,23 +50,6 @@
     prevTotal: new Map(),
   };
 
-  function escapeHtml(str) {
-    return String(str).replace(/[&<>"']/g, (c) => ({
-      '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
-    }[c]));
-  }
-
-  function fmtDateTime(iso) {
-    if (!iso) return '-';
-    try {
-      return new Date(iso).toLocaleString('ko-KR', {
-        hour12: false, month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit',
-      });
-    } catch {
-      return iso;
-    }
-  }
-
   function tickClock() {
     clockEl.textContent = new Date().toLocaleTimeString('ko-KR', { hour12: false });
   }
@@ -81,34 +69,12 @@
     return out;
   }
 
-  function computeStandings(json) {
-    const criteria = json.criteria || [];
-    const maxTotal = criteria.reduce((s, c) => s + (c.max || 0), 0);
-    const teams = (json.teams || []).map((t) => {
-      const total = criteria.reduce((s, c) => s + (Number(t.scores?.[c.key]) || 0), 0);
-      return { ...t, total, pct: maxTotal ? (total / maxTotal) * 100 : 0 };
-    });
-    teams.sort((a, b) => {
-      if (b.total !== a.total) return b.total - a.total;
-      const at = a.submitted_at ? new Date(a.submitted_at).getTime() : Infinity;
-      const bt = b.submitted_at ? new Date(b.submitted_at).getTime() : Infinity;
-      if (at !== bt) return at - bt;
-      return a.team.localeCompare(b.team);
-    });
-    teams.forEach((t, i) => { t.rank = i + 1; });
-    return { criteria, maxTotal, teams };
-  }
-
   function buildScreens(teams) {
     // Lowest-ranked group first, working up to the podium last: e.g. for 16
     // teams the order is 10-16위 -> 4-9위 -> TOP 3, building toward the reveal.
     const pages = paginate(teams.slice(3), TARGET_ROWS_PER_PAGE);
     const rankScreens = pages.map((page) => ({ type: 'rank', teams: page })).reverse();
     return [...rankScreens, { type: 'podium' }];
-  }
-
-  function medalFor(rank) {
-    return rank === 1 ? '🥇' : rank === 2 ? '🥈' : '🥉';
   }
 
   function moveClassFor(team) {
