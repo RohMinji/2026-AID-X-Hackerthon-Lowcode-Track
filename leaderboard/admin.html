@@ -40,12 +40,27 @@
   </div>
 
   <div class="card">
+    <h2>결과 JSON 직접 입력</h2>
+    <div class="hint">
+      저장소의 <code>results.json</code>을 자동으로 불러오는 대신, 채점 에이전트가 준
+      JSON을 여기에 그대로 붙여넣어 미리보기/게시할 수 있습니다. 아래 칸은
+      불러올 때마다 현재 <code>results.json</code> 내용으로 채워지며, 내용을
+      바꾼 뒤 "이 내용 사용"을 누르면 그 즉시 아래 미리보기가 바뀝니다.
+    </div>
+    <textarea id="jsonPaste" rows="10" spellcheck="false"
+      style="width:100%; margin-top:8px; font-family:ui-monospace,Menlo,Consolas,monospace; font-size:12px; background:rgba(255,255,255,0.06); color:var(--ink); border:1px solid var(--border); border-radius:8px; padding:10px;"
+      placeholder='{"event": {...}, "criteria": [...], "teams": [...]}'></textarea>
+    <div class="row" style="margin-top:8px;">
+      <button class="btn-ghost" id="btnUseFetched">results.json 다시 불러오기</button>
+      <button class="btn-ghost" id="btnUsePasted">이 내용 사용</button>
+    </div>
+    <div class="status-msg" id="pasteMsg"></div>
+  </div>
+
+  <div class="card">
     <div class="row" style="justify-content: space-between;">
-      <h2 style="margin:0;">채점 결과 미리보기 (results.json, 아직 미게시)</h2>
-      <div class="row">
-        <button class="btn-ghost" id="btnReload">새로고침</button>
-        <button class="btn" id="btnPublish">게시하기</button>
-      </div>
+      <h2 style="margin:0;">채점 결과 미리보기 (아직 미게시)</h2>
+      <button class="btn" id="btnPublish">게시하기</button>
     </div>
     <div class="hint" id="draftMeta">불러오는 중...</div>
     <div class="table-scroll">
@@ -83,6 +98,28 @@
         <tbody id="revealTableBody"></tbody>
       </table>
     </div>
+  </div>
+
+  <div class="card">
+    <h2>게시 히스토리</h2>
+    <div class="hint">게시할 때마다 <code>leaderboard/history.json</code>에 스냅샷이 계속 쌓입니다 (최근 순).</div>
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>게시 시각</th>
+            <th>팀 수</th>
+            <th>1위</th>
+            <th>2위</th>
+            <th>3위</th>
+          </tr>
+        </thead>
+        <tbody id="historyTableBody">
+          <tr><td colspan="5" class="empty-note">불러오는 중...</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="status-msg" id="historyMsg"></div>
   </div>
 
   <div class="footer-note">이 페이지는 저장소 쓰기 권한이 있는 진행자만 사용하세요.</div>
