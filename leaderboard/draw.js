@@ -7,10 +7,16 @@
   const DECEL_DURATION_S = 1.3;
   const FINALE_DELAY_S = 1.8;
   const STAR_COUNT = 140;
+  const STREAK_COUNT = 26;
+  const FLIGHT_SPAN_S = MAX_STOP_S + DECEL_DURATION_S; // used to pace Jupiter's recession
 
   const el = (id) => document.getElementById(id);
+  const stageEl = el('stage');
+  const spaceCanvasEl = el('spaceCanvas');
   const lanesEl = el('lanes');
   const starfieldEl = el('starfield');
+  const warpStreaksEl = el('warpStreaks');
+  const jupiterEl = el('jupiter');
   const orderListEl = el('orderList');
   const introOverlay = el('introOverlay');
   const introText = el('introText');
@@ -21,10 +27,11 @@
   const btnCopy = el('btnCopy');
 
   let ships = [];
+  let totalShips = 0;
   let animRunning = false;
   let startTs = 0;
   let lastFrame = 0;
-  let orderCounter = 0;
+  let stopsSoFar = 0;
 
   function easeOutQuad(t) { return 1 - (1 - t) * (1 - t); }
 
@@ -58,8 +65,24 @@
     starfieldEl.appendChild(frag);
   }
 
+  function buildWarpStreaks() {
+    const frag = document.createDocumentFragment();
+    for (let i = 0; i < STREAK_COUNT; i++) {
+      const streak = document.createElement('span');
+      streak.className = 'streak';
+      streak.style.top = `${Math.random() * 100}%`;
+      streak.style.width = `${40 + Math.random() * 90}px`;
+      streak.style.animationDuration = `${0.6 + Math.random() * 0.9}s`;
+      streak.style.animationDelay = `${Math.random() * 1.5}s`;
+      streak.style.opacity = String(0.25 + Math.random() * 0.4);
+      frag.appendChild(streak);
+    }
+    warpStreaksEl.appendChild(frag);
+  }
+
   function buildLanes(teams) {
     lanesEl.innerHTML = '';
+    totalShips = teams.length;
     ships = teams.map((t, i) => {
       const hue = Math.round((360 / teams.length) * i);
       const laneEl = document.createElement('div');
@@ -70,6 +93,7 @@
       shipEl.style.setProperty('--lane-color', `hsl(${hue} 85% 65%)`);
       shipEl.innerHTML = `
         <span class="order-badge" hidden></span>
+        <span class="trail"></span>
         <span class="flame"></span>
         <span class="rocket">🚀</span>
         <span class="ship-label">${escapeHtml(t.team)}</span>
@@ -82,20 +106,35 @@
         agent: t.agent,
         el: shipEl,
         flameEl: shipEl.querySelector('.flame'),
+        trailEl: shipEl.querySelector('.trail'),
         badgeEl: shipEl.querySelector('.order-badge'),
         x: 0,
-        baseSpeed: 70 + Math.random() * 50,
+        baseSpeed: 90 + Math.random() * 70,
         stopTime: randomStopTime(),
         decelStart: null,
         stopped: false,
         order: null,
+        // Two overlapping sine waves per ship give each a distinct,
+        // organically crooked flight path instead of a straight line.
+        wobbleAmp1: 8 + Math.random() * 8,
+        wobbleFreq1: 0.6 + Math.random() * 0.9,
+        wobblePhase1: Math.random() * Math.PI * 2,
+        wobbleAmp2: 3 + Math.random() * 4,
+        wobbleFreq2: 2 + Math.random() * 2.5,
+        wobblePhase2: Math.random() * Math.PI * 2,
       };
     });
   }
 
+  function resetJupiter() {
+    jupiterEl.style.transform = 'translate(0px, -50%) scale(1)';
+    jupiterEl.style.opacity = '1';
+  }
+
   function resetShips() {
-    orderCounter = 0;
+    stopsSoFar = 0;
     orderListEl.innerHTML = '';
+    resetJupiter();
     ships.forEach((s) => {
       s.x = 0;
       s.decelStart = null;
@@ -104,6 +143,7 @@
       s.stopTime = randomStopTime();
       s.el.classList.remove('stopped');
       s.flameEl.classList.remove('out');
+      s.trailEl.style.opacity = '1';
       s.badgeEl.hidden = true;
       s.el.style.transform = 'translate(0px, -50%)';
     });
@@ -113,10 +153,20 @@
     introOverlay.hidden = true;
     finaleOverlay.hidden = true;
     resetShips();
+    stageEl.classList.add('flying');
     startTs = performance.now();
     lastFrame = 0;
     animRunning = true;
     requestAnimationFrame(tick);
+  }
+
+  function updateJupiter(elapsed) {
+    const progress = Math.min(1, elapsed / FLIGHT_SPAN_S);
+    const driftPx = progress * (jupiterEl.parentElement.clientWidth * 0.4);
+    const scale = 1 - progress * 0.55;
+    const opacity = 1 - progress * 0.45;
+    jupiterEl.style.transform = `translate(${-driftPx}px, -50%) scale(${scale})`;
+    jupiterEl.style.opacity = String(opacity);
   }
 
   function tick(now) {
@@ -127,6 +177,8 @@
 
     const trackWidth = Math.max(200, lanesEl.clientWidth - 120);
     let allStopped = true;
+
+    updateJupiter(elapsed);
 
     ships.forEach((s) => {
       if (s.stopped) return;
@@ -143,32 +195,47 @@
         const p = Math.min(1, (elapsed - s.decelStart) / DECEL_DURATION_S);
         const speedNow = s.baseSpeed * (1 - easeOutQuad(p));
         s.x += speedNow * dt;
+        s.trailEl.style.opacity = String(1 - p);
         if (p >= 1) {
           s.stopped = true;
-          orderCounter += 1;
-          s.order = orderCounter;
+          stopsSoFar += 1;
+          // The first ship to stop presents LAST: order counts down from
+          // the total as ships come to rest, so the final ship standing
+          // becomes presentation order 1.
+          s.order = totalShips - stopsSoFar + 1;
           onShipStopped(s);
         }
       }
 
       const xMod = ((s.x % trackWidth) + trackWidth) % trackWidth;
-      const bobY = Math.sin(elapsed * 1.6 + s.x * 0.01) * 3;
+      const bobY =
+        Math.sin(elapsed * s.wobbleFreq1 + s.wobblePhase1) * s.wobbleAmp1 +
+        Math.sin(elapsed * s.wobbleFreq2 + s.wobblePhase2) * s.wobbleAmp2;
       s.el.style.transform = `translate(${xMod}px, calc(-50% + ${bobY}px))`;
     });
 
     if (allStopped) {
       animRunning = false;
+      stageEl.classList.remove('flying');
       setTimeout(showFinale, FINALE_DELAY_S * 1000);
       return;
     }
     requestAnimationFrame(tick);
   }
 
+  function triggerImpact() {
+    spaceCanvasEl.classList.remove('impact');
+    void spaceCanvasEl.offsetWidth; // force reflow so the shake can retrigger
+    spaceCanvasEl.classList.add('impact');
+  }
+
   function onShipStopped(s) {
     s.el.classList.add('stopped');
     s.flameEl.classList.add('out');
+    s.trailEl.style.opacity = '0';
     s.badgeEl.hidden = false;
     s.badgeEl.textContent = s.order;
+    triggerImpact();
 
     const li = document.createElement('li');
     li.className = 'order-item';
@@ -221,6 +288,7 @@
       const teams = await loadRoster();
       buildLanes(teams);
       buildStarfield();
+      buildWarpStreaks();
     } catch (err) {
       introText.textContent = `팀 명단을 불러오지 못했습니다: ${err.message}`;
       btnStart.disabled = true;
