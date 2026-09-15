@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>발표 순서 추첨</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="draw.css" />
+</head>
+<body>
+
+<div class="stage" id="stage">
+  <header class="topbar">
+    <h1>🚀 발표 순서 추첨</h1>
+    <nav>
+      <a href="index.html" target="_blank" rel="noopener">실시간 화면 ↗</a>
+      <a href="status.html" target="_blank" rel="noopener">현황 화면 ↗</a>
+    </nav>
+  </header>
+
+  <div class="main-row">
+    <div class="space-canvas" id="spaceCanvas">
+      <div class="starfield" id="starfield"></div>
+      <div class="earth"></div>
+      <div class="lanes" id="lanes"></div>
+    </div>
+
+    <aside class="order-panel">
+      <h2>발표 순서</h2>
+      <ol id="orderList"></ol>
+    </aside>
+  </div>
+
+  <div class="overlay" id="introOverlay">
+    <div class="overlay-card">
+      <h2>16팀 발표 순서를 추첨합니다</h2>
+      <p id="introText">
+        버튼을 누르면 우주선 16대가 지구에서 동시에 출발합니다.
+        먼저 추진력을 잃고 멈춰서는 팀부터 순서대로 1번이 됩니다.
+      </p>
+      <button class="big-btn" id="btnStart">🚀 추첨 시작</button>
+    </div>
+  </div>
+
+  <div class="overlay" id="finaleOverlay" hidden>
+    <div class="overlay-card">
+      <h2>🎉 추첨 완료!</h2>
+      <ol class="finale-list" id="finaleList"></ol>
+      <div class="finale-actions">
+        <button class="small-btn" id="btnCopy">순서 복사</button>
+        <button class="small-btn" id="btnRestart">🔄 다시 추첨</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="shared.js"></script>
+<script src="draw.js"></script>
+</body>
+</html>
