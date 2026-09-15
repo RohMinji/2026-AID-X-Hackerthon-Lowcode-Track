@@ -250,6 +250,12 @@ html, body {
   padding: 1px 6px;
 }
 
+/* Docked (not yet launched): engines dark until the ship actually departs. */
+.ship:not(.launched) .flame,
+.ship:not(.launched) .trail {
+  opacity: 0;
+}
+
 .ship .order-badge {
   display: inline-flex;
   align-items: center;
@@ -351,6 +357,14 @@ html, body {
 
 .order-team { font-weight: 800; font-size: 13px; }
 .order-agent { color: var(--accent); font-size: 11px; font-weight: 600; }
+
+/* Stopped-but-unranked entries during the draw: a neutral dot, not a
+   number, since the real order stays hidden until everyone has stopped. */
+.order-item.pending .order-num {
+  background: rgba(255, 255, 255, 0.12);
+  color: var(--ink-dim);
+  font-size: 16px;
+}
 
 /* ---------------- Overlays ---------------- */
 

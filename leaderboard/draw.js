@@ -2,8 +2,9 @@
   const { escapeHtml } = window.Leaderboard;
 
   const ROSTER_URL = './results.json';
-  const MIN_STOP_S = 4;
-  const MAX_STOP_S = 24;
+  const LAUNCH_DELAY_MAX_S = 10; // ships depart from Earth at staggered random times
+  const MIN_FLIGHT_S = 4;
+  const MAX_FLIGHT_S = 18;
   const DECEL_DURATION_S = 1.3;
   const FINALE_DELAY_S = 1.8;
   const STAR_COUNT = 140;
@@ -28,12 +29,15 @@
   let ships = [];
   let animRunning = false;
   let startTs = 0;
-  let orderCounter = 0;
 
   function easeOutQuad(t) { return 1 - (1 - t) * (1 - t); }
 
-  function randomStopTime() {
-    return MIN_STOP_S + Math.random() * (MAX_STOP_S - MIN_STOP_S);
+  function randomLaunchDelay() {
+    return Math.random() * LAUNCH_DELAY_MAX_S;
+  }
+
+  function randomFlightDuration() {
+    return MIN_FLIGHT_S + Math.random() * (MAX_FLIGHT_S - MIN_FLIGHT_S);
   }
 
   async function loadRoster() {
@@ -104,8 +108,9 @@
         flameEl: shipEl.querySelector('.flame'),
         trailEl: shipEl.querySelector('.trail'),
         badgeEl: shipEl.querySelector('.order-badge'),
-        stopTime: randomStopTime(),
-        decelStart: null,
+        launchDelay: randomLaunchDelay(),
+        flightDuration: randomFlightDuration(),
+        launched: false,
         stopped: false,
         order: null,
         // Two overlapping sine waves per ship give each a distinct,
@@ -121,16 +126,16 @@
   }
 
   function resetShips() {
-    orderCounter = 0;
     orderListEl.innerHTML = '';
     ships.forEach((s) => {
-      s.decelStart = null;
+      s.launchDelay = randomLaunchDelay();
+      s.flightDuration = randomFlightDuration();
+      s.launched = false;
       s.stopped = false;
       s.order = null;
-      s.stopTime = randomStopTime();
-      s.el.classList.remove('stopped');
+      s.el.classList.remove('stopped', 'launched');
       s.flameEl.classList.remove('out');
-      s.trailEl.style.opacity = '1';
+      s.trailEl.style.opacity = '0';
       s.badgeEl.hidden = true;
       s.el.style.transform = 'translate(0px, -50%)';
     });
@@ -157,25 +162,30 @@
       if (s.stopped) return;
       allStopped = false;
 
-      // A ship's on-screen distance from Earth is a direct, monotonic
-      // function of how long it flew before losing thrust - so the ship
-      // that stops soonest always ends up closest to Earth, matching the
-      // "closest team presents first" rule below exactly, not just on
-      // average.
-      const rampElapsed = Math.min(elapsed, s.stopTime);
-      const baseX = trackWidth * (rampElapsed / MAX_STOP_S);
+      const sinceLaunch = elapsed - s.launchDelay;
+      if (sinceLaunch < 0) {
+        applyTransform(s, 0, elapsed);
+        return;
+      }
+      if (!s.launched) {
+        s.launched = true;
+        s.el.classList.add('launched');
+        s.trailEl.style.opacity = '1';
+      }
 
-      if (elapsed >= s.stopTime) {
-        if (s.decelStart === null) s.decelStart = elapsed;
-        const p = Math.min(1, (elapsed - s.decelStart) / DECEL_DURATION_S);
+      // A ship's on-screen distance from Earth is a direct, monotonic
+      // function of how long IT (not the clock) has been flying - so the
+      // ship with the shortest flight always ends up closest to Earth,
+      // whenever it happens to launch.
+      const rampElapsed = Math.min(sinceLaunch, s.flightDuration);
+      const baseX = trackWidth * (rampElapsed / MAX_FLIGHT_S);
+
+      if (sinceLaunch >= s.flightDuration) {
+        const p = Math.min(1, (sinceLaunch - s.flightDuration) / DECEL_DURATION_S);
         const x = baseX + COAST_PX * easeOutQuad(p);
         s.trailEl.style.opacity = String(1 - p);
         if (p >= 1) {
           s.stopped = true;
-          orderCounter += 1;
-          // First ship to stop = shortest flight = closest to Earth =
-          // presents first.
-          s.order = orderCounter;
           onShipStopped(s);
         }
         applyTransform(s, x, elapsed);
@@ -187,7 +197,7 @@
     if (allStopped) {
       animRunning = false;
       stageEl.classList.remove('flying');
-      setTimeout(showFinale, FINALE_DELAY_S * 1000);
+      setTimeout(revealFinalOrder, FINALE_DELAY_S * 1000);
       return;
     }
     requestAnimationFrame(tick);
@@ -206,18 +216,21 @@
     spaceCanvasEl.classList.add('impact');
   }
 
+  // Ships stop in an order that reveals nothing about final rank (a late
+  // launcher can still have the shortest flight). So while the draw is
+  // running we only show WHICH teams have stopped so far, with no number -
+  // final order stays unknown to everyone until revealFinalOrder() runs.
   function onShipStopped(s) {
     s.el.classList.add('stopped');
     s.flameEl.classList.add('out');
     s.trailEl.style.opacity = '0';
-    s.badgeEl.hidden = false;
-    s.badgeEl.textContent = s.order;
     triggerImpact();
 
     const li = document.createElement('li');
-    li.className = 'order-item';
+    li.className = 'order-item pending';
+    li.dataset.team = s.team;
     li.innerHTML = `
-      <span class="order-num">${s.order}</span>
+      <span class="order-num">·</span>
       <span class="order-team">${escapeHtml(s.team)}</span>
       <span class="order-agent">${escapeHtml(s.agent)}</span>
     `;
@@ -225,16 +238,23 @@
     li.scrollIntoView({ block: 'nearest' });
   }
 
-  function showFinale() {
-    finaleListEl.innerHTML = [...ships]
-      .sort((a, b) => a.order - b.order)
-      .map((s) => `
-        <li>
-          <span class="order-num">${s.order}</span>
-          <span class="order-team">${escapeHtml(s.team)}</span>
-          <span class="order-agent">${escapeHtml(s.agent)}</span>
-        </li>
-      `).join('');
+  function revealFinalOrder() {
+    const ranked = [...ships].sort((a, b) => a.flightDuration - b.flightDuration);
+    ranked.forEach((s, i) => {
+      s.order = i + 1;
+      s.badgeEl.hidden = false;
+      s.badgeEl.textContent = s.order;
+    });
+
+    const rowsHtml = (s) => `
+      <li>
+        <span class="order-num">${s.order}</span>
+        <span class="order-team">${escapeHtml(s.team)}</span>
+        <span class="order-agent">${escapeHtml(s.agent)}</span>
+      </li>
+    `;
+    orderListEl.innerHTML = ranked.map(rowsHtml).join('');
+    finaleListEl.innerHTML = ranked.map(rowsHtml).join('');
     finaleOverlay.hidden = false;
   }
 
