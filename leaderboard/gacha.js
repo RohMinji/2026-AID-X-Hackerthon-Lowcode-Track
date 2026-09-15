@@ -1,7 +1,5 @@
 (() => {
-  const { escapeHtml } = window.Leaderboard;
-
-  const ROSTER_URL = './results.json';
+  const TEAM_COUNT = 16;
   const BOKEH_COUNT = 22;
   const DRAW_LOCK_MS = 700; // prevents double-clicking through the drop/crack animation
 
@@ -11,36 +9,20 @@
   const trayEl = el('tray');
   const btnDraw = el('btnDraw');
   const remainingHint = el('remainingHint');
-  const introText = el('introText');
   const orderListEl = el('orderList');
   const finaleOverlay = el('finaleOverlay');
   const finaleListEl = el('finaleList');
   const btnCopy = el('btnCopy');
   const btnRestart = el('btnRestart');
 
-  let teams = [];
+  let capsules = []; // { number, color, domeEl }
   let pool = [];
-  let drawnCount = 0;
+  let drawnSequence = []; // numbers in the order they were drawn
   let drawing = false;
 
   function colorFor(i, total) {
     const hue = Math.round((360 / total) * i);
     return `hsl(${hue} 75% 62%)`;
-  }
-
-  async function loadRoster() {
-    const res = await fetch(`${ROSTER_URL}?_=${Date.now()}`, { cache: 'no-store' });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const json = await res.json();
-    const list = json.teams || [];
-    if (!list.length) throw new Error('results.json에 팀 데이터가 없습니다');
-    return list.map((t, i) => ({
-      team: t.team,
-      agent: t.agent || '',
-      color: colorFor(i, list.length),
-      order: null,
-      domeEl: null,
-    }));
   }
 
   function buildBokeh() {
@@ -52,7 +34,7 @@
       dot.style.height = `${size}px`;
       dot.style.left = `${Math.random() * 100}%`;
       dot.style.top = `${Math.random() * 100}%`;
-      dot.style.background = colorFor(Math.floor(Math.random() * 16), 16);
+      dot.style.background = colorFor(Math.floor(Math.random() * TEAM_COUNT), TEAM_COUNT);
       dot.style.animationDuration = `${3 + Math.random() * 4}s`;
       dot.style.animationDelay = `${Math.random() * 3}s`;
       frag.appendChild(dot);
@@ -66,22 +48,30 @@
     return { x: 50 + r * Math.cos(a), y: 50 + r * Math.sin(a) };
   }
 
+  function buildCapsules() {
+    capsules = Array.from({ length: TEAM_COUNT }, (_, i) => ({
+      number: i + 1,
+      color: colorFor(i, TEAM_COUNT),
+      domeEl: null,
+    }));
+  }
+
   function buildDome() {
     domeEl.innerHTML = '';
-    teams.forEach((t) => {
+    capsules.forEach((c) => {
       const pos = randomDiskPoint(36);
       const cap = document.createElement('div');
       cap.className = 'capsule';
       cap.style.left = `${pos.x}%`;
       cap.style.top = `${pos.y}%`;
-      cap.style.setProperty('--cap-color', t.color);
+      cap.style.setProperty('--cap-color', c.color);
       cap.style.setProperty('--dx', `${(Math.random() * 12 - 6).toFixed(1)}px`);
       cap.style.setProperty('--dy', `${(Math.random() * 12 - 6).toFixed(1)}px`);
       cap.style.animationDuration = `${1.6 + Math.random() * 1.2}s`;
       cap.style.animationDelay = `${Math.random() * 1.5}s`;
       cap.innerHTML = '<span class="cap-shine"></span>';
       domeEl.appendChild(cap);
-      t.domeEl = cap;
+      c.domeEl = cap;
     });
   }
 
@@ -90,8 +80,8 @@
   }
 
   function resetAll() {
-    pool = [...teams];
-    drawnCount = 0;
+    pool = [...capsules];
+    drawnSequence = [];
     drawing = false;
     orderListEl.innerHTML = '';
     trayEl.innerHTML = '<div class="tray-placeholder">캡슐을 뽑아보세요</div>';
@@ -109,8 +99,8 @@
 
     const idx = Math.floor(Math.random() * pool.length);
     const picked = pool.splice(idx, 1)[0];
-    drawnCount += 1;
-    picked.order = drawnCount;
+    drawnSequence.push(picked.number);
+    const turn = drawnSequence.length;
     updateRemaining();
 
     if (picked.domeEl) {
@@ -127,9 +117,7 @@
       <div class="cap-half cap-top"></div>
       <div class="cap-half cap-bottom"></div>
       <div class="reveal-card">
-        <span class="reveal-num">${picked.order}</span>
-        <span class="reveal-team">${escapeHtml(picked.team)}</span>
-        <span class="reveal-agent">${escapeHtml(picked.agent)}</span>
+        <span class="reveal-num">${picked.number}</span>
       </div>
     `;
     trayEl.appendChild(reveal);
@@ -139,9 +127,8 @@
     const li = document.createElement('li');
     li.className = 'order-item';
     li.innerHTML = `
-      <span class="order-num">${picked.order}</span>
-      <span class="order-team">${escapeHtml(picked.team)}</span>
-      <span class="order-agent">${escapeHtml(picked.agent)}</span>
+      <span class="order-num">${turn}</span>
+      <span class="drawn-value">${picked.number}번</span>
     `;
     orderListEl.appendChild(li);
     li.scrollIntoView({ block: 'nearest' });
@@ -158,12 +145,10 @@
   }
 
   function showFinale() {
-    const ranked = [...teams].sort((a, b) => a.order - b.order);
-    finaleListEl.innerHTML = ranked.map((t) => `
+    finaleListEl.innerHTML = drawnSequence.map((num, i) => `
       <li>
-        <span class="order-num">${t.order}</span>
-        <span class="order-team">${escapeHtml(t.team)}</span>
-        <span class="order-agent">${escapeHtml(t.agent)}</span>
+        <span class="order-num">${i + 1}</span>
+        <span class="drawn-value">${num}번</span>
       </li>
     `).join('');
     finaleOverlay.hidden = false;
@@ -177,10 +162,7 @@
   });
 
   btnCopy.addEventListener('click', async () => {
-    const text = [...teams]
-      .sort((a, b) => a.order - b.order)
-      .map((t) => `${t.order}. ${t.team}${t.agent ? ` - ${t.agent}` : ''}`)
-      .join('\n');
+    const text = drawnSequence.map((num, i) => `${i + 1}번째 뽑기: ${num}번`).join('\n');
     try {
       await navigator.clipboard.writeText(text);
       const original = btnCopy.textContent;
@@ -191,15 +173,7 @@
     }
   });
 
-  (async () => {
-    try {
-      buildBokeh();
-      teams = await loadRoster();
-      resetAll();
-    } catch (err) {
-      introText.textContent = `팀 명단을 불러오지 못했습니다: ${err.message}`;
-      remainingHint.textContent = '';
-      btnDraw.disabled = true;
-    }
-  })();
+  buildBokeh();
+  buildCapsules();
+  resetAll();
 })();

@@ -15,7 +15,8 @@
   <header class="topbar">
     <div class="topbar-title">
       <h1>🎰 캡슐 뽑기</h1>
-      <p id="introText">버튼을 누를 때마다 캡슐이 하나씩 나옵니다. 처음 나온 팀이 1번, 마지막 팀이 16번입니다.</p>
+      <p>버튼을 누를 때마다 1~16 중 하나가 무작위로 나옵니다. 이미 나온 번호는 다시 나오지 않습니다.
+        팀 이름은 표시되지 않으니, 각 팀이 순서대로 나와 직접 뽑게 하세요.</p>
     </div>
     <nav>
       <a href="index.html" target="_blank" rel="noopener">실시간 화면 ↗</a>
@@ -35,7 +36,7 @@
           <button class="crank-btn" id="btnDraw">🎰 캡슐 뽑기</button>
         </div>
       </div>
-      <div class="remaining-hint" id="remainingHint">불러오는 중...</div>
+      <div class="remaining-hint" id="remainingHint">남은 캡슐: 16개</div>
       <div class="tray" id="tray">
         <div class="tray-placeholder">캡슐을 뽑아보세요</div>
       </div>
@@ -59,7 +60,6 @@
   </div>
 </div>
 
-<script src="shared.js"></script>
 <script src="gacha.js"></script>
 </body>
 </html>
