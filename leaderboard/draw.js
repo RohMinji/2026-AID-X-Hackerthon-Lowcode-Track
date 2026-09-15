@@ -8,7 +8,7 @@
   const FINALE_DELAY_S = 1.8;
   const STAR_COUNT = 140;
   const STREAK_COUNT = 26;
-  const FLIGHT_SPAN_S = MAX_STOP_S + DECEL_DURATION_S; // used to pace Jupiter's recession
+  const COAST_PX = 36; // small identical overshoot for every ship while it eases to a stop
 
   const el = (id) => document.getElementById(id);
   const stageEl = el('stage');
@@ -16,7 +16,6 @@
   const lanesEl = el('lanes');
   const starfieldEl = el('starfield');
   const warpStreaksEl = el('warpStreaks');
-  const jupiterEl = el('jupiter');
   const orderListEl = el('orderList');
   const introOverlay = el('introOverlay');
   const introText = el('introText');
@@ -27,11 +26,9 @@
   const btnCopy = el('btnCopy');
 
   let ships = [];
-  let totalShips = 0;
   let animRunning = false;
   let startTs = 0;
-  let lastFrame = 0;
-  let stopsSoFar = 0;
+  let orderCounter = 0;
 
   function easeOutQuad(t) { return 1 - (1 - t) * (1 - t); }
 
@@ -82,7 +79,6 @@
 
   function buildLanes(teams) {
     lanesEl.innerHTML = '';
-    totalShips = teams.length;
     ships = teams.map((t, i) => {
       const hue = Math.round((360 / teams.length) * i);
       const laneEl = document.createElement('div');
@@ -108,8 +104,6 @@
         flameEl: shipEl.querySelector('.flame'),
         trailEl: shipEl.querySelector('.trail'),
         badgeEl: shipEl.querySelector('.order-badge'),
-        x: 0,
-        baseSpeed: 90 + Math.random() * 70,
         stopTime: randomStopTime(),
         decelStart: null,
         stopped: false,
@@ -126,17 +120,10 @@
     });
   }
 
-  function resetJupiter() {
-    jupiterEl.style.transform = 'translate(0px, -50%) scale(1)';
-    jupiterEl.style.opacity = '1';
-  }
-
   function resetShips() {
-    stopsSoFar = 0;
+    orderCounter = 0;
     orderListEl.innerHTML = '';
-    resetJupiter();
     ships.forEach((s) => {
-      s.x = 0;
       s.decelStart = null;
       s.stopped = false;
       s.order = null;
@@ -155,63 +142,46 @@
     resetShips();
     stageEl.classList.add('flying');
     startTs = performance.now();
-    lastFrame = 0;
     animRunning = true;
     requestAnimationFrame(tick);
-  }
-
-  function updateJupiter(elapsed) {
-    const progress = Math.min(1, elapsed / FLIGHT_SPAN_S);
-    const driftPx = progress * (jupiterEl.parentElement.clientWidth * 0.4);
-    const scale = 1 - progress * 0.55;
-    const opacity = 1 - progress * 0.45;
-    jupiterEl.style.transform = `translate(${-driftPx}px, -50%) scale(${scale})`;
-    jupiterEl.style.opacity = String(opacity);
   }
 
   function tick(now) {
     if (!animRunning) return;
     const elapsed = (now - startTs) / 1000;
-    const dt = lastFrame ? Math.min(0.05, (now - lastFrame) / 1000) : 0;
-    lastFrame = now;
 
     const trackWidth = Math.max(200, lanesEl.clientWidth - 120);
     let allStopped = true;
-
-    updateJupiter(elapsed);
 
     ships.forEach((s) => {
       if (s.stopped) return;
       allStopped = false;
 
-      if (s.decelStart === null) {
-        if (elapsed >= s.stopTime) {
-          s.decelStart = elapsed;
-        } else {
-          s.x += s.baseSpeed * dt;
-        }
-      }
-      if (s.decelStart !== null) {
+      // A ship's on-screen distance from Earth is a direct, monotonic
+      // function of how long it flew before losing thrust - so the ship
+      // that stops soonest always ends up closest to Earth, matching the
+      // "closest team presents first" rule below exactly, not just on
+      // average.
+      const rampElapsed = Math.min(elapsed, s.stopTime);
+      const baseX = trackWidth * (rampElapsed / MAX_STOP_S);
+
+      if (elapsed >= s.stopTime) {
+        if (s.decelStart === null) s.decelStart = elapsed;
         const p = Math.min(1, (elapsed - s.decelStart) / DECEL_DURATION_S);
-        const speedNow = s.baseSpeed * (1 - easeOutQuad(p));
-        s.x += speedNow * dt;
+        const x = baseX + COAST_PX * easeOutQuad(p);
         s.trailEl.style.opacity = String(1 - p);
         if (p >= 1) {
           s.stopped = true;
-          stopsSoFar += 1;
-          // The first ship to stop presents LAST: order counts down from
-          // the total as ships come to rest, so the final ship standing
-          // becomes presentation order 1.
-          s.order = totalShips - stopsSoFar + 1;
+          orderCounter += 1;
+          // First ship to stop = shortest flight = closest to Earth =
+          // presents first.
+          s.order = orderCounter;
           onShipStopped(s);
         }
+        applyTransform(s, x, elapsed);
+      } else {
+        applyTransform(s, baseX, elapsed);
       }
-
-      const xMod = ((s.x % trackWidth) + trackWidth) % trackWidth;
-      const bobY =
-        Math.sin(elapsed * s.wobbleFreq1 + s.wobblePhase1) * s.wobbleAmp1 +
-        Math.sin(elapsed * s.wobbleFreq2 + s.wobblePhase2) * s.wobbleAmp2;
-      s.el.style.transform = `translate(${xMod}px, calc(-50% + ${bobY}px))`;
     });
 
     if (allStopped) {
@@ -221,6 +191,13 @@
       return;
     }
     requestAnimationFrame(tick);
+  }
+
+  function applyTransform(s, x, elapsed) {
+    const bobY =
+      Math.sin(elapsed * s.wobbleFreq1 + s.wobblePhase1) * s.wobbleAmp1 +
+      Math.sin(elapsed * s.wobbleFreq2 + s.wobblePhase2) * s.wobbleAmp2;
+    s.el.style.transform = `translate(${x}px, calc(-50% + ${bobY}px))`;
   }
 
   function triggerImpact() {

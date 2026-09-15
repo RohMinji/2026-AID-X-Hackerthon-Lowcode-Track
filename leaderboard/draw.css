@@ -132,47 +132,6 @@ html, body {
   to { transform: translateX(calc(100vw + 220px)); }
 }
 
-/* Jupiter drifts left, shrinks, and fades as the draw progresses - a
-   parallax cue that the fleet is flying further out into deep space. */
-.jupiter {
-  position: absolute;
-  left: 58%;
-  top: 38%;
-  width: 9vw;
-  height: 9vw;
-  max-width: 150px;
-  max-height: 150px;
-  min-width: 70px;
-  min-height: 70px;
-  border-radius: 50%;
-  z-index: 1;
-  transform: translate(0px, -50%) scale(1);
-  transform-origin: center;
-  transition: transform 0.05s linear, opacity 0.05s linear;
-  background:
-    repeating-linear-gradient(
-      95deg,
-      #e8c99b 0 6%,
-      #d9ad72 6% 12%,
-      #c98f52 12% 17%,
-      #e8c99b 17% 24%,
-      #b97a42 24% 30%
-    );
-  box-shadow: 0 0 50px rgba(255, 200, 140, 0.25);
-}
-
-.jupiter::after {
-  content: "";
-  position: absolute;
-  left: -35%;
-  right: -35%;
-  top: 46%;
-  height: 8%;
-  border-radius: 50%;
-  background: rgba(255, 220, 180, 0.35);
-  transform: rotate(-8deg);
-}
-
 /* ---------------- Impact shake on each stop ---------------- */
 
 .space-canvas.impact {
