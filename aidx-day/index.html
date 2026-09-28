@@ -1,0 +1,416 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#05070f">
+<title>AID-X Day</title>
+<meta name="description" content="AID-X Day 행사 안내">
+<style>
+  :root {
+    --bg-0: #05070f;
+    --bg-1: #0a0f1f;
+    --panel: #0d1428;
+    --ink: #eaf0ff;
+    --ink-dim: #9fb0d9;
+    --accent: #35e0ff;
+    --accent-2: #7c5cff;
+    --border: rgba(140, 170, 255, 0.18);
+    --ph-bg: rgba(255, 210, 92, 0.16);
+    --ph-ink: #ffd25c;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body { margin: 0; padding: 0; }
+
+  body {
+    min-height: 100vh;
+    background:
+      radial-gradient(120% 60% at 50% -10%, rgba(124, 92, 255, 0.28), transparent 60%),
+      radial-gradient(80% 40% at 100% 20%, rgba(53, 224, 255, 0.12), transparent 60%),
+      var(--bg-0);
+    background-attachment: fixed;
+    color: var(--ink);
+    font-family: "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", "Segoe UI", system-ui, sans-serif;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    word-break: keep-all;
+  }
+
+  .wrap {
+    max-width: 480px;
+    margin: 0 auto;
+    padding: max(20px, env(safe-area-inset-top)) 16px max(32px, env(safe-area-inset-bottom));
+  }
+
+  /* 자리표시자: 실제 내용으로 바꿔야 하는 부분 */
+  .ph {
+    background: var(--ph-bg);
+    color: var(--ph-ink);
+    border-radius: 4px;
+    padding: 0 4px;
+    box-decoration-break: clone;
+    -webkit-box-decoration-break: clone;
+  }
+
+  /* ---------- Countdown ---------- */
+  .countdown {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    margin: 0 -16px 20px;
+    padding: 12px 16px;
+    background: rgba(5, 7, 15, 0.82);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+  }
+  .countdown-label {
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    color: var(--ink-dim);
+    text-align: center;
+    margin-bottom: 6px;
+  }
+  .countdown-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+  }
+  .cd-cell {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 8px 0 6px;
+    text-align: center;
+  }
+  .cd-num {
+    font-size: 26px;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+    color: var(--accent);
+    line-height: 1.1;
+  }
+  .cd-unit { font-size: 11px; color: var(--ink-dim); }
+  .countdown-live {
+    display: none;
+    text-align: center;
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--accent);
+    padding: 8px 0;
+  }
+  .countdown.is-live .countdown-grid { display: none; }
+  .countdown.is-live .countdown-live { display: block; }
+
+  /* ---------- Hero ---------- */
+  .hero { text-align: center; padding: 12px 0 8px; }
+  .eyebrow {
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    color: var(--accent);
+    border: 1px solid rgba(53, 224, 255, 0.4);
+    border-radius: 999px;
+    padding: 4px 12px;
+    margin-bottom: 14px;
+  }
+  h1 {
+    margin: 0 0 10px;
+    font-size: 40px;
+    line-height: 1.1;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .tagline { margin: 0; color: var(--ink-dim); font-size: 15px; }
+
+  /* ---------- Cards ---------- */
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 18px 16px;
+    margin-top: 16px;
+  }
+  .card h2 {
+    margin: 0 0 12px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: var(--accent);
+  }
+
+  .facts { margin: 0; display: grid; gap: 12px; }
+  .fact { display: grid; grid-template-columns: 56px 1fr; gap: 8px; }
+  .fact dt { color: var(--ink-dim); font-size: 14px; }
+  .fact dd { margin: 0; font-size: 15px; font-weight: 600; }
+  .fact dd small { display: block; font-weight: 400; color: var(--ink-dim); font-size: 13px; margin-top: 2px; }
+
+  .btn {
+    display: block;
+    text-align: center;
+    margin-top: 14px;
+    padding: 12px;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 15px;
+    text-decoration: none;
+    color: var(--bg-0);
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  }
+  .btn.ghost {
+    color: var(--ink);
+    background: transparent;
+    border: 1px solid var(--border);
+  }
+
+  .timeline { list-style: none; margin: 0; padding: 0; }
+  .timeline li {
+    display: grid;
+    grid-template-columns: 64px 1fr;
+    gap: 8px;
+    padding: 10px 0;
+    border-top: 1px solid var(--border);
+  }
+  .timeline li:first-child { border-top: 0; padding-top: 0; }
+  .timeline time {
+    font-variant-numeric: tabular-nums;
+    font-weight: 700;
+    color: var(--accent);
+    font-size: 14px;
+  }
+  .timeline .title { font-weight: 600; font-size: 15px; }
+  .timeline .desc { color: var(--ink-dim); font-size: 13px; }
+  .timeline li.is-now { background: rgba(53, 224, 255, 0.08); margin: 0 -16px; padding-left: 16px; padding-right: 16px; }
+  .timeline li.is-now .title::after {
+    content: "진행 중";
+    margin-left: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--bg-0);
+    background: var(--accent);
+    border-radius: 999px;
+    padding: 1px 7px;
+    vertical-align: 2px;
+  }
+
+  .notes { margin: 0; padding-left: 18px; }
+  .notes li { margin: 6px 0; font-size: 14px; }
+
+  footer {
+    margin-top: 28px;
+    text-align: center;
+    font-size: 12px;
+    color: var(--ink-dim);
+  }
+  footer a { color: var(--ink-dim); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <section class="countdown" id="countdown" aria-live="polite">
+    <div class="countdown-label" id="cd-label">행사 시작까지</div>
+    <div class="countdown-grid">
+      <div class="cd-cell"><div class="cd-num" id="cd-d">--</div><div class="cd-unit">일</div></div>
+      <div class="cd-cell"><div class="cd-num" id="cd-h">--</div><div class="cd-unit">시간</div></div>
+      <div class="cd-cell"><div class="cd-num" id="cd-m">--</div><div class="cd-unit">분</div></div>
+      <div class="cd-cell"><div class="cd-num" id="cd-s">--</div><div class="cd-unit">초</div></div>
+    </div>
+    <div class="countdown-live" id="cd-live"></div>
+  </section>
+
+  <header class="hero">
+    <div class="eyebrow" id="eyebrow"></div>
+    <h1 id="title"></h1>
+    <p class="tagline" id="tagline"></p>
+  </header>
+
+  <section class="card">
+    <h2>행사 정보</h2>
+    <dl class="facts" id="facts"></dl>
+    <a class="btn" id="map-btn" target="_blank" rel="noopener">지도에서 보기</a>
+  </section>
+
+  <section class="card">
+    <h2>프로그램</h2>
+    <ol class="timeline" id="program"></ol>
+  </section>
+
+  <section class="card">
+    <h2>안내 사항</h2>
+    <ul class="notes" id="notes"></ul>
+  </section>
+
+  <section class="card">
+    <h2>문의</h2>
+    <dl class="facts" id="contact"></dl>
+    <a class="btn ghost" id="link-btn" target="_blank" rel="noopener"></a>
+  </section>
+
+  <footer id="footer"></footer>
+</div>
+
+<script>
+/* =====================================================================
+   행사 정보 — 이 블록만 고치면 페이지 전체에 반영돼요.
+   [대괄호]로 된 값은 자리표시자라 페이지에서 노란색으로 표시돼요.
+   ===================================================================== */
+const EVENT = {
+  eyebrow: "2026 AID-X",
+  title: "AID-X Day",
+  tagline: "[행사 한 줄 소개]",
+
+  // 카운트다운 기준 시각 (한국 시간 기준 +09:00 유지)
+  startISO: "2026-10-15T14:00:00+09:00",
+  endISO:   "2026-10-15T18:00:00+09:00",
+
+  dateText: "[2026년 10월 15일 (목)]",
+  timeText: "[14:00 – 18:00]",
+  venue:    "[장소 이름]",
+  venueDetail: "[상세 주소 / 층·호실]",
+  mapUrl:   "",   // 예: "https://naver.me/xxxx" — 비워 두면 지도 버튼이 숨겨져요
+  target:   "[참석 대상]",
+
+  // 시간은 "HH:MM" (startISO와 같은 날짜로 계산해서 '진행 중' 표시)
+  program: [
+    { time: "[14:00]", title: "[오프닝]",        desc: "[설명]" },
+    { time: "[14:20]", title: "[세션 1]",        desc: "[발표자 / 설명]" },
+    { time: "[15:10]", title: "[휴식]",          desc: "" },
+    { time: "[15:30]", title: "[세션 2]",        desc: "[발표자 / 설명]" },
+    { time: "[16:30]", title: "[시상 및 네트워킹]", desc: "[설명]" },
+    { time: "[18:00]", title: "[폐회]",          desc: "" },
+  ],
+
+  notes: [
+    "[준비물 또는 사전 안내]",
+    "[주차 / 교통 안내]",
+    "[식사·다과 안내]",
+  ],
+
+  contactName:  "[담당자 이름]",
+  contactPhone: "[연락처]",
+  contactEmail: "[이메일]",
+
+  linkLabel: "[신청 / 자료 링크]",
+  linkUrl:   "",   // 비워 두면 링크 버튼이 숨겨져요
+
+  footer: "© 2026 AID-X",
+};
+/* ===================================================================== */
+
+// "[...]" 부분을 노란 자리표시자로 감싸서 렌더링
+function render(el, text) {
+  el.textContent = "";
+  String(text).split(/(\[[^\]]*\])/).forEach(part => {
+    if (!part) return;
+    if (/^\[[^\]]*\]$/.test(part)) {
+      const span = document.createElement("span");
+      span.className = "ph";
+      span.textContent = part;
+      el.appendChild(span);
+    } else {
+      el.appendChild(document.createTextNode(part));
+    }
+  });
+  return el;
+}
+const $ = id => document.getElementById(id);
+const make = (tag, cls) => { const e = document.createElement(tag); if (cls) e.className = cls; return e; };
+
+function fact(dl, label, main, sub) {
+  const row = make("div", "fact");
+  row.appendChild(render(make("dt"), label));
+  const dd = render(make("dd"), main);
+  if (sub) dd.appendChild(render(make("small"), sub));
+  row.appendChild(dd);
+  dl.appendChild(row);
+}
+
+render($("eyebrow"), EVENT.eyebrow);
+render($("title"), EVENT.title);
+render($("tagline"), EVENT.tagline);
+document.title = EVENT.title.replace(/[\[\]]/g, "");
+
+fact($("facts"), "일시", EVENT.dateText, EVENT.timeText);
+fact($("facts"), "장소", EVENT.venue, EVENT.venueDetail);
+fact($("facts"), "대상", EVENT.target);
+
+if (EVENT.mapUrl) $("map-btn").href = EVENT.mapUrl; else $("map-btn").remove();
+
+EVENT.program.forEach(p => {
+  const li = make("li");
+  li.dataset.time = p.time.replace(/[\[\]]/g, "");
+  li.appendChild(render(make("time"), p.time));
+  const body = make("div");
+  body.appendChild(render(make("div", "title"), p.title));
+  if (p.desc) body.appendChild(render(make("div", "desc"), p.desc));
+  li.appendChild(body);
+  $("program").appendChild(li);
+});
+
+EVENT.notes.forEach(n => $("notes").appendChild(render(make("li"), n)));
+
+fact($("contact"), "담당", EVENT.contactName);
+fact($("contact"), "전화", EVENT.contactPhone);
+fact($("contact"), "메일", EVENT.contactEmail);
+
+if (EVENT.linkUrl) {
+  render($("link-btn"), EVENT.linkLabel);
+  $("link-btn").href = EVENT.linkUrl;
+} else {
+  $("link-btn").remove();
+}
+
+render($("footer"), EVENT.footer);
+
+// ---------- 카운트다운 + 진행 중 표시 ----------
+const start = new Date(EVENT.startISO).getTime();
+const end = new Date(EVENT.endISO).getTime();
+const tz = EVENT.startISO.slice(19) || "+09:00";
+const day = EVENT.startISO.slice(0, 10);
+const slots = [...$("program").children].map(li => ({
+  li, at: /^\d{1,2}:\d{2}$/.test(li.dataset.time)
+    ? new Date(`${day}T${li.dataset.time.padStart(5, "0")}:00${tz}`).getTime()
+    : NaN
+}));
+const pad = n => String(n).padStart(2, "0");
+
+function tick() {
+  const now = Date.now();
+  const cd = $("countdown");
+
+  if (now < start) {
+    let s = Math.floor((start - now) / 1000);
+    const d = Math.floor(s / 86400); s %= 86400;
+    const h = Math.floor(s / 3600);  s %= 3600;
+    const m = Math.floor(s / 60);    s %= 60;
+    $("cd-d").textContent = d;
+    $("cd-h").textContent = pad(h);
+    $("cd-m").textContent = pad(m);
+    $("cd-s").textContent = pad(s);
+    cd.classList.remove("is-live");
+  } else {
+    cd.classList.add("is-live");
+    $("cd-label").textContent = now < end ? "지금" : "";
+    $("cd-live").textContent = now < end ? "행사 진행 중" : "행사가 종료되었어요. 감사합니다!";
+  }
+
+  // 현재 진행 중인 프로그램 강조
+  let current = null;
+  if (now >= start && now < end) {
+    slots.forEach(s => { if (!isNaN(s.at) && s.at <= now) current = s.li; });
+  }
+  slots.forEach(s => s.li.classList.toggle("is-now", s.li === current));
+}
+tick();
+setInterval(tick, 1000);
+</script>
+</body>
+</html>
