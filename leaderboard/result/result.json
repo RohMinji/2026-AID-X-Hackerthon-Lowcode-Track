@@ -1,19 +1,19 @@
 {
-  "push_date": "20260929T15:05",
-  "push_ID": 2,
+  "push_date": "20260930T11:27",
+  "push_ID": 3,
   "push_results": {
     "eval_1": {
       "test_1": {
         "total": 75.96,
         "common": 8.41,
         "custom": 15.55,
-        "mission": 52
+        "mission": 52.0
       },
       "test_2": {
         "total": 113.37,
         "common": 19.43,
         "custom": 13.94,
-        "mission": 80
+        "mission": 80.0
       }
     }
   }
