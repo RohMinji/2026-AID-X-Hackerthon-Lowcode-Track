@@ -20,9 +20,9 @@
    image   : 대표 이미지 주소 (예: "img/agenda01.jpg")
    ===================================================================== */
 
-// 전시 위치·운영 시간이 아직 확정 전이면 true로 두세요 (상단에 안내 띠가 보여요)
-const EXHIBIT_SAMPLE = true;
-const EXHIBIT_NOTICE = "전시 위치·운영 시간은 예시예요. 전시별 상세 소개는 곧 업데이트돼요.";
+// true로 두면 상세 페이지 위쪽에 EXHIBIT_NOTICE 안내 띠가 보여요
+const EXHIBIT_SAMPLE = false;
+const EXHIBIT_NOTICE = "전시별 상세 소개는 곧 업데이트돼요.";
 
 const PARTS = {
   works:      { name: "Works",      color: "#6f95ff", icon: "img/cursor.webp" },
@@ -31,8 +31,8 @@ const PARTS = {
   tech:       { name: "Tech",       color: "#4fc8f0", icon: "img/layers.webp" },
 };
 
-const EXHIBIT_PLACE = "1F 전시홀";
-const EXHIBIT_HOURS = "10.14 (수) 13:00–17:00 · 10.15 (목) 10:00–15:00";
+const EXHIBIT_PLACE = "KT 판교 빌딩";
+const EXHIBIT_HOURS = "10.15 (목) 10:00–17:00";
 
 const EXHIBITS = [
   // ---------------- Works (6) ----------------
