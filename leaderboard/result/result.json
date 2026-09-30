@@ -1,6 +1,6 @@
 {
-  "push_date": "20260930T11:27",
-  "push_ID": 3,
+  "push_date": "20260930T13:40",
+  "push_ID": 4,
   "push_results": {
     "eval_1": {
       "test_1": {
@@ -14,6 +14,48 @@
         "common": 19.43,
         "custom": 13.94,
         "mission": 80.0
+      }
+    },
+    "eval_2": {
+      "test_1": {
+        "total": 100.27,
+        "common": 10.0,
+        "custom": 10.27,
+        "mission": 80.0
+      },
+      "test_2": {
+        "total": 113.37,
+        "common": 19.43,
+        "custom": 13.94,
+        "mission": 80.0
+      }
+    },
+    "eval_3": {
+      "test_1": {
+        "total": 36.25,
+        "common": 10.03,
+        "custom": 10.22,
+        "mission": 16.0
+      },
+      "test_2": {
+        "total": 105.68,
+        "common": 19.36,
+        "custom": 6.32,
+        "mission": 80.0
+      }
+    },
+    "eval_4": {
+      "test_1": {
+        "total": 36.25,
+        "common": 10.03,
+        "custom": 10.22,
+        "mission": 16.0
+      },
+      "test_2": {
+        "total": 28.53,
+        "common": 5.94,
+        "custom": 6.59,
+        "mission": 16.0
       }
     }
   }
