@@ -77,6 +77,10 @@ a { color: inherit; }
 .head .row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 12px; }
 .head .num { font-size: 13px; color: var(--ink-faint); font-variant-numeric: tabular-nums; }
 .head h1 { margin: 0 0 6px; font-size: clamp(26px, 6.5vw, 40px); line-height: 1.2; font-weight: 900; letter-spacing: -0.02em; }
+.head h1.multi { font-size: clamp(21px, 5.2vw, 30px); }
+.head h1.multi span { display: block; }
+.head h1.multi span + span { margin-top: 6px; }
+.card p.pending { color: var(--ink-dim); }
 .head .team { color: var(--ink-dim); font-size: 15px; margin-bottom: 12px; }
 .head .summary { font-size: 17px; margin: 0; }
 
@@ -150,7 +154,7 @@ a { color: inherit; }
 
 .same { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
 .same a {
-  display: grid; grid-template-columns: 48px 1fr; gap: 10px; align-items: center;
+  display: grid; grid-template-columns: 28px 1fr; gap: 10px; align-items: center;
   padding: 10px 12px; border-radius: 12px; text-decoration: none;
   background: var(--panel-2); border: 1px solid var(--border);
 }

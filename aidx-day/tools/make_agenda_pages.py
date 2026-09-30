@@ -2,17 +2,24 @@
 
 각 페이지는 내용이 없는 껍데기이고, 실제 내용은 exhibits.js + agenda.js가 그려요.
 전시 제목·설명만 바꿀 때는 다시 실행할 필요가 없어요.
-전시 개수가 바뀌거나 제목(공유 미리보기용)을 맞추고 싶을 때 실행하세요:
+전시 개수나 제목이 바뀌면 실행해서 공유 미리보기용 제목을 맞춰 주세요 (node 필요):
 
     python3 tools/make_agenda_pages.py
 """
 import html
+import json
 import pathlib
-import re
+import subprocess
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
-src = (ROOT / "exhibits.js").read_text(encoding="utf-8")
-items = re.findall(r'id:\s*"(agenda\d+)".*?title:\s*"([^"]*)".*?summary:\s*"([^"]*)"', src, re.S)
+# exhibits.js를 node로 읽어서 [id, 제목, 설명] 목록을 얻어요 (node 필요)
+JS = """
+const fs = require("fs");
+eval(fs.readFileSync(process.argv[1], "utf8") + "; globalThis.__E = EXHIBITS; globalThis.__T = exTitleText; globalThis.__M = exTeam;");
+console.log(JSON.stringify(__E.map(e => [e.id, __T(e), e.summary || `${__M(e)} · AID-X Day 전시`])));
+"""
+items = json.loads(subprocess.run(["node", "-e", JS, str(ROOT / "exhibits.js")],
+                                  capture_output=True, text=True, check=True).stdout)
 
 TEMPLATE = """<!doctype html>
 <html lang="ko">

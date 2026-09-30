@@ -253,7 +253,9 @@
   .ex-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
   .ex-no { font-size: 13px; font-weight: 800; color: var(--c); font-variant-numeric: tabular-nums; }
   .ex-title { font-size: 16px; font-weight: 800; line-height: 1.35; }
-  .ex-team { font-size: 13px; color: var(--ink-dim); margin-top: 2px; }
+  .ex-title span { display: block; }
+  .ex-title span + span { margin-top: 4px; }
+  .ex-team { font-size: 13px; color: var(--ink-dim); margin-top: 6px; }
   .ex-sum { font-size: 14px; color: var(--ink-dim); margin-top: 8px; }
   .ex-more { font-size: 13px; font-weight: 700; color: var(--c); margin-top: 10px; }
 
@@ -764,18 +766,16 @@ function renderExhibits(v) {
     if (!list.length) return;
     v.append(h("section", { class: "ex-part", style: `--c:${p.color}` },
       h("div", { class: "ex-part-head" },
-        h("h3", {}, p.name), h("span", { class: "muted small" }, `${p.label} · ${p.zone}존 · ${list.length}개`)),
-      h("div", { class: "ex-grid" }, list.map(e => {
-        const n = EXHIBITS.indexOf(e) + 1;
-        return h("a", { class: "ex-card", href: e.id },
+        h("h3", {}, p.name), h("span", { class: "muted small" }, `${list.length}개`)),
+      h("div", { class: "ex-grid" }, list.map(e =>
+        h("a", { class: "ex-card", href: e.id },
           h("div", { class: "ex-top" },
-            h("span", { class: "ex-no" }, String(n).padStart(2, "0")),
-            h("span", { class: "badge", style: `--c:${p.color}` }, `${e.booth}`)),
-          h("div", { class: "ex-title" }, e.title),
-          h("div", { class: "ex-team" }, e.team),
-          h("div", { class: "ex-sum" }, e.summary),
-          h("div", { class: "ex-more" }, "자세히 보기 →"));
-      }))));
+            h("span", { class: "ex-no" }, `Agenda ${exNo(e)}`),
+            e.label || e.booth ? h("span", { class: "badge", style: `--c:${p.color}` }, e.label || e.booth) : null),
+          h("div", { class: "ex-title" }, exTitles(e).map(t => h("span", {}, t))),
+          h("div", { class: "ex-team" }, exTeam(e)),
+          e.summary ? h("div", { class: "ex-sum" }, e.summary) : null,
+          h("div", { class: "ex-more" }, "자세히 보기 →"))))));
   });
 }
 

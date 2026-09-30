@@ -4,182 +4,105 @@
 
    id      : 상세 페이지 주소 (agenda01 → https://aidxday.pages.dev/agenda01)
    part    : 아래 PARTS의 키 (works / biz / innovation / tech)
-   booth   : 부스 번호
-   title   : 전시 제목
-   team    : 팀·부서·회사
+   label   : 제목 앞 말머리 (예: "Garage") — 선택
+   title   : 전시 제목 (여러 개면 ["(1) ...", "(2) ..."] 배열로)
+   team    : 사이트에 보이는 담당 조직 (표의 '사이트입력용')
+   org     : 담당 부서 (기록용, 화면에는 안 보여요)
+   ── 아래는 준비되는 대로 채우면 돼요. 비어 있으면 화면에서 숨기거나 '준비 중'으로 보여요.
    summary : 목록에 보이는 한 줄 소개
    desc    : 상세 페이지 본문 (문단 배열)
    points  : 핵심 포인트 (목록)
-   demo    : 시연 시간 (없으면 빈 배열)
+   booth   : 부스 번호 (예: "A-01")
+   demo    : 시연 시간 (예: ["10.14 14:00"])
    tags    : 태그
-   contact : 문의 (선택)
-   link    : 관련 자료 링크 (선택)
-   image   : 대표 이미지 주소 (선택, 비워 두면 기본 그래픽)
+   contact : 문의
+   link    : 관련 자료 링크
+   image   : 대표 이미지 주소 (예: "img/agenda01.jpg")
    ===================================================================== */
-const EXHIBIT_SAMPLE = true;   // 실제 정보로 바꾼 뒤 false로 바꾸면 '예시 데이터' 안내가 사라져요
+
+// 전시 위치·운영 시간이 아직 확정 전이면 true로 두세요 (상단에 안내 띠가 보여요)
+const EXHIBIT_SAMPLE = true;
+const EXHIBIT_NOTICE = "전시 위치·운영 시간은 예시예요. 전시별 상세 소개는 곧 업데이트돼요.";
 
 const PARTS = {
-  works:      { name: "Works",      label: "일하는 방식",   color: "#35e0ff", zone: "A" },
-  biz:        { name: "Biz",        label: "비즈니스",      color: "#ffb35c", zone: "B" },
-  innovation: { name: "Innovation", label: "혁신 실험",     color: "#a58bff", zone: "C" },
-  tech:       { name: "Tech",       label: "기술",          color: "#35ffa0", zone: "D" },
+  works:      { name: "Works",      color: "#35e0ff" },
+  biz:        { name: "Biz",        color: "#ffb35c" },
+  innovation: { name: "Innovation", color: "#a58bff" },
+  tech:       { name: "Tech",       color: "#35ffa0" },
 };
 
 const EXHIBIT_PLACE = "1F 전시홀";
 const EXHIBIT_HOURS = "10.14 (수) 13:00–17:00 · 10.15 (목) 10:00–15:00";
 
 const EXHIBITS = [
-  // ---------------- Works ----------------
-  { id: "agenda01", part: "works", booth: "A-01", title: "회의록 자동 요약 비서", team: "경영지원팀",
-    summary: "회의 녹음만 올리면 결정 사항과 할 일을 정리해 줘요.",
-    desc: ["매주 반복되는 회의록 작성 시간을 줄이기 위해 만든 도구예요. 녹음 파일을 올리면 AI가 논의 내용, 결정 사항, 담당자별 할 일을 나눠 정리해요.",
-           "정리된 할 일은 사내 메신저로 바로 공유할 수 있어요."],
-    points: ["회의록 작성 시간 70% 단축", "담당자·마감일 자동 추출", "메신저 연동 공유"],
-    demo: ["10.14 14:00", "10.15 11:00"], tags: ["생산성", "요약", "협업"] },
-  { id: "agenda02", part: "works", booth: "A-02", title: "사내 규정 챗봇", team: "인사팀",
-    summary: "휴가·출장·복지 규정을 대화로 바로 찾아요.",
-    desc: ["흩어져 있던 규정 문서를 한곳에 모아, 질문하면 해당 조항과 함께 답해 주는 챗봇이에요.",
-           "답변마다 근거 문서 링크를 붙여 신뢰도를 높였어요."],
-    points: ["규정 문서 120여 건 학습", "근거 조항 링크 제공", "자주 묻는 질문 대시보드"],
-    demo: ["10.14 15:00"], tags: ["챗봇", "HR", "검색"] },
-  { id: "agenda03", part: "works", booth: "A-03", title: "로우코드 결재 흐름 빌더", team: "IT기획팀",
-    summary: "코딩 없이 끌어다 놓기로 결재 흐름을 만들어요.",
-    desc: ["부서마다 다른 결재 절차를 현업 담당자가 직접 설계할 수 있게 만든 도구예요.",
-           "만든 흐름은 바로 사내 결재 시스템에 적용돼요."],
-    points: ["드래그 앤 드롭 설계", "조건별 분기 지원", "적용 전 시뮬레이션"],
-    demo: ["10.14 16:00", "10.15 13:00"], tags: ["로우코드", "결재", "자동화"] },
-  { id: "agenda04", part: "works", booth: "A-04", title: "업무 메일 초안 도우미", team: "영업지원팀",
-    summary: "상황만 적으면 격식에 맞는 메일 초안을 써 줘요.",
-    desc: ["고객 응대, 일정 조율, 사과 메일처럼 자주 쓰는 메일을 상황에 맞게 초안으로 만들어 줘요.",
-           "회사 말투 가이드를 반영해 톤을 일정하게 맞춰요."],
-    points: ["상황별 템플릿 30종", "회사 말투 가이드 반영", "영문 메일 동시 작성"],
-    demo: ["10.15 10:30"], tags: ["글쓰기", "메일", "생산성"] },
-  { id: "agenda05", part: "works", booth: "A-05", title: "온보딩 체크리스트 자동화", team: "인재개발팀",
-    summary: "신규 입사자별 첫 30일 할 일을 자동으로 챙겨 줘요.",
-    desc: ["직무와 부서에 따라 달라지는 온보딩 과정을 자동으로 구성하고, 진행 상황을 멘토와 함께 볼 수 있어요."],
-    points: ["직무별 맞춤 체크리스트", "멘토 알림", "온보딩 만족도 설문 연동"],
-    demo: ["10.14 13:30"], tags: ["HR", "온보딩", "자동화"] },
-  { id: "agenda06", part: "works", booth: "A-06", title: "스마트 회의실 예약", team: "총무팀",
-    summary: "인원과 장비 조건에 맞는 회의실을 추천해요.",
-    desc: ["참석 인원, 화상 장비 필요 여부, 위치를 입력하면 가장 알맞은 회의실을 추천하고 바로 예약해 줘요.",
-           "노쇼 회의실은 자동으로 반납돼요."],
-    points: ["조건 기반 추천", "노쇼 자동 반납", "이용률 리포트"],
-    demo: [], tags: ["공간", "예약", "IoT"] },
-  { id: "agenda07", part: "works", booth: "A-07", title: "팀 지식 위키 검색", team: "품질관리팀",
-    summary: "팀에 쌓인 문서에서 원하는 답을 바로 찾아요.",
-    desc: ["여러 곳에 흩어진 팀 문서를 한 번에 검색하고, 질문에 맞는 부분을 요약해 보여줘요."],
-    points: ["문서 통합 검색", "답변 요약", "권한별 열람 제어"],
-    demo: ["10.15 14:00"], tags: ["검색", "지식관리"] },
+  // ---------------- Works (6) ----------------
+  { id: "agenda01", part: "works", org: "IT부문", team: "IT전략",
+    title: "kode:crew + kode:harness" },
+  { id: "agenda02", part: "works", org: "IT부문", team: "AX플랫폼",
+    title: "KDS 2.0 기반 AI디자인 파이프라인 구축과 바이브코딩 개발 가속화" },
+  { id: "agenda03", part: "works", org: "IT부문", team: "AX플랫폼",
+    title: "Enterprise AI Agent Platform ‘AX Works’ 구축 사례" },
+  { id: "agenda04", part: "works", org: "그룹사", team: "KTDS",
+    title: "Metis" },
+  { id: "agenda05", part: "works", org: "그룹사", team: "KTDS",
+    title: "Auto Builder" },
+  { id: "agenda06", part: "works", org: "Microsoft", team: "Microsoft",
+    title: "Enterprise AI/Agent Transformation의 흐름과 Best Practice" },
 
-  // ---------------- Biz ----------------
-  { id: "agenda08", part: "biz", booth: "B-01", title: "고객 이탈 예측 대시보드", team: "마케팅팀",
-    summary: "이탈 가능성이 높은 고객을 미리 찾아 알려줘요.",
-    desc: ["구매 이력과 이용 패턴을 분석해 이탈 위험 고객을 점수로 보여주는 대시보드예요.",
-           "위험 고객에게 보낼 맞춤 혜택도 추천해요."],
-    points: ["이탈 예측 정확도 82%", "맞춤 혜택 추천", "주간 리포트 자동 발송"],
-    demo: ["10.14 14:30"], tags: ["데이터", "마케팅", "예측"] },
-  { id: "agenda09", part: "biz", booth: "B-02", title: "AI 상품 설명 생성기", team: "커머스팀",
-    summary: "상품 정보만 넣으면 판매 페이지 문구를 만들어요.",
-    desc: ["상품 사양과 이미지를 입력하면 채널별(웹, 앱, SNS) 판매 문구를 자동으로 만들어 줘요."],
-    points: ["채널별 문구 동시 생성", "금칙어 자동 검사", "A/B 테스트 연동"],
-    demo: ["10.14 15:30", "10.15 11:30"], tags: ["커머스", "생성형 AI"] },
-  { id: "agenda10", part: "biz", booth: "B-03", title: "영업 기회 스코어링", team: "B2B영업팀",
-    summary: "계약 가능성이 높은 영업 기회부터 보여줘요.",
-    desc: ["상담 기록과 고객 정보를 바탕으로 영업 기회마다 성사 가능성을 점수로 매겨 우선순위를 정해 줘요."],
-    points: ["성사 가능성 점수", "다음 행동 추천", "CRM 연동"],
-    demo: [], tags: ["영업", "CRM", "예측"] },
-  { id: "agenda11", part: "biz", booth: "B-04", title: "리뷰 감성 분석 리포트", team: "CS팀",
-    summary: "고객 리뷰에서 불만과 칭찬 포인트를 자동으로 뽑아요.",
-    desc: ["여러 채널의 고객 리뷰를 모아 긍정·부정 요인을 주제별로 분류하고, 주간 변화를 보여줘요."],
-    points: ["리뷰 자동 수집", "주제별 감성 분류", "급증 이슈 알림"],
-    demo: ["10.15 10:00"], tags: ["CS", "텍스트 분석"] },
-  { id: "agenda12", part: "biz", booth: "B-05", title: "수요 예측 기반 재고 관리", team: "SCM팀",
-    summary: "판매 예측으로 재고 부족과 과잉을 줄여요.",
-    desc: ["과거 판매량, 계절, 프로모션 일정을 반영해 품목별 수요를 예측하고 적정 발주량을 추천해요."],
-    points: ["품목별 수요 예측", "발주량 추천", "재고 회전율 개선 12%"],
-    demo: ["10.14 16:30"], tags: ["SCM", "예측", "데이터"] },
-  { id: "agenda13", part: "biz", booth: "B-06", title: "파트너 계약서 검토 도우미", team: "법무팀",
-    summary: "계약서의 위험 조항을 표시하고 수정안을 제안해요.",
-    desc: ["계약서를 올리면 표준 조건과 다른 조항, 위험 조항을 찾아 표시하고 수정 문구를 제안해요."],
-    points: ["위험 조항 하이라이트", "표준 조건 비교", "검토 이력 관리"],
-    demo: ["10.15 13:30"], tags: ["법무", "문서 분석"] },
-  { id: "agenda14", part: "biz", booth: "B-07", title: "프로모션 성과 시뮬레이터", team: "전략기획팀",
-    summary: "할인율과 기간을 바꿔 보며 예상 매출을 확인해요.",
-    desc: ["프로모션 조건을 바꿔 보면서 예상 매출, 이익, 신규 고객 수를 미리 비교할 수 있는 도구예요."],
-    points: ["조건별 매출 시뮬레이션", "과거 캠페인 비교", "의사결정 리포트"],
-    demo: [], tags: ["전략", "시뮬레이션"] },
+  // ---------------- Biz (9) ----------------
+  { id: "agenda07", part: "biz", org: "IT부문", team: "IT플랫폼", label: "Garage",
+    title: "AI, 고객의 목소리를 듣다 (앱 리뷰와 VoC분석을 통한 서비스 개선사례)" },
+  { id: "agenda08", part: "biz", org: "IT부문", team: "IT플랫폼", label: "Garage",
+    title: ["(1) Loop Engineering 기반 모델 분석·설계–개발–검증을 잇는 단일 순환 체계 구축",
+            "(2) Github Cloud Agent를 활용한 개발업무 AX 전환"] },
+  { id: "agenda09", part: "biz", org: "IT부문", team: "AX플랫폼",
+    title: "MAGMA BIDW" },
+  { id: "agenda10", part: "biz", org: "Enterprise부문", team: "E부문",
+    title: "B2B 사업지원 프로젝트 (B2B세일즈Agent, B2B통합마케팅플랫폼 등)" },
+  { id: "agenda11", part: "biz", org: "AX미래기술원", team: "Agentic AI Lab",
+    title: "믿음 Arena (믿음 K3.0 Pro/ 독파모 비교), Agentic AICC (Sound AI)" },
+  { id: "agenda12", part: "biz", org: "AX미래기술원", team: "Frontier AI Lab",
+    title: "Agentic AICC_Sound AI (믿:음 SLM 2.0 (Full Duplex Speech To Speech)" },
+  { id: "agenda13", part: "biz", org: "AX미래기술원", team: "Agentic AI Lab",
+    title: "산업특화 AX (공공/의료/금융/특허)" },
+  { id: "agenda14", part: "biz", org: "AX미래기술원", team: "Agentic AI Lab",
+    title: "외부협력(리벨리온) NPU 서빙박스 믿:음 K 2.5 Pro 모델 전시" },
+  { id: "agenda15", part: "biz", org: "AX미래기술원", team: "Agentic AI Lab",
+    title: "외부협력(PRIVIT AI) Appliance 솔루션에 KT 가드레일을 탑재" },
 
-  // ---------------- Innovation ----------------
-  { id: "agenda15", part: "innovation", booth: "C-01", title: "현장 안전 비전 AI", team: "안전환경팀",
-    summary: "카메라로 안전모 미착용과 위험 구역 진입을 감지해요.",
-    desc: ["작업 현장 CCTV 영상을 분석해 안전 수칙 위반을 실시간으로 감지하고 관리자에게 알려줘요."],
-    points: ["실시간 위반 감지", "위험 구역 설정", "사고 예방 리포트"],
-    demo: ["10.14 14:00", "10.15 12:00"], tags: ["비전 AI", "안전"] },
-  { id: "agenda16", part: "innovation", booth: "C-02", title: "음성으로 쓰는 작업 일지", team: "생산팀",
-    summary: "손을 쓰기 어려운 현장에서 말로 일지를 남겨요.",
-    desc: ["현장 작업자가 말로 기록하면 표준 양식의 작업 일지로 자동 정리돼요. 소음이 많은 환경에서도 인식되도록 조정했어요."],
-    points: ["소음 환경 음성 인식", "표준 양식 자동 변환", "사진 첨부"],
-    demo: ["10.14 15:00"], tags: ["음성", "현장"] },
-  { id: "agenda17", part: "innovation", booth: "C-03", title: "디지털 트윈 설비 모니터링", team: "설비기술팀",
-    summary: "공장 설비 상태를 3D 화면으로 한눈에 봐요.",
-    desc: ["설비 센서 데이터를 3D 모델에 연결해 온도, 진동, 가동률을 실시간으로 보여주고 고장 징후를 알려줘요."],
-    points: ["3D 설비 모델", "고장 징후 조기 경보", "정비 일정 추천"],
-    demo: ["10.15 11:00"], tags: ["디지털 트윈", "IoT"] },
-  { id: "agenda18", part: "innovation", booth: "C-04", title: "사내 아이디어 매칭 플랫폼", team: "혁신TF",
-    summary: "아이디어를 올리면 함께할 동료를 추천해 줘요.",
-    desc: ["직원들이 올린 아이디어를 주제별로 묶고, 관련 경험이 있는 동료를 추천해 팀 구성을 도와줘요."],
-    points: ["아이디어 주제 분류", "동료 추천", "실행 단계 관리"],
-    demo: [], tags: ["협업", "혁신"] },
-  { id: "agenda19", part: "innovation", booth: "C-05", title: "AR 설비 점검 가이드", team: "품질보증팀",
-    summary: "태블릿을 비추면 점검 순서가 화면에 겹쳐 보여요.",
-    desc: ["점검 대상 설비에 태블릿을 비추면 점검 순서와 기준값이 증강현실로 표시돼요. 신규 작업자 교육 시간이 줄었어요."],
-    points: ["AR 점검 순서 안내", "기준값 자동 비교", "점검 결과 자동 저장"],
-    demo: ["10.14 16:00", "10.15 14:30"], tags: ["AR", "품질"] },
-  { id: "agenda20", part: "innovation", booth: "C-06", title: "탄소 배출 트래커", team: "ESG팀",
-    summary: "부서별 탄소 배출량을 자동으로 계산하고 줄일 방법을 제안해요.",
-    desc: ["에너지 사용량, 출장, 물류 데이터를 모아 탄소 배출량을 계산하고, 줄일 수 있는 항목을 우선순위로 보여줘요."],
-    points: ["배출량 자동 집계", "감축 시나리오 비교", "ESG 보고서 초안"],
-    demo: ["10.15 10:30"], tags: ["ESG", "데이터"] },
-  { id: "agenda21", part: "innovation", booth: "C-07", title: "해커톤 우수작: 점심 메뉴 추천", team: "AID-X 해커톤 팀 '배고파'",
-    summary: "날씨와 동료 취향을 반영해 점심 메뉴를 골라 줘요.",
-    desc: ["해커톤에서 만든 재미있는 프로젝트예요. 날씨, 최근 먹은 메뉴, 팀원 취향을 반영해 점심 메뉴와 식당을 추천해요."],
-    points: ["팀 취향 투표", "날씨 반영", "주변 식당 연동"],
-    demo: ["10.14 13:00"], tags: ["해커톤", "재미"] },
+  // ---------------- Innovation (6) ----------------
+  { id: "agenda16", part: "innovation", org: "IT부문", team: "IT플랫폼",
+    title: "휴머노이드 Physical AI개발" },
+  { id: "agenda17", part: "innovation", org: "IT부문", team: "IT플랫폼",
+    title: "Manufacturing AX Agent Pack(with Glasses)" },
+  { id: "agenda18", part: "innovation", org: "IT부문", team: "AX플랫폼",
+    title: "AX기반 UAM개발(UAM Agent)" },
+  { id: "agenda19", part: "innovation", org: "IT부문", team: "IT플랫폼",
+    title: "AI/ChatOps운영자 포탈" },
+  { id: "agenda20", part: "innovation", org: "그룹사", team: "KT m&s",
+    title: "KT m&s 유통혁신AX" },
+  { id: "agenda21", part: "innovation", org: "그룹사", team: "kt genie music",
+    title: "AX 기반 음원 매출 인사이트 시스템" },
 
-  // ---------------- Tech ----------------
-  { id: "agenda22", part: "tech", booth: "D-01", title: "사내 LLM 게이트웨이", team: "AI플랫폼팀",
-    summary: "여러 AI 모델을 안전하게 쓰는 사내 공통 관문이에요.",
-    desc: ["사내 서비스들이 외부·내부 AI 모델을 쓸 때 거치는 공통 게이트웨이예요. 개인정보 마스킹, 사용량 관리, 로그 감사를 한곳에서 처리해요."],
-    points: ["개인정보 자동 마스킹", "모델별 사용량·비용 관리", "감사 로그"],
-    demo: ["10.14 15:30"], tags: ["LLM", "보안", "플랫폼"] },
-  { id: "agenda23", part: "tech", booth: "D-02", title: "문서 검색 증강(RAG) 키트", team: "데이터플랫폼팀",
-    summary: "사내 문서로 답하는 AI를 빠르게 만드는 도구 모음이에요.",
-    desc: ["문서 수집, 분할, 색인, 답변 생성까지 필요한 구성 요소를 묶어, 팀별로 며칠 만에 문서 기반 AI를 만들 수 있게 했어요."],
-    points: ["문서 수집 커넥터 12종", "답변 근거 표시", "품질 평가 도구 포함"],
-    demo: ["10.15 12:30"], tags: ["RAG", "검색", "LLM"] },
-  { id: "agenda24", part: "tech", booth: "D-03", title: "실시간 데이터 파이프라인", team: "데이터엔지니어링팀",
-    summary: "주문 데이터를 1초 안에 분석 시스템으로 보내요.",
-    desc: ["주문·결제 이벤트를 실시간으로 수집해 분석 대시보드와 알림 시스템으로 보내는 파이프라인이에요."],
-    points: ["초당 5만 건 처리", "장애 자동 복구", "데이터 품질 검사"],
-    demo: [], tags: ["데이터", "스트리밍"] },
-  { id: "agenda25", part: "tech", booth: "D-04", title: "AI 코드 리뷰 봇", team: "개발생산성팀",
-    summary: "코드 변경 사항을 먼저 검토하고 개선점을 알려줘요.",
-    desc: ["개발자가 코드를 올리면 AI가 버그 가능성, 보안 문제, 개선점을 먼저 짚어 줘요. 리뷰 대기 시간이 줄었어요."],
-    points: ["버그·보안 이슈 탐지", "팀 코딩 규칙 반영", "리뷰 대기 시간 40% 단축"],
-    demo: ["10.14 16:30", "10.15 13:00"], tags: ["개발", "코드 리뷰"] },
-  { id: "agenda26", part: "tech", booth: "D-05", title: "모델 평가 자동화 파이프라인", team: "ML엔지니어링팀",
-    summary: "AI 모델을 바꿀 때마다 품질을 자동으로 비교해요.",
-    desc: ["평가 데이터셋과 채점 기준을 등록해 두면, 모델이나 프롬프트를 바꿀 때마다 자동으로 품질을 비교해 리포트로 보여줘요."],
-    points: ["자동 회귀 평가", "버전별 비교 리포트", "사람 평가 연동"],
-    demo: ["10.15 11:30"], tags: ["ML", "평가"] },
-  { id: "agenda27", part: "tech", booth: "D-06", title: "엣지 디바이스 경량 AI", team: "임베디드팀",
-    summary: "인터넷 없이 현장 장비에서 바로 도는 작은 AI 모델이에요.",
-    desc: ["큰 모델을 작게 줄여 현장 장비에서 바로 추론할 수 있게 했어요. 통신이 불안정한 곳에서도 동작해요."],
-    points: ["모델 크기 90% 축소", "오프라인 추론", "원격 업데이트"],
-    demo: [], tags: ["엣지", "경량화"] },
-  { id: "agenda28", part: "tech", booth: "D-07", title: "개인정보 비식별화 도구", team: "정보보호팀",
-    summary: "데이터를 분석에 쓰기 전에 개인정보를 자동으로 가려요.",
-    desc: ["분석용 데이터에서 이름, 연락처, 주소 같은 개인정보를 자동으로 찾아 가리거나 가명 처리해 줘요."],
-    points: ["개인정보 자동 탐지", "가명·익명 처리", "처리 이력 감사"],
-    demo: ["10.14 14:30"], tags: ["보안", "데이터"] },
+  // ---------------- Tech (7) ----------------
+  { id: "agenda22", part: "tech", org: "정보보안실", team: "정보보안실",
+    title: "KRONOS: AI Pentest Agent" },
+  { id: "agenda23", part: "tech", org: "네트워크부문", team: "네트워크부문",
+    title: "6G" },
+  { id: "agenda24", part: "tech", org: "네트워크부문", team: "네트워크부문",
+    title: "Quantum security" },
+  { id: "agenda25", part: "tech", org: "네트워크부문", team: "네트워크부문",
+    title: "AI Edge" },
+  { id: "agenda26", part: "tech", org: "네트워크부문", team: "네트워크부문",
+    title: "Anti Fraud" },
+  { id: "agenda27", part: "tech", org: "네트워크부문", team: "네트워크부문",
+    title: "OSP" },
+  { id: "agenda28", part: "tech", org: "AX미래기술원", team: "AX미래기술원",
+    title: "Agentic On (AX사업부문 협업)" },
 ];
+
+// 화면 표시용 도우미 (목록·상세 페이지 공통)
+const exTitles = e => Array.isArray(e.title) ? e.title : [e.title];
+const exTitleText = e => (e.label ? `[${e.label}] ` : "") + exTitles(e).join(" / ");
+const exTeam = e => e.team;
+const exNo = e => e.id.replace(/\D/g, "");
