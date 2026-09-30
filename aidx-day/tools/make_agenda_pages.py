@@ -26,7 +26,7 @@ TEMPLATE = """<!doctype html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#f4f5ff">
+<meta name="theme-color" content="#0a0a1f">
 <title>{title} · AID-X Day 전시</title>
 <meta name="description" content="{summary}">
 <meta property="og:title" content="{title} · AID-X Day 전시">

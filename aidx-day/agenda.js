@@ -25,7 +25,7 @@
   back.innerHTML = svgBack;
   back.append("전시 목록");
   const topbar = h("header", { class: "topbar" },
-    h("div", { class: "topbar-inner" }, back, h("a", { class: "brand", href: "./" }, h("b", {}, "AID-X Day"))));
+    h("div", { class: "topbar-inner" }, back, h("a", { class: "brand", href: "./" }, h("img", { src: "img/logo.webp", alt: "AID-X Day", width: "79", height: "20" }))));
   document.body.insertBefore(topbar, app);
   if (EXHIBIT_SAMPLE) {
     document.body.insertBefore(h("div", { class: "sample-banner" }, EXHIBIT_NOTICE), app);
