@@ -269,6 +269,32 @@
   .slots span.on { color: #fff; background: var(--grad); border-color: transparent; font-weight: 700; }
   .slots span.past { opacity: .45; text-decoration: line-through; }
 
+  /* PC 일정표 (열=일차, 행=시간) */
+  .sched-grid { display: none; }
+  @media (min-width: 1000px) {
+    .sched-list { display: none; }
+    .card > .group-title { display: none; }
+    .sched-grid { display: grid; column-gap: 12px; row-gap: 0; }
+    .sg-head {
+      grid-row: 1; padding: 10px 14px; margin-bottom: 8px; border-radius: 12px; font-size: 14px; font-weight: 800;
+      background: color-mix(in srgb, var(--c) 14%, transparent); color: var(--c);
+    }
+    .sg-time { grid-column: 1; padding-top: 10px; font-size: 13px; font-weight: 800; color: var(--accent); font-variant-numeric: tabular-nums; }
+    .sg-line { grid-column: 1 / -1; border-top: 1px dashed var(--border); pointer-events: none; }
+    .sg-cell {
+      margin: 5px 0; padding: 10px 14px; border-radius: 12px; z-index: 1;
+      background: var(--surface); border: 1px solid var(--border); box-shadow: inset 3px 0 0 var(--c);
+      display: flex; flex-direction: column; justify-content: center;
+    }
+    .sg-when { font-size: 12px; color: var(--ink-faint); font-variant-numeric: tabular-nums; display: flex; gap: 8px; align-items: center; }
+    .sg-live { color: var(--live); font-weight: 700; }
+    .sg-title { font-size: 15px; font-weight: 800; margin-top: 2px; }
+    .sg-cell.is-break { background: transparent; border-style: dashed; box-shadow: none; }
+    .sg-cell.is-break .sg-title { color: var(--ink-dim); font-weight: 600; }
+    .sg-cell.is-past { opacity: .5; }
+    .sg-cell.is-now { border-color: var(--c); background: color-mix(in srgb, var(--c) 14%, transparent); }
+  }
+
   /* 전시 목록 */
   .ex-part { margin-bottom: 26px; }
   .ex-part-head { display: flex; align-items: center; gap: 10px; margin: 0 0 12px; }
@@ -524,7 +550,7 @@ const EVENT = {
   //       break: true 이면 흐리게 표시 (점심시간 등)
   programs: {
     day: {
-      tab: "Day", name: "AID-X Day", dates: "10.15 (목)", color: "#948bff",
+      tab: "Day", name: "AID-X Day", dates: "10.15 (목)", color: "#b48cff",
       groups: [
         { day: "d2", title: "10.15 (목)", items: [
           { times: [["10:00", "12:00"]], title: "오프닝 및 개회사" },
@@ -537,7 +563,7 @@ const EVENT = {
       ],
     },
     hackathon: {
-      tab: "Hackathon", name: "AID-X Hackathon", dates: "10.14 (수) – 10.15 (목)", color: "#4fc8f0",
+      tab: "Hackathon", name: "AID-X Hackathon", dates: "10.14 (수) – 10.15 (목)", color: "#7f9dff",
       groups: [
         { day: "d1", title: "1일차 · 10.14 (수)", items: [
           { times: [["09:00", "09:30"]], title: "참가자 등록 및 웰컴키트 배부" },
@@ -576,7 +602,7 @@ const EVENT = {
     ],
     info: [
       { label: "추첨번호 발급", value: "16:30까지", note: "행사일 16:30 이후에는 발급되지 않아요." },
-      { label: "Lucky Draw 추첨", value: "18:00", note: "행사일 18시에 진행돼요." },
+      { label: "Lucky Draw 추첨", value: "16:30", note: "행사일 16:30부터 진행돼요." },
       { label: "경품 수령", value: "현장 지급", note: "추첨 시 현장에서 본인 확인 후 지급돼요." },
     ],
     prizes: [
@@ -838,9 +864,35 @@ function renderProgram() {
             h("span", { class: x === live ? "on" : t >= x.t1 ? "past" : "" }, `${x.a}–${x.b}`))) : null,
           it.desc ? h("div", { class: "desc" }, it.desc) : null)));
     });
-    card.append(ol);
+    card.append(h("div", { class: pr.groups.length > 1 ? "sched-list" : "" }, ol));
   });
+  if (pr.groups.length > 1) card.append(schedGrid(pr, t));
   v.append(card);
+}
+
+// PC용 일정표: 열 = 일차, 행 = 시간 (시간 경계를 모아 칸을 나누고 항목은 여러 칸에 걸침)
+function schedGrid(pr, t) {
+  const toMin = hm => { const [a, b] = hm.split(":").map(Number); return a * 60 + b; };
+  const marks = [...new Set(pr.groups.flatMap(g => g.items.flatMap(it => it.times.flat())))]
+    .sort((a, b) => toMin(a) - toMin(b));
+  const row = hm => marks.indexOf(hm) + 2;   // 1행은 머리글
+  const grid = h("div", { class: "sched-grid", style: `grid-template-columns: 76px repeat(${pr.groups.length}, 1fr); grid-template-rows: auto repeat(${marks.length - 1}, minmax(52px, auto));` });
+  grid.append(h("div", { class: "sg-corner" }));
+  pr.groups.forEach((g, i) => grid.append(h("div", { class: "sg-head", style: `grid-column:${i + 2}` }, g.title)));
+  marks.slice(0, -1).forEach((m, i) => {
+    grid.append(h("div", { class: "sg-time", style: `grid-row:${i + 2}` }, m));
+    grid.append(h("div", { class: "sg-line", style: `grid-row:${i + 2}` }));
+  });
+  pr.groups.forEach((g, gi) => g.items.forEach(it => it.slots.forEach(x => {
+    const live = x.t0 <= t && t < x.t1;
+    grid.append(h("div", {
+      class: "sg-cell" + (live ? " is-now" : t >= x.t1 ? " is-past" : "") + (it.break ? " is-break" : ""),
+      style: `grid-column:${gi + 2}; grid-row:${row(x.a)} / ${row(x.b)}`,
+    },
+      h("div", { class: "sg-when" }, `${x.a} – ${x.b}`, live ? h("span", { class: "sg-live" }, h("span", { class: "live-dot" }), "진행 중") : null),
+      h("div", { class: "sg-title" }, it.title)));
+  })));
+  return grid;
 }
 
 // ---------- 전시 목록 (상세: agenda01 ~ agenda28) ----------

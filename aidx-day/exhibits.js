@@ -28,7 +28,7 @@ const PARTS = {
   works:      { name: "Works",      color: "#6f95ff", icon: "img/cursor.webp" },
   biz:        { name: "Biz",        color: "#a88bff", icon: "img/ring.webp" },
   innovation: { name: "Innovation", color: "#e27bff", icon: "img/star.webp" },
-  tech:       { name: "Tech",       color: "#4fc8f0", icon: "img/layers.webp" },
+  tech:       { name: "Tech",       color: "#ff8fc7", icon: "img/layers.webp" },
 };
 
 const EXHIBIT_PLACE = "KT 판교 빌딩";
