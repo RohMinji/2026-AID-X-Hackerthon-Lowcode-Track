@@ -351,7 +351,47 @@
   summary::after { content: "+"; color: var(--accent); font-weight: 900; }
   details[open] summary::after { content: "−"; }
   details p { margin: 8px 0 0; font-size: 14px; color: var(--ink-dim); }
-  .contact { display: grid; gap: 6px; font-size: 14px; }
+  .contact { display: grid; gap: 10px; font-size: 15px; }
+  .contact-row { display: grid; grid-template-columns: 96px 1fr; gap: 8px; align-items: baseline; }
+  .contact-row a { color: var(--accent); font-weight: 700; text-decoration: none; word-break: break-all; }
+
+  /* 이벤트: Lucky Draw */
+  .ld-hero {
+    position: relative; overflow: hidden;
+    background: linear-gradient(135deg, rgba(91, 124, 255, .18), rgba(181, 123, 255, .14)), var(--panel);
+    border-color: rgba(160, 140, 255, .35);
+  }
+  .ld-hero h3 { margin: 10px 0 8px; font-size: 22px; font-weight: 900; letter-spacing: -0.01em; }
+  .ld-hero p { margin: 0; font-size: 15px; color: var(--ink); line-height: 1.65; }
+  .ld-hero .ld-free { margin-top: 10px; font-size: 13px; color: var(--ink-dim); }
+  .ld-meter { margin-top: 16px; padding: 14px; border-radius: 14px; background: var(--surface); border: 1px solid var(--border); }
+  .ld-tiles { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; }
+  .ld-tile {
+    text-align: center; font-size: 11px; font-weight: 700; padding: 8px 0; border-radius: 10px;
+    color: #cfd6ff; background: rgba(91, 124, 255, .18); border: 1px solid rgba(91, 124, 255, .35);
+  }
+  .ld-tile.talk { color: #e6d6ff; background: rgba(181, 123, 255, .18); border-color: rgba(181, 123, 255, .35); }
+  .ld-meter p { margin: 10px 0 0; font-size: 14px; color: var(--ink-dim); }
+  .ld-meter p b { color: var(--ink); }
+  .ld-info { display: grid; gap: 10px; }
+  .ld-info-item {
+    display: grid; grid-template-columns: 1fr auto; gap: 2px 12px; align-items: baseline;
+    padding: 12px 14px; border-radius: 14px; background: var(--surface); border: 1px solid var(--border);
+  }
+  .ld-info-item .k { font-size: 14px; font-weight: 700; }
+  .ld-info-item .v {
+    font-size: 20px; font-weight: 900; font-variant-numeric: tabular-nums; text-align: right;
+    background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .ld-info-item .n { grid-column: 1 / -1; font-size: 13px; color: var(--ink-dim); }
+  .ld-prizes { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .ld-prize { text-align: center; padding: 16px 8px; border-radius: 14px; background: var(--surface); border: 1px solid var(--border); }
+  .ld-prize .i { font-size: 28px; line-height: 1; }
+  .ld-prize .r { margin-top: 8px; font-size: 15px; font-weight: 900; }
+  .ld-prize .p { font-size: 13px; color: var(--ink-dim); }
+  .route-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 12px; }
+  .route-head h3 { margin: 0; }
+  .times span small { font-size: 11px; opacity: .8; }
 
   footer { text-align: center; font-size: 12px; color: var(--ink-faint); padding: 24px 0 0; }
 
@@ -366,6 +406,8 @@
     .home-grid > :only-child { grid-column: 1 / -1; }
     .rooms { grid-template-columns: 1fr 1fr; }
     .shuttle-grid { grid-template-columns: 1fr 1fr; }
+    .ld-prizes { grid-template-columns: repeat(4, 1fr); }
+    .ld-info { grid-template-columns: repeat(3, 1fr); }
     .page-head img { width: 88px; }
   }
 
@@ -515,41 +557,46 @@ const EVENT = {
     },
   },
 
-  // 셔틀: times는 일차별 출발 시각
+  // 셔틀: 운행일 하루 (shuttleDay = days의 id). times는 [출발 시각, 대수]
+  shuttleDay: "d2",
   shuttles: [
-    { name: "강남역 → 행사장", stop: "강남역 11번 출구 앞 셔틀 정류장", mapUrl: "https://map.naver.com/",
-      times: { d1: ["08:20", "08:40", "09:00", "09:20", "09:40", "12:40", "13:10"],
-               d2: ["08:20", "08:40", "09:00", "09:20", "10:00", "13:00"] } },
-    { name: "판교역 → 행사장", stop: "판교역 1번 출구 버스 승강장", mapUrl: "https://map.naver.com/",
-      times: { d1: ["08:15", "08:45", "09:15"],
-               d2: ["08:15", "08:45", "09:15"] } },
-    { name: "행사장 → 강남역 · 판교역", stop: "행사장 B1 셔틀 승하차장", mapUrl: "",
-      times: { d1: ["12:00", "15:00", "17:10", "17:40", "18:10", "18:30"],
-               d2: ["12:30", "15:00", "17:20", "17:40", "18:00"] } },
-  ],
-  shuttleNote: "셔틀은 교통 상황에 따라 5~10분 늦을 수 있어요. 출발 5분 전까지 탑승해 주세요.",
-
-  steps: [
-    { title: "사전 등록",       desc: "등록 완료 메일로 받은 QR 참가증을 확인해 주세요." },
-    { title: "현장 체크인",     desc: "1층 등록 데스크에서 QR을 보여주고 명찰을 받아요." },
-    { title: "세션·부스 참여",  desc: "관심 있는 세션에 자유롭게 들어가요. 핸즈온은 선착순이에요." },
-    { title: "스탬프 투어",     desc: "전시홀 부스 5곳에서 스탬프를 모아 기념품으로 바꿔요." },
-    { title: "설문 & 경품",     desc: "2일차 설문에 참여하면 시상식 경품 추첨 대상이 돼요." },
+    { name: "광화문사옥 → 판교사옥", times: [["09:00", 1], ["10:00", 2], ["11:00", 2], ["13:00", 2]] },
+    { name: "우면사옥 → 판교사옥",   times: [["10:00", 1], ["11:00", 1]] },
   ],
 
-  faq: [
-    { q: "사전 등록을 못 했어요.", a: "현장 등록 데스크에서 등록할 수 있어요. 좌석이 한정돼 있어 조기 마감될 수 있어요." },
-    { q: "하루만 참석해도 되나요?", a: "네. 원하는 날짜에만 오셔도 돼요." },
-    { q: "세션 자료는 받을 수 있나요?", a: "연사가 공개에 동의한 자료는 행사 후 등록 메일로 보내 드려요." },
-    { q: "주차가 되나요?", a: "B1 주차장을 쓸 수 있어요. 등록 데스크에서 4시간 무료 주차 등록을 해 드려요." },
-  ],
+  // 이벤트 탭: Lucky Draw
+  luckyDraw: {
+    title: "AID-X DAY Lucky Draw",
+    lead: "AID-X DAY 전시와 발표를 관람하며 전시 공간과 발표 장소에 비치된 QR로 만족도 조사에 참여해 주세요.",
+    surveys: { exhibit: 4, talk: 2, need: 3 },
+    steps: [
+      { title: "전시·발표 관람", desc: "전시 공간과 발표 장소에 비치된 QR을 찾아 주세요." },
+      { title: "QR로 만족도 조사 참여", desc: "총 6개(전시 4개 · 발표 2개) 중 3개 이상 참여해 주세요." },
+      { title: "추첨번호 받기", desc: "설문조사 때 입력한 메일 주소로 추첨번호가 발송돼요." },
+    ],
+    info: [
+      { label: "추첨번호 발급", value: "16:30까지", note: "행사일 16:30 이후에는 발급되지 않아요." },
+      { label: "Lucky Draw 추첨", value: "18:00", note: "행사일 18시에 진행돼요." },
+      { label: "경품 수령", value: "현장 지급", note: "추첨 시 현장에서 본인 확인 후 지급돼요." },
+    ],
+    prizes: [
+      { rank: "1등", icon: "🥇", prize: "경품" },
+      { rank: "2등", icon: "🥈", prize: "경품" },
+      { rank: "3등", icon: "🥉", prize: "경품" },
+      { rank: "참가상", icon: "🎁", prize: "경품" },
+    ],
+    prizeNote: "경품은 행사 운영 상황에 따라 변경될 수 있습니다.",
+  },
 
   notices: [
     { time: "09.28", text: "행사 안내 페이지가 열렸어요." },
   ],
 
-  contact: { name: "AID-X 운영 사무국", phone: "02-0000-0000", email: "aidx@example.com" },
-  footer: "© 2026 AID-X",
+  contacts: [
+    { label: "AID-X Day", email: "aidx.day@kt.com" },
+    { label: "HackaThon", email: "aidx.hackathon@kt.com" },
+  ],
+  footer: "kt AID-X Day & HackaThon",
 };
 /* ===================================================================== */
 
@@ -643,7 +690,6 @@ function seg(options, current, onPick) {
   return h("div", { class: "seg", role: "group" },
     options.map(o => h("button", { "aria-pressed": String(o.value === current), onclick: () => onPick(o.value) }, o.label)));
 }
-const daySeg = onPick => seg(EVENT.days.map(d => ({ value: d.id, label: `${d.label} ${d.sub}` })), state.day, onPick);
 
 // ---------- 홈 ----------
 let cdEls = null;
@@ -701,12 +747,12 @@ function renderHome() {
   // 셔틀 요약 (행사 날짜에만)
   const td = todayDay();
   const homeRow = h("div", { class: "home-grid stack" });
-  if (td && p.kind !== "after") {
+  if (td && td.id === EVENT.shuttleDay && p.kind !== "after") {
     const t = now();
     const card = h("div", { class: "card" }, h("div", { class: "section-label" }, "다음 셔틀"));
     const ul = h("ul", { class: "now-list" });
     EVENT.shuttles.forEach(r => {
-      const nextT = (r.times[td.id] || []).map(x => at(td.date, x)).find(x => x > t);
+      const nextT = r.times.map(([x]) => at(td.date, x)).find(x => x > t);
       ul.append(h("li", { class: "now-item" },
         h("div", { class: "t" }, r.name),
         h("div", { class: "small muted" }, nextT ? `${fmt(nextT)} 출발 · ${mins(nextT - t)} 후` : "오늘 운행이 끝났어요")));
@@ -735,7 +781,7 @@ function renderHome() {
     q("#program", "program", "프로그램", `일정 · 전시 ${EXHIBITS.length}개`),
     q("#floors", "floors", "층별 안내", "강연장·편의시설"),
     q("#shuttle", "shuttle", "오시는 길", "위치·셔틀"),
-    q("#join", "join", "이벤트", "참여·FAQ")));
+    q("#join", "join", "이벤트", "Lucky Draw")));
 
   v.append(grid);
   tickCountdown();
@@ -864,28 +910,23 @@ function renderShuttle() {
     h("div", { style: "font-weight:800;font-size:17px" }, EVENT.venue),
     EVENT.venueAddress ? h("div", { class: "muted small" }, EVENT.venueAddress) : null,
     EVENT.mapUrl ? h("a", { class: "btn", href: EVENT.mapUrl, target: "_blank", rel: "noopener" }, "지도에서 보기") : null));
-  v.append(h("div", { class: "section-label", style: "margin-top:8px" }, "셔틀 버스"));
-  v.append(h("div", { class: "toolbar" }, daySeg(x => { state.day = x; renderShuttle(); })));
-
-  const d = dayOf(state.day), t = now();
+  const d = dayOf(EVENT.shuttleDay), t = now();
   const isToday = todayDay() && todayDay().id === d.id;
+  v.append(h("div", { class: "section-label", style: "margin-top:8px" }, `셔틀 버스 · ${d.sub} 운행`));
   const grid = h("div", { class: "stack shuttle-grid", style: "display:grid" });
   EVENT.shuttles.forEach(r => {
-    const times = r.times[d.id] || [];
-    const abs = times.map(x => at(d.date, x));
+    const abs = r.times.map(([x]) => at(d.date, x));
     const nextIdx = isToday ? abs.findIndex(x => x > t) : -1;
+    const total = r.times.reduce((n, [, c]) => n + c, 0);
     grid.append(h("div", { class: "card route" },
-      h("h3", {}, r.name),
-      h("div", { class: "stop" }, `🚏 ${r.stop}`),
+      h("div", { class: "route-head" }, h("h3", {}, r.name), h("span", { class: "badge", style: "--c:var(--accent)" }, `총 ${total}대`)),
       isToday ? h("div", { class: "next-bus" },
-        nextIdx >= 0 ? [h("span", {}, "다음 출발"), h("span", {}, h("b", {}, times[nextIdx]), h("span", { class: "muted small" }, ` · ${mins(abs[nextIdx] - t)} 후`))]
+        nextIdx >= 0 ? [h("span", {}, "다음 출발"), h("span", {}, h("b", {}, r.times[nextIdx][0]), h("span", { class: "muted small" }, ` · ${mins(abs[nextIdx] - t)} 후`))]
                      : [h("span", {}, "오늘 운행이 끝났어요")]) : null,
-      h("div", { class: "times" }, times.map((x, i) =>
-        h("span", { class: isToday && abs[i] <= t ? "past" : i === nextIdx ? "next" : "" }, x))),
-      r.mapUrl ? h("a", { class: "btn", href: r.mapUrl, target: "_blank", rel: "noopener" }, "탑승 위치 지도") : null));
+      h("div", { class: "times" }, r.times.map(([x, c], i) =>
+        h("span", { class: isToday && abs[i] <= t ? "past" : i === nextIdx ? "next" : "" }, x, c > 1 ? h("small", {}, ` ${c}대`) : null)))));
   });
   v.append(grid);
-  v.append(h("p", { class: "muted small", style: "margin-top:16px" }, "※ " + EVENT.shuttleNote));
 }
 
 // ---------- 참여 방법 ----------
@@ -893,16 +934,34 @@ function renderJoin() {
   const v = $("view-join");
   v.textContent = "";
   v.append(pageHead("이벤트", ART.star));
+  const L = EVENT.luckyDraw, sv = L.surveys;
+  const tiles = [...Array(sv.exhibit).fill("전시"), ...Array(sv.talk).fill("발표")]
+    .map((k, i) => h("span", { class: "ld-tile" + (k === "발표" ? " talk" : "") }, `${k} ${k === "전시" ? i + 1 : i - sv.exhibit + 1}`));
   v.append(h("div", { class: "stack" },
-    h("div", { class: "card" }, h("div", { class: "section-label" }, "이렇게 참여해요"),
-      h("ol", { class: "steps" }, EVENT.steps.map(s => h("li", {}, h("div", {}, h("h3", {}, s.title), h("p", {}, s.desc)))))),
-    h("div", { class: "card" }, h("div", { class: "section-label" }, "자주 묻는 질문"),
-      EVENT.faq.map(f => h("details", {}, h("summary", {}, f.q), h("p", {}, f.a)))),
+    h("div", { class: "card ld-hero" },
+      h("span", { class: "badge", style: "--c:var(--accent-2)" }, "🎁 Lucky Draw"),
+      h("h3", {}, L.title),
+      h("p", {}, L.lead),
+      h("p", { class: "ld-free" }, "별도 사전 등록 없이 현장에서 바로 참여할 수 있어요.")),
+
+    h("div", { class: "card" }, h("div", { class: "section-label" }, "참여 방법"),
+      h("ol", { class: "steps" }, L.steps.map(x => h("li", {}, h("div", {}, h("h3", {}, x.title), h("p", {}, x.desc))))),
+      h("div", { class: "ld-meter" },
+        h("div", { class: "ld-tiles" }, tiles),
+        h("p", {}, h("b", {}, `${sv.exhibit + sv.talk}개 중 ${sv.need}개 이상`), " 참여하면 추첨번호가 메일로 발송돼요."))),
+
+    h("div", { class: "card" }, h("div", { class: "section-label" }, "📧 당첨 안내"),
+      h("div", { class: "ld-info" }, L.info.map(x => h("div", { class: "ld-info-item" },
+        h("div", { class: "k" }, x.label), h("div", { class: "v" }, x.value), h("div", { class: "n" }, x.note))))),
+
+    h("div", { class: "card" }, h("div", { class: "section-label" }, "🏆 경품 안내"),
+      h("div", { class: "ld-prizes" }, L.prizes.map(x => h("div", { class: "ld-prize" },
+        h("div", { class: "i" }, x.icon), h("div", { class: "r" }, x.rank), h("div", { class: "p" }, x.prize)))),
+      h("p", { class: "muted small", style: "margin:12px 0 0" }, "※ " + L.prizeNote)),
+
     h("div", { class: "card" }, h("div", { class: "section-label" }, "문의"),
-      h("div", { class: "contact" },
-        h("div", { style: "font-weight:700" }, EVENT.contact.name),
-        h("a", { href: `tel:${EVENT.contact.phone.replace(/[^0-9+]/g, "")}` }, `📞 ${EVENT.contact.phone}`),
-        h("a", { href: `mailto:${EVENT.contact.email}` }, `✉️ ${EVENT.contact.email}`)))));
+      h("div", { class: "contact" }, EVENT.contacts.map(c =>
+        h("div", { class: "contact-row" }, h("span", { class: "muted" }, c.label), h("a", { href: `mailto:${c.email}` }, c.email)))))));
 }
 
 // ---------- 라우팅 ----------
