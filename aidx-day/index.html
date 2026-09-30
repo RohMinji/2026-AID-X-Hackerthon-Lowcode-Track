@@ -235,11 +235,27 @@
   }
   .empty { text-align: center; color: var(--ink-dim); padding: 24px 0; }
 
-  .hl-grid { display: grid; gap: 12px; }
-  .hl { padding: 16px; border-radius: 14px; background: var(--panel-2); border: 1px solid var(--border); }
-  .hl h3 { margin: 8px 0 4px; font-size: 16px; }
-  .hl p { margin: 0; font-size: 14px; color: var(--ink-dim); }
-  .hl .when { font-size: 12px; color: var(--ink-faint); margin-top: 8px; }
+  /* 전시 목록 */
+  .ex-part { margin-bottom: 24px; }
+  .ex-part-head { display: flex; align-items: baseline; gap: 10px; margin: 0 0 10px; }
+  .ex-part-head h3 {
+    margin: 0; font-size: 20px; font-weight: 900; color: var(--c);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .ex-part-head h3::before { content: ""; width: 4px; height: 18px; border-radius: 2px; background: var(--c); }
+  .ex-grid { display: grid; gap: 10px; }
+  .ex-card {
+    display: block; text-decoration: none; padding: 16px; border-radius: 16px;
+    background: var(--panel); border: 1px solid var(--border);
+    transition: border-color .15s, transform .15s;
+  }
+  .ex-card:hover { border-color: var(--c); transform: translateY(-2px); }
+  .ex-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .ex-no { font-size: 13px; font-weight: 800; color: var(--c); font-variant-numeric: tabular-nums; }
+  .ex-title { font-size: 16px; font-weight: 800; line-height: 1.35; }
+  .ex-team { font-size: 13px; color: var(--ink-dim); margin-top: 2px; }
+  .ex-sum { font-size: 14px; color: var(--ink-dim); margin-top: 8px; }
+  .ex-more { font-size: 13px; font-weight: 700; color: var(--c); margin-top: 10px; }
 
   /* ---------- 층별 안내 ---------- */
   .floor-tabs { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 6px; margin-bottom: 14px; }
@@ -306,7 +322,7 @@
      ===================================================================== */
   @media (min-width: 720px) {
     :root { --gutter: 28px; }
-    .hl-grid { grid-template-columns: 1fr 1fr; }
+    .ex-grid { grid-template-columns: 1fr 1fr; }
     .quick { grid-template-columns: repeat(4, 1fr); }
     .home-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
     .home-grid > :only-child { grid-column: 1 / -1; }
@@ -339,7 +355,7 @@
     .sess { grid-template-columns: 72px 1fr; }
     .sess.is-now { margin: 0 -24px; padding-left: 24px; padding-right: 24px; }
     .sess .title { font-size: 17px; }
-    .hl-grid { grid-template-columns: repeat(3, 1fr); }
+    .ex-grid { grid-template-columns: repeat(3, 1fr); }
     .rooms { grid-template-columns: repeat(3, 1fr); }
     .floor-tabs { max-width: 420px; }
   }
@@ -354,7 +370,7 @@
     <div class="status-pill" id="status-pill"></div>
   </div>
 </header>
-<div class="sample-banner" id="sample-banner" hidden>지금 보이는 일정·장소·셔틀 정보는 <b>예시 데이터</b>예요. 실제 정보로 곧 바뀌어요.</div>
+<div class="sample-banner" id="sample-banner" hidden>지금 보이는 일정·전시·장소·셔틀 정보는 <b>예시 데이터</b>예요. 실제 정보로 곧 바뀌어요.</div>
 <div class="preview-banner" id="preview-banner" hidden></div>
 
 <div class="layout">
@@ -381,6 +397,7 @@
   </main>
 </div>
 
+<script src="exhibits.js"></script>
 <script>
 /* =====================================================================
    행사 데이터 — 이 블록만 고치면 페이지 전체에 반영돼요.
@@ -416,7 +433,7 @@ const EVENT = {
     hall:   { name: "그랜드홀",        floor: "3F", desc: "키노트·패널·시상식" },
     a:      { name: "세미나룸 A",      floor: "2F", desc: "AI 트랙 · 핸즈온" },
     b:      { name: "세미나룸 B",      floor: "2F", desc: "데이터 트랙" },
-    expo:   { name: "전시홀",          floor: "1F", desc: "스폰서·프로젝트 부스" },
+    expo:   { name: "전시홀",          floor: "1F", desc: "전시 28개 · Works · Biz · Innovation · Tech" },
     lounge: { name: "네트워킹 라운지", floor: "1F", desc: "점심·다과·네트워킹" },
     reg:    { name: "등록 데스크",     floor: "1F", desc: "정문 들어와서 바로 오른쪽" },
     bus:    { name: "셔틀 승하차장",   floor: "B1", desc: "엘리베이터 B1 → 출구 방향 표지판" },
@@ -461,16 +478,6 @@ const EVENT = {
     { day: "d2", start: "15:10", end: "16:00", track: "data",    room: "b",      title: "데이터 문해력 키우기", speaker: "신나래 · 샘플에듀" },
     { day: "d2", start: "16:10", end: "17:00", track: "event",   room: "hall",   title: "시상식 & 경품 추첨" },
     { day: "d2", start: "17:00", end: "17:20", track: "keynote", room: "hall",   title: "폐회" },
-  ],
-
-  // '한눈에 보기' 카드
-  highlights: [
-    { track: "keynote", title: "기조연설 2편",       desc: "이틀 동안 업계 리더의 기조연설을 들을 수 있어요.", when: "10.14 10:00 · 10.15 09:30 · 3F 그랜드홀" },
-    { track: "ai",      title: "AI 트랙",            desc: "생성형 AI, 에이전트, 평가, 보안까지 실무 사례 중심 세션.", when: "이틀간 5개 세션 · 2F 세미나룸 A" },
-    { track: "data",    title: "데이터 트랙",        desc: "파이프라인부터 대시보드, 팀 문화까지.", when: "이틀간 5개 세션 · 2F 세미나룸 B" },
-    { track: "hands",   title: "핸즈온 워크숍",      desc: "직접 만들어 보는 실습 세션. 노트북 지참.", when: "10.14 13:00 · 10.15 11:30 · 2F 세미나룸 A" },
-    { track: "event",   title: "해커톤 본선 & 시상", desc: "본선 10팀 발표와 시상식, 경품 추첨.", when: "10.15 13:30~17:00 · 3F 그랜드홀" },
-    { track: "event",   title: "부스 & 스탬프 투어", desc: "부스 5곳 스탬프를 모으면 기념품을 드려요.", when: "1F 전시홀" },
   ],
 
   // 셔틀: times는 일차별 출발 시각
@@ -575,7 +582,8 @@ function phase() {
 const state = {
   tab: "home",
   day: (todayDay() || EVENT.days[0]).id,
-  view: "timeline",
+  view: "talk",
+  part: "all",
   track: "all",
   floor: EVENT.floors.find(f => f.id === "1F") ? "1F" : EVENT.floors[0].id,
   highlightRoom: null,
@@ -677,7 +685,7 @@ function renderHome() {
     return a;
   };
   grid.append(h("div", { class: "quick" },
-    q("#program", "program", "프로그램", "시간표·세션"),
+    q("#program", "program", "프로그램", `발표 · 전시 ${EXHIBITS.length}개`),
     q("#floors", "floors", "층별 안내", "강연장·편의시설"),
     q("#shuttle", "shuttle", "셔틀", "시간표·탑승 위치"),
     q("#join", "join", "참여 방법", "체크인·FAQ")));
@@ -704,16 +712,16 @@ function renderProgram() {
   v.textContent = "";
   v.append(h("h2", { class: "page-title" }, "프로그램"));
   v.append(h("div", { class: "toolbar" },
-    seg([{ value: "timeline", label: "시간표" }, { value: "overview", label: "한눈에 보기" }], state.view, x => { state.view = x; renderProgram(); }),
-    state.view === "timeline" ? daySeg(x => { state.day = x; renderProgram(); }) : null));
+    seg([{ value: "talk", label: "발표" }, { value: "exhibit", label: `전시 ${EXHIBITS.length}` }], state.view, x => {
+      state.view = x;
+      history.replaceState(null, "", "#program/" + x);
+      renderProgram();
+    }),
+    state.view === "talk" ? daySeg(x => { state.day = x; renderProgram(); }) : null));
+
+  if (state.view === "exhibit") { renderExhibits(v); return; }
 
   const card = h("div", { class: "card" });
-  if (state.view === "overview") {
-    card.append(h("div", { class: "hl-grid" }, EVENT.highlights.map(x => h("div", { class: "hl" },
-      badge(x.track), h("h3", {}, x.title), h("p", {}, x.desc), h("div", { class: "when" }, x.when)))));
-    v.append(card);
-    return;
-  }
 
   const used = [...new Set(EVENT.sessions.filter(s => s.day === state.day).map(s => s.track))];
   v.append(h("div", { class: "chips" },
@@ -739,6 +747,36 @@ function renderProgram() {
   });
   card.append(list.length ? ol : h("div", { class: "empty" }, "해당하는 세션이 없어요."));
   v.append(card);
+}
+
+// ---------- 전시 목록 (상세: agenda01 ~ agenda28) ----------
+function renderExhibits(v) {
+  v.append(h("p", { class: "muted small", style: "margin:-4px 0 12px" }, `📍 ${EXHIBIT_PLACE} · ${EXHIBIT_HOURS}`));
+  v.append(h("div", { class: "chips" },
+    h("button", { class: "chip", "aria-pressed": String(state.part === "all"), onclick: () => { state.part = "all"; renderProgram(); } }, `전체 ${EXHIBITS.length}`),
+    Object.entries(PARTS).map(([k, p]) =>
+      h("button", { class: "chip", style: `--c:${p.color}`, "aria-pressed": String(state.part === k), onclick: () => { state.part = k; renderProgram(); } },
+        `${p.name} ${EXHIBITS.filter(e => e.part === k).length}`))));
+
+  const parts = Object.entries(PARTS).filter(([k]) => state.part === "all" || state.part === k);
+  parts.forEach(([k, p]) => {
+    const list = EXHIBITS.filter(e => e.part === k);
+    if (!list.length) return;
+    v.append(h("section", { class: "ex-part", style: `--c:${p.color}` },
+      h("div", { class: "ex-part-head" },
+        h("h3", {}, p.name), h("span", { class: "muted small" }, `${p.label} · ${p.zone}존 · ${list.length}개`)),
+      h("div", { class: "ex-grid" }, list.map(e => {
+        const n = EXHIBITS.indexOf(e) + 1;
+        return h("a", { class: "ex-card", href: e.id },
+          h("div", { class: "ex-top" },
+            h("span", { class: "ex-no" }, String(n).padStart(2, "0")),
+            h("span", { class: "badge", style: `--c:${p.color}` }, `${e.booth}`)),
+          h("div", { class: "ex-title" }, e.title),
+          h("div", { class: "ex-team" }, e.team),
+          h("div", { class: "ex-sum" }, e.summary),
+          h("div", { class: "ex-more" }, "자세히 보기 →"));
+      }))));
+  });
 }
 
 // ---------- 층별 안내 ----------
@@ -831,8 +869,9 @@ function renderJoin() {
 // ---------- 라우팅 ----------
 const renderers = { home: renderHome, program: renderProgram, floors: renderFloors, shuttle: renderShuttle, join: renderJoin };
 function route() {
-  const tab = (location.hash || "#home").slice(1);
+  const [tab, sub] = (location.hash || "#home").slice(1).split("/");
   state.tab = renderers[tab] ? tab : "home";
+  if (state.tab === "program" && (sub === "talk" || sub === "exhibit")) state.view = sub;
   document.querySelectorAll(".tab").forEach(a => { if (a.dataset.tab === state.tab) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current"); });
   document.querySelectorAll(".view").forEach(s => s.classList.toggle("active", s.id === "view-" + state.tab));
   renderers[state.tab]();
