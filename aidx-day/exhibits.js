@@ -25,10 +25,10 @@ const EXHIBIT_SAMPLE = true;
 const EXHIBIT_NOTICE = "전시 위치·운영 시간은 예시예요. 전시별 상세 소개는 곧 업데이트돼요.";
 
 const PARTS = {
-  works:      { name: "Works",      color: "#35e0ff" },
-  biz:        { name: "Biz",        color: "#ffb35c" },
-  innovation: { name: "Innovation", color: "#a58bff" },
-  tech:       { name: "Tech",       color: "#35ffa0" },
+  works:      { name: "Works",      color: "#2f6bff", icon: "img/cursor.webp" },
+  biz:        { name: "Biz",        color: "#7b4dff", icon: "img/ring.webp" },
+  innovation: { name: "Innovation", color: "#c040d0", icon: "img/star.webp" },
+  tech:       { name: "Tech",       color: "#0c93c4", icon: "img/layers.webp" },
 };
 
 const EXHIBIT_PLACE = "1F 전시홀";

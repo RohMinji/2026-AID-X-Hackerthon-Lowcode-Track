@@ -58,7 +58,9 @@
 
   const visual = h("div", { class: "visual" });
   if (x.image) visual.append(h("img", { src: x.image, alt: exTitleText(x) }));
-  else visual.append(h("div", { class: "ph" }, h("div", {}, h("b", {}, part.name), h("span", {}, x.booth ? `BOOTH ${x.booth}` : `AGENDA ${exNo(x)}`))));
+  else visual.append(h("div", { class: "ph" },
+    part.icon ? h("img", { src: part.icon, alt: "", "aria-hidden": "true" }) : null,
+    h("div", { class: "cap" }, h("b", {}, part.name), h("span", {}, x.booth ? `BOOTH ${x.booth}` : `AGENDA ${exNo(x)}`))));
 
   const main = h("div", { class: "grid" },
     h("section", { class: "card" }, h("h2", { class: "label" }, "소개"),
