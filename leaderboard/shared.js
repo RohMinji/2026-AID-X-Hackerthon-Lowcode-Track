@@ -57,5 +57,20 @@ window.Leaderboard = (() => {
     });
   }
 
-  return { escapeHtml, fmtDateTime, medalFor, computeStandings, diffStandings };
+  // published.json may carry `reveal_at` (when its scores go on screen) and
+  // `previous` (the snapshot that was on screen before it, written by the
+  // admin page on publish). Until reveal_at passes, every screen keeps
+  // showing `previous`, so scores can be published ahead of the reveal.
+  // Returns { visible, previous, revealAt, pending }: `visible` is the raw
+  // JSON to show right now (null when nothing has been revealed yet), and
+  // `previous` is what `visible` should be compared against.
+  function resolveSnapshots(json, now = Date.now()) {
+    const parsed = json && json.reveal_at ? new Date(json.reveal_at).getTime() : NaN;
+    const revealAt = Number.isFinite(parsed) ? parsed : null;
+    const pending = revealAt !== null && now < revealAt;
+    if (pending) return { visible: json.previous || null, previous: null, revealAt, pending };
+    return { visible: json || null, previous: (json && json.previous) || null, revealAt, pending };
+  }
+
+  return { escapeHtml, fmtDateTime, medalFor, computeStandings, diffStandings, resolveSnapshots };
 })();

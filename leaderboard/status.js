@@ -1,5 +1,5 @@
 (() => {
-  const { escapeHtml, fmtDateTime, medalFor, computeStandings } = window.Leaderboard;
+  const { escapeHtml, fmtDateTime, medalFor, computeStandings, resolveSnapshots } = window.Leaderboard;
 
   const PUBLISHED_URL = './published.json';
   const POLL_MS = 15000;
@@ -32,12 +32,14 @@
     try {
       const res = await fetch(`${PUBLISHED_URL}?_=${Date.now()}`, { cache: 'no-store' });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const json = await res.json();
+      const raw = await res.json();
+      // Scores published ahead of their reveal time stay hidden here too.
+      const json = resolveSnapshots(raw).visible || { criteria: [], teams: [] };
       const { maxTotal, teams } = computeStandings(json);
 
-      eventNameEl.textContent = json.event?.name || '해커톤 현황';
-      eventNoteEl.textContent = json.event?.note || '';
-      updatedAtEl.textContent = `마지막 갱신 ${fmtDateTime(json.event?.updated_at)}`;
+      eventNameEl.textContent = raw.event?.name || '해커톤 현황';
+      eventNoteEl.textContent = raw.event?.note || '';
+      updatedAtEl.textContent = `마지막 갱신 ${fmtDateTime(json.reveal_at || json.event?.updated_at)}`;
       renderTable(maxTotal, teams);
     } catch (err) {
       updatedAtEl.textContent = `불러오기 오류: ${err.message}`;

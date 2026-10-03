@@ -5,50 +5,44 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 <title>AID-X 해커톤 라이브 리더보드</title>
 <link rel="icon" href="data:,">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
 <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-<div class="stage" id="stage">
+<div class="stage" id="stage" data-mode="status">
 
-  <!-- Top bar -->
+  <!-- Soft white background with floating glass shapes -->
+  <div class="backdrop" aria-hidden="true">
+    <span class="blob blob-a"></span>
+    <span class="blob blob-b"></span>
+    <span class="blob blob-c"></span>
+  </div>
+
   <header class="topbar">
     <div class="topbar-left">
-      <span class="live-dot"></span>
-      <span class="live-label">LIVE</span>
+      <span class="brand-mark">AID-X</span>
       <h1 class="event-name" id="eventName">해커톤 라이브 리더보드</h1>
     </div>
     <div class="topbar-right">
-      <span class="event-note" id="eventNote"></span>
+      <span class="mode-chip" id="modeChip"><span class="mode-dot"></span><span id="modeLabel">LIVE</span></span>
       <span class="clock" id="clock">--:--:--</span>
     </div>
   </header>
 
-  <!-- Main viewport that swaps between podium / ranking screens -->
-  <main class="viewport" id="viewport">
+  <!-- Screens for the current mode are injected here by app.js -->
+  <main class="viewport" id="viewport"></main>
 
-    <section class="screen podium-screen" id="screen-podium" data-screen="podium">
-      <h2 class="screen-title">🏆 TOP 3</h2>
-      <div class="podium" id="podiumWrap">
-        <!-- podium cards injected by JS -->
-      </div>
-    </section>
-
-    <!-- rank list screens are injected dynamically by JS as .screen.rank-screen -->
-
-  </main>
-
-  <!-- Footer / progress -->
   <footer class="footbar">
     <div class="dots" id="screenDots"></div>
     <div class="countdown">
       <span class="countdown-text" id="countdownText">다음 화면까지 --초</span>
       <span class="countdown-track"><span class="countdown-fill" id="countdownFill"></span></span>
     </div>
-    <div class="updated" id="updatedAt">마지막 갱신 --</div>
+    <div class="updated" id="updatedAt">--</div>
   </footer>
 
-  <!-- Hidden host-control panel -->
+  <!-- Hidden host-control panel (P key or the corner gear) -->
   <button class="panel-tab" id="panelTab" aria-label="진행자 패널 열기">⚙</button>
 
   <div class="control-panel" id="controlPanel" hidden>
@@ -57,32 +51,30 @@
       <button id="panelClose" class="panel-close">✕</button>
     </div>
     <div class="panel-row">
+      <label for="modeSelect">화면 모드</label>
+      <select id="modeSelect">
+        <option value="auto">자동 (시간에 따라)</option>
+        <option value="wait">채점 대기</option>
+        <option value="reveal">점수 공개</option>
+        <option value="status">현황 공개</option>
+      </select>
+    </div>
+    <div class="panel-row">
       <button id="btnPrev">◀ 이전 화면</button>
       <button id="btnNext">다음 화면 ▶</button>
-    </div>
-    <div class="panel-row">
-      <button id="btnPodium">시상대로 이동</button>
       <button id="btnPause">일시정지</button>
-    </div>
-    <div class="panel-row">
-      <label for="rotateRange">화면 전환 간격: <span id="rotateVal">8</span>초</label>
-      <input type="range" id="rotateRange" min="4" max="30" step="1" value="8" />
     </div>
     <div class="panel-row">
       <button id="btnRefresh">지금 새로고침</button>
     </div>
     <div class="panel-status">
-      <div>폴링 주기: 15초</div>
+      <div id="scheduleStatus">공개 일정: -</div>
       <div id="fetchStatus">상태: 대기 중</div>
-      <div id="teamCount">팀 수: -</div>
     </div>
     <div class="panel-row panel-links">
       <a href="admin.html" target="_blank" rel="noopener">관리자 페이지 ↗</a>
-      <a href="status.html" target="_blank" rel="noopener">현황 화면 ↗</a>
-    </div>
-    <div class="panel-row panel-links">
-      <a href="draw.html" target="_blank" rel="noopener">발표 순서 추첨(우주선) ↗</a>
-      <a href="gacha.html" target="_blank" rel="noopener">발표 순서 추첨(캡슐) ↗</a>
+      <a href="status.html" target="_blank" rel="noopener">현황 표 ↗</a>
+      <a href="?demo" target="_blank" rel="noopener">점수 공개 미리보기 ↗</a>
     </div>
   </div>
 

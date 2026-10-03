@@ -1,5 +1,5 @@
 (() => {
-  const { escapeHtml, computeStandings, diffStandings } = window.Leaderboard;
+  const { escapeHtml, computeStandings, diffStandings, resolveSnapshots } = window.Leaderboard;
 
   // Must match the branch the GitHub Pages deploy workflow actually builds
   // from (see .github/workflows/deploy-pages.yml). Update this once the repo
@@ -15,6 +15,7 @@
   const HISTORY_URL = './history.json';
   const TOKEN_KEY = 'lb_admin_token';
   const MAX_HISTORY_ROWS = 20;
+  const MIN_LEAD_MS = 3 * 60 * 1000;
 
   const el = (id) => document.getElementById(id);
   const tokenInput = el('tokenInput');
@@ -34,10 +35,17 @@
   const revealTableBody = el('revealTableBody');
   const historyTableBody = el('historyTableBody');
   const historyMsg = el('historyMsg');
+  const revealAtInput = el('revealAtInput');
+  const btnRevealNextHour = el('btnRevealNextHour');
+  const btnRevealNow = el('btnRevealNow');
+  const scheduleMsg = el('scheduleMsg');
 
   let draftDataRaw = null;
   let publishedDataRaw = null;
   let draftStandings = null;
+  // Standings of what the live board shows right now. While a publish is
+  // still waiting for its reveal time that is the snapshot before it, so a
+  // corrected re-publish is still compared against what people have seen.
   let publishedStandings = null;
   let historyEntries = [];
 
@@ -49,6 +57,44 @@
     node.className = 'status-msg';
     node.textContent = '';
   }
+
+  function pad2(n) { return String(n).padStart(2, '0'); }
+
+  function toInputValue(ms) {
+    const d = new Date(ms);
+    return `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}T${pad2(d.getHours())}:${pad2(d.getMinutes())}`;
+  }
+
+  function nextTopOfHour() {
+    const d = new Date();
+    d.setMinutes(0, 0, 0);
+    d.setHours(d.getHours() + 1);
+    return d.getTime();
+  }
+
+  function fmtWhen(ms) {
+    return new Date(ms).toLocaleString('ko-KR', { hour12: false, month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
+  }
+
+  // The snapshot the live board currently shows for a published.json.
+  function visibleOf(pub) {
+    const snap = resolveSnapshots(pub);
+    return snap.visible || { criteria: [], teams: [] };
+  }
+
+  function renderSchedule(pub) {
+    const snap = resolveSnapshots(pub);
+    if (snap.pending) {
+      setMsg(scheduleMsg, 'info', `현재 게시본은 ${fmtWhen(snap.revealAt)}에 공개될 예정입니다 (대기 중). 다시 게시하면 이 게시본을 대체합니다.`);
+    } else if (snap.revealAt !== null) {
+      setMsg(scheduleMsg, 'info', `현재 게시본은 ${fmtWhen(snap.revealAt)}에 공개됐습니다.`);
+    } else {
+      clearMsg(scheduleMsg);
+    }
+  }
+
+  btnRevealNextHour.addEventListener('click', () => { revealAtInput.value = toInputValue(nextTopOfHour()); });
+  btnRevealNow.addEventListener('click', () => { revealAtInput.value = toInputValue(Date.now()); });
 
   function loadTokenStatus() {
     const token = sessionStorage.getItem(TOKEN_KEY);
@@ -152,7 +198,9 @@
         fetchJson(HISTORY_URL).catch(() => ({ entries: [] })),
       ]);
       publishedDataRaw = publishedJson;
-      publishedStandings = computeStandings(publishedJson);
+      publishedStandings = computeStandings(visibleOf(publishedJson));
+      renderSchedule(publishedJson);
+      if (!revealAtInput.value) revealAtInput.value = toInputValue(nextTopOfHour());
       historyEntries = historyJson.entries || [];
 
       jsonPaste.value = JSON.stringify(draftJson, null, 2);
@@ -251,6 +299,7 @@
     const historyObj = historyFile ? JSON.parse(base64DecodeUtf8(historyFile.content)) : { entries: [] };
     historyObj.entries.push({
       published_at: new Date().toISOString(),
+      reveal_at: publishedDataRaw.reveal_at || null,
       event: draftDataRaw.event || null,
       criteria: draftDataRaw.criteria || [],
       teams: draftStandings.teams.map((t) => ({
@@ -277,8 +326,19 @@
     }
     if (!draftDataRaw || !draftStandings) return;
 
+    const revealAt = new Date(revealAtInput.value).getTime();
+    if (!revealAtInput.value || !Number.isFinite(revealAt)) {
+      setMsg(scheduleMsg, 'err', '점수 공개 시간을 입력하세요.');
+      revealAtInput.focus();
+      return;
+    }
+    const lead = revealAt - Date.now();
+    const leadNote = lead < MIN_LEAD_MS
+      ? '\n\n※ 공개 시각이 3분 이내입니다. GitHub Pages 반영(1~2분) 때문에 화면에는 조금 늦게 나올 수 있습니다.'
+      : '';
     const ok = window.confirm(
-      `정말 게시하시겠습니까?\n실시간 화면과 현황 화면에 바로 반영됩니다. (팀 ${draftStandings.teams.length}개)`
+      `정말 게시하시겠습니까? (팀 ${draftStandings.teams.length}개)\n` +
+      `실시간 화면에는 ${fmtWhen(revealAt)}에 공개됩니다.${leadNote}`
     );
     if (!ok) return;
 
@@ -288,7 +348,21 @@
 
     try {
       const publishedFile = await githubGetFile(token, PUBLISHED_PATH);
-      const prettyContent = `${JSON.stringify(draftDataRaw, null, 2)}\n`;
+      const current = publishedFile ? JSON.parse(base64DecodeUtf8(publishedFile.content)) : null;
+      // `previous` = what the board shows until revealAt, and what the reveal
+      // screens compare against. Re-publishing before the reveal keeps the
+      // same previous instead of chaining onto the unrevealed one.
+      let previous = null;
+      if (current) {
+        const snap = resolveSnapshots(current);
+        if (snap.visible && (snap.visible.teams || []).length) {
+          const { previous: _drop, ...rest } = snap.visible;
+          previous = rest;
+        }
+      }
+      const { previous: _p, reveal_at: _r, ...draftClean } = draftDataRaw;
+      const outData = { ...draftClean, reveal_at: new Date(revealAt).toISOString(), previous };
+      const prettyContent = `${JSON.stringify(outData, null, 2)}\n`;
       const putData = await githubPutFile(
         token,
         PUBLISHED_PATH,
@@ -297,11 +371,13 @@
         `Publish leaderboard results (${new Date().toISOString()})`,
       );
 
-      setMsg(publishMsg, 'ok', `게시 완료 (commit ${(putData.commit && putData.commit.sha || '').slice(0, 7)}). 실시간 화면은 15초 이내에 반영됩니다.`);
-      renderReveal(publishedStandings, draftStandings);
+      setMsg(publishMsg, 'ok', `게시 완료 (commit ${(putData.commit && putData.commit.sha || '').slice(0, 7)}). 실시간 화면에는 ${fmtWhen(revealAt)}에 공개됩니다.`);
+      const before = previous ? computeStandings(previous) : { teams: [] };
+      renderReveal(before, draftStandings);
 
-      publishedDataRaw = draftDataRaw;
-      publishedStandings = draftStandings;
+      publishedDataRaw = outData;
+      publishedStandings = computeStandings(visibleOf(outData));
+      renderSchedule(outData);
       renderDraftTable(draftStandings.maxTotal, diffStandings(publishedStandings.teams, draftStandings.teams));
     } catch (err) {
       setMsg(publishMsg, 'err', `게시 실패: ${err.message}`);

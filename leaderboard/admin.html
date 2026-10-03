@@ -58,6 +58,25 @@
   </div>
 
   <div class="card">
+    <h2>점수 공개 시간</h2>
+    <div class="row">
+      <div class="field">
+        <label for="revealAtInput">게시한 점수가 실시간 화면에 공개되는 시각</label>
+        <input type="datetime-local" id="revealAtInput" step="60" style="color-scheme: dark;" />
+      </div>
+      <button class="btn-ghost" id="btnRevealNextHour">다음 정각으로</button>
+      <button class="btn-ghost" id="btnRevealNow">지금 바로</button>
+    </div>
+    <div class="hint">
+      게시해도 이 시각 전까지는 실시간 화면에 이전 점수가 그대로 보이고, 채점 대기 화면에
+      "HH:MM 새로운 점수 공개 예정"으로 이 시각이 표시됩니다. 이 시각이 되면 순위 변동·라이징 스타·다크호스
+      화면이 30분 동안 나온 뒤 현황 화면으로 돌아갑니다. GitHub Pages 반영에 1~2분 걸리니
+      공개 시각보다 최소 3분 먼저 게시하세요.
+    </div>
+    <div class="status-msg" id="scheduleMsg"></div>
+  </div>
+
+  <div class="card">
     <div class="row" style="justify-content: space-between;">
       <h2 style="margin:0;">채점 결과 미리보기 (아직 미게시)</h2>
       <button class="btn" id="btnPublish">게시하기</button>
@@ -71,7 +90,7 @@
             <th>팀</th>
             <th>팀원</th>
             <th class="num">총점</th>
-            <th>게시본 대비 변동</th>
+            <th>공개 중인 점수 대비 변동</th>
           </tr>
         </thead>
         <tbody id="draftTableBody">
