@@ -322,13 +322,31 @@
   .ex-more { font-size: 13px; font-weight: 800; color: var(--c); margin-top: 10px; }
 
   /* ---------- 층별 안내 ---------- */
-  .floor-tabs { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 6px; margin-bottom: 14px; }
+  /* 층 버튼은 왼쪽 세로, 배치도는 오른쪽 */
+  .floor-layout { display: grid; grid-template-columns: 60px 1fr; gap: 10px; align-items: start; }
+  .floor-tabs {
+    display: grid; gap: 8px; position: sticky; top: 72px;
+    padding: 8px; border-radius: 18px; background: var(--panel); border: 1px solid var(--border);
+  }
+  .floor-panel { min-width: 0; }
+  .floor-title { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+  .floor-title b {
+    font-size: 30px; font-weight: 900; line-height: 1; letter-spacing: -0.02em;
+    padding-right: 10px; border-right: 1px solid var(--border);
+  }
+  .floor-title span { font-size: 15px; font-weight: 700; color: var(--ink-dim); }
+  .floor-map-link { position: relative; display: block; }
+  .floor-map-link .zoom {
+    position: absolute; right: 8px; bottom: 8px; font-size: 11px; font-weight: 700;
+    padding: 3px 8px; border-radius: 999px; background: rgba(10, 10, 31, .75); color: var(--ink-dim);
+    border: 1px solid var(--border);
+  }
   .floor-tabs button {
     border: 1px solid var(--border); background: var(--glass); border-radius: 14px;
-    padding: 10px 0; font-weight: 900; font-size: 16px; color: var(--ink-dim); cursor: pointer; box-shadow: var(--shadow);
+    padding: 14px 0; font-weight: 900; font-size: 15px; color: var(--ink-dim); cursor: pointer; box-shadow: var(--shadow);
   }
   .floor-tabs button[aria-pressed="true"] { border-color: transparent; color: #fff; background: var(--grad); box-shadow: 0 6px 18px rgba(80, 70, 255, .3); }
-  .floor-map { width: 100%; border-radius: 14px; border: 1px solid var(--border); margin-bottom: 14px; display: block; }
+  .floor-map { width: 100%; border-radius: 14px; border: 1px solid var(--border); display: block; }
   .rooms { display: grid; gap: 10px; }
   .room { padding: 14px; border-radius: 16px; background: var(--surface); border: 1px solid var(--border); }
   .room.hl-room { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(61, 75, 255, .25), 0 10px 30px rgba(61, 75, 255, .15); }
@@ -469,7 +487,11 @@
     .sess .title { font-size: 17px; }
     .ex-grid { grid-template-columns: repeat(3, 1fr); }
     .rooms { grid-template-columns: repeat(3, 1fr); }
-    .floor-tabs { max-width: 420px; }
+    .floor-layout { grid-template-columns: 120px 1fr; gap: 16px; }
+    .floor-tabs { padding: 12px; gap: 10px; top: 80px; }
+    .floor-tabs button { padding: 22px 0; font-size: 20px; }
+    .floor-title b { font-size: 44px; padding-right: 14px; }
+    .floor-title span { font-size: 20px; }
   }
 </style>
 </head>
@@ -542,10 +564,10 @@ const EVENT = {
   // 층 안내: map에 평면도 이미지 주소를 넣으면 같이 보여줘요 (예: "floor-1f.png")
   //          facilities에 편의시설을 넣으면 '편의시설' 목록으로 보여줘요
   floors: [
-    { id: "8F", name: "8층", map: "", facilities: [] },
-    { id: "2F", name: "2층", map: "", facilities: [] },
-    { id: "1F", name: "1층", map: "", facilities: [] },
-    { id: "B1", name: "지하 1층", map: "", facilities: [] },
+    { id: "8F", name: "8층", title: "Low-Code 해커톤/전시 영역 배치도", map: "img/floor-8f.webp", facilities: [] },
+    { id: "2F", name: "2층", title: "Pro-Code 해커톤 영역 배치도",     map: "img/floor-2f.webp", facilities: [] },
+    { id: "1F", name: "1층", title: "발표/전시 영역 배치도",           map: "img/floor-1f.webp", facilities: [] },
+    { id: "B1", name: "지하 1층", title: "Cafeteria · 점심식사 공간",   map: "", facilities: [] },
   ],
 
   // 일정: AID-X Day / HackaThon 두 탭. times는 [시작, 끝] 목록 (여러 회차면 여러 개)
@@ -931,13 +953,15 @@ function renderFloors() {
   const v = $("view-floors");
   v.textContent = "";
   v.append(pageHead("층별 안내", ART.cursor));
-  v.append(h("div", { class: "floor-tabs" }, EVENT.floors.map(f =>
-    h("button", { "aria-pressed": String(f.id === state.floor), onclick: () => { state.floor = f.id; state.highlightRoom = null; renderFloors(); } }, f.id))));
+  const tabs = h("div", { class: "floor-tabs", role: "group", "aria-label": "층 선택" }, EVENT.floors.map(f =>
+    h("button", { "aria-pressed": String(f.id === state.floor), onclick: () => { state.floor = f.id; state.highlightRoom = null; renderFloors(); } }, f.id)));
 
   const f = EVENT.floors.find(x => x.id === state.floor);
-  const card = h("div", { class: "card stack" });
-  card.append(h("div", { class: "section-label" }, `${f.name} (${f.id})`));
-  if (f.map) card.append(h("img", { class: "floor-map", src: f.map, alt: `${f.name} 평면도` }));
+  const card = h("div", { class: "card stack floor-panel" });
+  card.append(h("div", { class: "floor-title" }, h("b", {}, f.id), h("span", {}, f.title || f.name)));
+  if (f.map) card.append(h("a", { class: "floor-map-link", href: f.map, target: "_blank", rel: "noopener", "aria-label": `${f.title} 크게 보기` },
+    h("img", { class: "floor-map", src: f.map, alt: `${f.name} ${f.title || "배치도"}` }),
+    h("span", { class: "zoom" }, "크게 보기")));
 
   const rooms = Object.entries(EVENT.rooms).filter(([, r]) => r.floor === f.id);
   const grid = h("div", { class: "rooms" });
@@ -950,8 +974,7 @@ function renderFloors() {
     card.append(h("div", {}, h("div", { class: "section-label", style: "margin-top:4px" }, "편의시설"),
       h("ul", { class: "facilities" }, f.facilities.map(x => h("li", {}, x)))));
   }
-  v.append(card);
-
+  v.append(h("div", { class: "floor-layout" }, tabs, card));
 }
 
 // ---------- 셔틀 ----------
