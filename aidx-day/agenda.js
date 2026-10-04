@@ -70,7 +70,7 @@
 
   const infoRows = [
     ["담당", [exTeam(x)]],
-    ["위치", [EXHIBIT_PLACE + (x.booth ? ` · ${x.booth} 부스` : ""), h("small", {}, h("a", { href: "./#floors" }, "층별 안내 보기"))]],
+    ["위치", [EXHIBIT_PLACE + ` · ${part.name} 존` + (x.booth ? ` · ${x.booth} 부스` : ""), h("small", {}, h("a", { href: "./#floors" }, "층별 안내 보기"))]],
     ["운영", [h("small", { style: "font-size:14px;color:inherit;font-weight:600" }, EXHIBIT_HOURS)]],
     x.demo && x.demo.length ? ["시연", [h("div", { class: "chips time" }, x.demo.map(t => h("span", {}, t)))]] : null,
     x.tags && x.tags.length ? ["태그", [h("div", { class: "chips" }, x.tags.map(t => h("span", {}, "#" + t)))]] : null,
@@ -88,7 +88,7 @@
 
   const others = EXHIBITS.filter(e => e.part === x.part && e.id !== x.id);
   const same = others.length ? h("section", { class: "card" },
-    h("h2", { class: "label" }, `${part.name} 파트 다른 전시`),
+    h("h2", { class: "label" }, `${part.name} 존 다른 전시`),
     h("ul", { class: "same" }, others.map(e => h("li", {}, h("a", { href: e.id }, h("span", { class: "b" }, exNo(e)), h("span", { class: "t" }, exTitleText(e))))))) : null;
 
   side.append(same);

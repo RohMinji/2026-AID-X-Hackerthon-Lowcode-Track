@@ -269,10 +269,39 @@
   .slots span.on { color: #fff; background: var(--grad); border-color: transparent; font-weight: 700; }
   .slots span.past { opacity: .45; text-decoration: line-through; }
 
+  /* 발표 세션표 */
+  .talks .tr { display: grid; grid-template-columns: 58px 1fr; gap: 12px; padding: 12px 0; border-top: 1px solid var(--border); }
+  .talks .tr-head { display: none; }
+  .talks .when { font-variant-numeric: tabular-nums; font-weight: 800; color: var(--accent); font-size: 15px; line-height: 1.2; padding-top: 10px; }
+  .talks .when small { display: block; color: var(--ink-faint); font-weight: 500; font-size: 12px; margin-top: 2px; }
+  .tr-cells { display: grid; gap: 8px; min-width: 0; }
+  .tz { padding: 8px 12px; border-radius: 10px; font-size: 14px; font-weight: 800; color: var(--c); background: color-mix(in srgb, var(--c) 14%, transparent); }
+  .tc { padding: 10px 12px; border-radius: 12px; background: var(--surface); border: 1px solid var(--border); box-shadow: inset 3px 0 0 var(--c); min-width: 0; }
+  .tc.empty { display: none; }
+  .tc-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; }
+  .tc-title { font-size: 15px; font-weight: 800; margin-top: 6px; line-height: 1.4; }
+  .tc.is-now { border-color: var(--c); background: color-mix(in srgb, var(--c) 14%, transparent); }
+  .tc.is-past { opacity: .5; }
+
+  /* AX Tech Connect 목록 */
+  .connect-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+  .connect-list li {
+    display: grid; grid-template-columns: 30px 1fr auto; gap: 10px; align-items: center;
+    padding: 12px 14px; border-radius: 14px; background: var(--panel); border: 1px solid var(--border);
+    box-shadow: inset 3px 0 0 var(--c);
+  }
+  .connect-list .n { font-size: 12px; font-weight: 800; color: var(--c); font-variant-numeric: tabular-nums; }
+  .connect-list .t { font-size: 15px; font-weight: 700; }
+
   /* PC 일정표 (열=일차, 행=시간) */
   .sched-grid { display: none; }
   @media (min-width: 1000px) {
     .sched-list { display: none; }
+    .talks .tr { grid-template-columns: 76px 1fr; }
+    .talks .tr-head { display: grid; border-top: 0; padding-top: 0; }
+    .tr-cells { grid-template-columns: 1fr 1fr; gap: 12px; }
+    .tc.full { grid-column: 1 / -1; }
+    .tc.empty { display: block; visibility: hidden; }
     .card > .group-title { display: none; }
     .sched-grid { display: grid; column-gap: 12px; row-gap: 0; }
     .sg-head {
@@ -451,6 +480,7 @@
     .rooms { grid-template-columns: 1fr 1fr; }
     .shuttle-grid { grid-template-columns: 1fr 1fr; }
     .ld-prizes { grid-template-columns: repeat(4, 1fr); }
+    .connect-list { grid-template-columns: 1fr 1fr; }
     .ld-info { grid-template-columns: repeat(3, 1fr); }
     .page-head img { width: 88px; }
   }
@@ -551,13 +581,15 @@ const EVENT = {
 
   // 장소: floor 값은 아래 floors의 id와 맞춰 주세요
   rooms: {
-    stage:  { name: "발표 공간",          floor: "1F", desc: "오프닝 · 발표세션 · 시상식 · Lucky Draw" },
-    expo1:  { name: "전시 공간",          floor: "1F", desc: "AID-X Day 전시" },
+    work:   { name: "Work 발표 존",       floor: "1F", desc: "Work 존 발표세션" },
+    tech:   { name: "Tech 발표 존",       floor: "1F", desc: "Tech 존 발표세션" },
+    stage:  { name: "시상식 · Lucky Draw", floor: "1F", desc: "오프닝 · 시상식 · Lucky Draw" },
+    expo1:  { name: "AID-X Day 전시",     floor: "1F", desc: "Innovation · Biz · Tech · Work 전시 29개" },
     cafe:   { name: "카페",               floor: "1F", desc: "" },
     bus:    { name: "셔틀버스 하차장",    floor: "1F", desc: "광화문사옥 · 우면사옥 셔틀 하차" },
     pro:    { name: "HackaThon Pro-Code", floor: "2F", desc: "" },
     low:    { name: "HackaThon Low-Code", floor: "8F", desc: "" },
-    expo8:  { name: "전시",               floor: "8F", desc: "전시 구성은 추후 안내돼요." },
+    expo8:  { name: "AX Tech Connect",    floor: "8F", desc: "별도 전시 13개 · 전략회의실 · 교육장 등" },
     lunch:  { name: "Cafeteria",          floor: "B1", desc: "점심식사 공간" },
   },
 
@@ -569,6 +601,29 @@ const EVENT = {
     { id: "1F", name: "1층", title: "발표/전시 영역 배치도",           map: "img/floor-1f.webp", facilities: [] },
     { id: "B1", name: "지하 1층", title: "Cafeteria · 점심식사 공간",   map: "", facilities: [] },
   ],
+
+  // 발표 세션 (AID-X Day, 1F) — 출처: AID-X DAY 리플릿 아젠다리스트. zone이 null이면 공통 세션
+  talks: {
+    day: "d2",
+    zones: {
+      work: { name: "Work 존", color: "#6f95ff" },
+      tech: { name: "Tech 존", color: "#ff8fc7" },
+    },
+    items: [
+      { no: "Intro",   zone: null,   start: "10:00", end: "10:10", title: "KT AX 일하는 방식 변화" },
+      { no: "1",       zone: "work", start: "10:10", end: "10:30", title: "Enterprise AI Agent Platform 'AX Works' 구축 사례" },
+      { no: "2",       zone: "work", start: "10:40", end: "11:00", title: "보안 패러다임을 바꾸는 여정: KRONOS 플랫폼의 오늘, 그리고 내일" },
+      { no: "3",       zone: "work", start: "11:10", end: "11:30", title: "습관에서 성과로, AI '사용자'를 '활용자'로 바꾸는 \"AX SPRINT: Customer\"" },
+      { no: "4",       zone: "work", start: "14:10", end: "14:30", title: "AI가 복잡한 재무 데이터를 읽기까지, CFO Agent 구축 여정" },
+      { no: "5",       zone: "work", start: "14:40", end: "15:00", title: "KT Commerce AX Journey" },
+      { no: "6",       zone: "tech", start: "10:10", end: "10:30", title: "KTDS 공통업무 AX 혁신 사례" },
+      { no: "7",       zone: "tech", start: "10:40", end: "11:00", title: "AI Agent로 전환과 운영을 가속화하는 ‘Agent Composer Core’" },
+      { no: "8",       zone: "tech", start: "11:10", end: "11:30", title: "B2B 영업 현장을 바꾸는 Biz On:Site AX" },
+      { no: "Special", zone: "tech", start: "11:40", end: "12:00", title: "KT와 Microsoft 가 함께 그려나가는 AI Governance의 미래" },
+      { no: "9",       zone: "tech", start: "14:10", end: "14:30", title: "kode:crew 개발 Story – AI가 만들고 사람이 결정한다" },
+      { no: "10",      zone: "tech", start: "14:40", end: "15:00", title: "AI 자동화로 출판사와 협업하는 방식을 바꾸다." },
+    ],
+  },
 
   // 일정: AID-X Day / HackaThon 두 탭. times는 [시작, 끝] 목록 (여러 회차면 여러 개)
   //       break: true 이면 흐리게 표시 (점심시간 등)
@@ -892,6 +947,38 @@ function renderProgram() {
   });
   if (pr.groups.length > 1) card.append(schedGrid(pr, t));
   v.append(card);
+  if (state.prog === "day") v.append(talksCard(t));
+}
+
+// 발표 세션표: 행 = 시작 시각, 열 = 존 (PC), 모바일은 시각별로 쌓아서
+function talksCard(t) {
+  const T = EVENT.talks, d = dayOf(T.day), zones = Object.entries(T.zones);
+  const starts = [...new Set(T.items.map(x => x.start))].sort();
+  const card = h("div", { class: "card talks", style: "margin-top:16px" },
+    h("div", { class: "prog-head" }, h("h3", { style: "color:var(--ink)" }, "발표 세션"), h("span", { class: "muted small" }, `${d.sub} · 1F`)),
+    h("div", { class: "tr tr-head" }, h("div", {}),
+      h("div", { class: "tr-cells" }, zones.map(([, z]) => h("div", { class: "tz", style: `--c:${z.color}` }, z.name)))));
+  starts.forEach(st => {
+    const row = T.items.filter(x => x.start === st);
+    const cell = x => {
+      const z = x.zone ? T.zones[x.zone] : null;
+      const t0 = at(d.date, x.start), t1 = at(d.date, x.end);
+      const live = t0 <= t && t < t1;
+      return h("div", { class: "tc" + (z ? "" : " full") + (live ? " is-now" : t >= t1 ? " is-past" : ""), style: `--c:${z ? z.color : "var(--accent)"}` },
+        h("div", { class: "tc-meta" },
+          h("span", { class: "badge" }, z ? z.name : "공통"),
+          h("span", { class: "faint small" }, `${x.no === "Intro" || x.no === "Special" ? x.no : "No." + x.no} · ${x.start}–${x.end}`),
+          live ? h("span", { class: "small", style: "color:var(--live);font-weight:700" }, h("span", { class: "live-dot" }), "진행 중") : null),
+        h("div", { class: "tc-title" }, x.title));
+    };
+    const cells = row.some(x => !x.zone) ? row.map(cell)
+      : zones.map(([k]) => { const x = row.find(r => r.zone === k); return x ? cell(x) : h("div", { class: "tc empty" }); });
+    const end = row.map(x => x.end).sort().pop();
+    card.append(h("div", { class: "tr" },
+      h("div", { class: "when" }, st, h("small", {}, `~${end}`)),
+      h("div", { class: "tr-cells" }, cells)));
+  });
+  return card;
 }
 
 // PC용 일정표: 열 = 일차, 행 = 시간 (시간 경계를 모아 칸을 나누고 항목은 여러 칸에 걸침)
@@ -926,7 +1013,9 @@ function renderExhibits(v) {
     h("button", { class: "chip", "aria-pressed": String(state.part === "all"), onclick: () => { state.part = "all"; renderProgram(); } }, `전체 ${EXHIBITS.length}`),
     Object.entries(PARTS).map(([k, p]) =>
       h("button", { class: "chip", style: `--c:${p.color}`, "aria-pressed": String(state.part === k), onclick: () => { state.part = k; renderProgram(); } },
-        `${p.name} ${EXHIBITS.filter(e => e.part === k).length}`))));
+        `${p.name} ${EXHIBITS.filter(e => e.part === k).length}`)),
+    h("button", { class: "chip", style: `--c:${TECH_CONNECT.color}`, "aria-pressed": String(state.part === "connect"), onclick: () => { state.part = "connect"; renderProgram(); } },
+      `${TECH_CONNECT.name} ${TECH_CONNECT.items.length}`)));
 
   const parts = Object.entries(PARTS).filter(([k]) => state.part === "all" || state.part === k);
   parts.forEach(([k, p]) => {
@@ -946,6 +1035,15 @@ function renderExhibits(v) {
           e.summary ? h("div", { class: "ex-sum" }, e.summary) : null,
           h("div", { class: "ex-more" }, "자세히 보기 →"))))));
   });
+  if (state.part === "all" || state.part === "connect") {
+    const C = TECH_CONNECT;
+    v.append(h("section", { class: "ex-part", style: `--c:${C.color}` },
+      h("div", { class: "ex-part-head" }, h("h3", {}, C.name), h("span", { class: "muted small" }, `별도 전시 · ${C.place} · ${C.items.length}개`)),
+      h("ol", { class: "connect-list" }, C.items.map((x, i) => h("li", {},
+        h("span", { class: "n" }, String(i + 1).padStart(2, "0")),
+        h("span", { class: "t" }, x.title),
+        x.place ? h("span", { class: "badge" }, x.place) : null)))));
+  }
 }
 
 // ---------- 층별 안내 ----------
