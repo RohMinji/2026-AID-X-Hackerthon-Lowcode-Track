@@ -440,7 +440,7 @@
   .ex-more { font-size: 13px; font-weight: 800; color: var(--c); margin-top: 10px; }
 
   /* ---------- 층별 안내 ---------- */
-  /* 층 버튼은 왼쪽 세로, 배치도는 오른쪽 */
+  /* 층 버튼은 왼쪽 세로, 층 안내는 오른쪽 */
   .floor-layout { display: grid; grid-template-columns: 60px 1fr; gap: 10px; align-items: start; }
   .floor-tabs {
     display: grid; gap: 8px; position: sticky; top: 72px;
@@ -706,9 +706,9 @@ const EVENT = {
   // 층 안내: map에 평면도 이미지 주소를 넣으면 같이 보여줘요 (예: "floor-1f.png")
   //          facilities에 편의시설을 넣으면 '편의시설' 목록으로 보여줘요
   floors: [
-    { id: "8F", name: "8층", title: "Low-Code 해커톤/전시 영역 배치도", map: "img/floor-8f.webp", facilities: ["수유실"] },
-    { id: "2F", name: "2층", title: "Pro-Code 해커톤 영역 배치도",     map: "img/floor-2f.webp", facilities: [] },
-    { id: "1F", name: "1층", title: "발표/전시 영역 배치도",           map: "img/floor-1f.webp", facilities: [] },
+    { id: "8F", name: "8층", title: "Low-Code 해커톤/전시 영역", map: "img/floor-8f.webp", facilities: ["수유실"] },
+    { id: "2F", name: "2층", title: "Pro-Code 해커톤 영역",     map: "img/floor-2f.webp", facilities: [] },
+    { id: "1F", name: "1층", title: "발표/전시 영역",           map: "img/floor-1f.webp", facilities: [] },
     { id: "B1", name: "지하 1층", title: "Cafeteria · 점심식사 공간",   map: "", facilities: [] },
   ],
 
@@ -1246,7 +1246,7 @@ function renderFloors() {
   const card = h("div", { class: "card stack floor-panel" });
   card.append(h("div", { class: "floor-title" }, h("b", {}, f.id), h("span", {}, f.title || f.name)));
   if (f.map) card.append(h("a", { class: "floor-map-link", href: f.map, target: "_blank", rel: "noopener", "aria-label": `${f.title} 크게 보기` },
-    h("img", { class: "floor-map", src: f.map, alt: `${f.name} ${f.title || "배치도"}` }),
+    h("img", { class: "floor-map", src: f.map, alt: `${f.name} ${f.title || "안내도"}` }),
     h("span", { class: "zoom" }, "크게 보기")));
 
   const rooms = Object.entries(EVENT.rooms).filter(([, r]) => r.floor === f.id);
