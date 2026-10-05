@@ -163,9 +163,26 @@
 
   .chips { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px; margin-bottom: 14px; scrollbar-width: none; }
   .chips::-webkit-scrollbar { display: none; }
+  .chips-wrap { position: relative; margin-bottom: 14px; }
+  .chips-wrap .chips { margin-bottom: 0; }
+  .chips-wrap::before, .chips-wrap::after {
+    content: ""; position: absolute; top: 0; bottom: 4px; width: 44px; pointer-events: none; opacity: 0; transition: opacity .2s;
+  }
+  .chips-wrap::before { left: 0; background: linear-gradient(90deg, var(--bg-0), transparent); }
+  .chips-wrap::after { right: 0; background: linear-gradient(270deg, var(--bg-0) 35%, transparent); }
+  .chips-wrap.has-less::before, .chips-wrap.has-more::after { opacity: 1; }
+  .chips-more {
+    position: absolute; right: 0; top: 50%; transform: translateY(calc(-50% - 2px)); z-index: 1;
+    width: 26px; height: 26px; border-radius: 50%; border: 1px solid var(--border); padding: 0;
+    background: var(--panel-solid, #15153a); color: var(--ink); font-size: 18px; line-height: 1; cursor: pointer;
+    display: none; animation: nudge 1.4s ease-in-out infinite;
+  }
+  .chips-wrap.has-more .chips-more { display: grid; place-items: center; }
+  @keyframes nudge { 50% { transform: translate(3px, calc(-50% - 2px)); } }
+  @media (prefers-reduced-motion: reduce) { .chips-more { animation: none; } }
   .chip {
     flex: none; border: 1px solid var(--border); background: var(--glass);
-    padding: 6px 12px; border-radius: 999px; font-size: 13px; font-weight: 600; color: var(--ink-dim); cursor: pointer;
+    padding: 5px 10px; border-radius: 999px; font-size: 12.5px; font-weight: 600; color: var(--ink-dim); cursor: pointer;
   }
   .chip[aria-pressed="true"] { border-color: var(--c, var(--accent)); color: var(--c, var(--accent)); background: color-mix(in srgb, var(--c, var(--accent)) 16%, transparent); }
 
@@ -395,6 +412,11 @@
   .ex-part { margin-bottom: 26px; }
   .ex-part-head { display: flex; align-items: center; gap: 10px; margin: 0 0 12px; }
   .ex-part-head img { width: 38px; height: 38px; object-fit: contain; }
+  .ex-place { margin: -4px 0 12px; font-size: 13px; color: var(--ink-dim); line-height: 1.6; }
+  .ex-place b { color: var(--ink); }
+  .ex-place .faint { padding-left: 20px; }
+  .ex-part-head { flex-wrap: wrap; }
+  .ex-part-head h3 { white-space: nowrap; }
   .ex-part-head h3 { margin: 0; font-size: 22px; font-weight: 900; color: var(--c); letter-spacing: -0.01em; }
   .ex-grid { display: grid; gap: 10px; }
   .ex-card {
@@ -1150,14 +1172,20 @@ function schedGrid(pr, t) {
 
 // ---------- 전시 목록 (상세: agenda01 ~ agenda28) ----------
 function renderExhibits(v) {
-  v.append(h("p", { class: "muted small", style: "margin:-4px 0 12px" }, `📍 ${EXHIBIT_PLACE} · ${EXHIBIT_HOURS}`));
-  v.append(h("div", { class: "chips" },
-    h("button", { class: "chip", "aria-pressed": String(state.part === "all"), onclick: () => { state.part = "all"; renderProgram(); } }, `전체 ${EXHIBITS.length}`),
-    Object.entries(PARTS).map(([k, p]) =>
-      h("button", { class: "chip", style: `--c:${p.color}`, "aria-pressed": String(state.part === k), onclick: () => { state.part = k; renderProgram(); } },
-        `${p.name} ${EXHIBITS.filter(e => e.part === k).length}`)),
-    h("button", { class: "chip", style: `--c:${TECH_CONNECT.color}`, "aria-pressed": String(state.part === "connect"), onclick: () => { state.part = "connect"; renderProgram(); } },
-      `${TECH_CONNECT.name} ${TECH_CONNECT.items.length}`)));
+  v.append(h("div", { class: "ex-place" },
+    h("div", {}, "📍 KT 판교 빌딩 · ", h("b", {}, "1F"), " 전시 · ", h("b", {}, TECH_CONNECT.place.replace(/^KT 판교 빌딩 /, "")), ` ${TECH_CONNECT.name}`),
+    h("div", { class: "faint" }, EXHIBIT_HOURS)));
+  // 카테고리 버튼: 선택한 것이 맨 앞으로, 다시 누르면 선택 해제 → 원래 순서
+  const cats = [
+    { key: "all", label: `전체 ${EXHIBITS.length}` },
+    ...Object.entries(PARTS).map(([k, p]) => ({ key: k, color: p.color, label: `${p.name} ${EXHIBITS.filter(e => e.part === k).length}` })),
+    { key: "connect", color: TECH_CONNECT.color, label: `${TECH_CONNECT.name} ${TECH_CONNECT.items.length}` },
+  ];
+  const sel = cats.find(c => c.key === state.part && c.key !== "all");
+  const ordered = sel ? [sel, ...cats.filter(c => c !== sel)] : cats;
+  v.append(chipScroller(h("div", { class: "chips" }, ordered.map(c =>
+    h("button", { class: "chip", style: c.color ? `--c:${c.color}` : null, "aria-pressed": String(state.part === c.key),
+      onclick: () => { state.part = state.part === c.key ? "all" : c.key; renderProgram(); } }, c.label)))));
 
   const parts = Object.entries(PARTS).filter(([k]) => state.part === "all" || state.part === k);
   parts.forEach(([k, p]) => {
@@ -1186,6 +1214,22 @@ function renderExhibits(v) {
         h("span", { class: "t" }, x.title),
         x.place ? h("span", { class: "badge" }, x.place) : null)))));
   }
+}
+
+// 가로로 넘치는 버튼 줄: 오른쪽 끝에 흐림 + 화살표로 '더 있음' 표시
+function chipScroller(row) {
+  const more = h("button", { class: "chips-more", type: "button", "aria-label": "다음 카테고리 보기",
+    onclick: () => row.scrollBy({ left: row.clientWidth * 0.7, behavior: "smooth" }) }, "›");
+  const wrap = h("div", { class: "chips-wrap" }, row, more);
+  const update = () => {
+    const over = row.scrollWidth > row.clientWidth + 4;
+    wrap.classList.toggle("has-more", over && row.scrollLeft + row.clientWidth < row.scrollWidth - 4);
+    wrap.classList.toggle("has-less", over && row.scrollLeft > 4);
+  };
+  row.addEventListener("scroll", update, { passive: true });
+  window.addEventListener("resize", update);
+  requestAnimationFrame(update);
+  return wrap;
 }
 
 // ---------- 층별 안내 ----------
