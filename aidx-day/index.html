@@ -699,7 +699,7 @@ const EVENT = {
     bus:    { name: "셔틀버스 하차장",    floor: "1F", desc: "광화문사옥 · 우면사옥 셔틀 하차" },
     pro:    { name: "Hackathon Pro-Code", floor: "2F", desc: "" },
     low:    { name: "Hackathon Low-Code", floor: "8F", desc: "" },
-    expo8:  { name: "AX Tech Connect",    floor: "8F", desc: "별도 전시 13개 · 캡슐 뽑기 이벤트" },
+    expo8:  { name: "AX Tech Connect",    floor: "8F", desc: "전시 13개 · 캡슐 뽑기 이벤트" },
     lunch:  { name: "Cafeteria",          floor: "B1", desc: "점심식사 공간" },
   },
 
@@ -1021,7 +1021,7 @@ function renderHome() {
     q("#floors", "floors", "층별 안내", "강연장·편의시설"),
     q("#shuttle", "shuttle", "오시는 길", "위치·셔틀"),
     q("#join", "join", "이벤트", "Lucky Draw"),
-    q("#program/connect", "connect", "AX Tech Connect", `8F 별도 전시 ${TECH_CONNECT.items.length}개`)));
+    q("#program/connect", "connect", "AX Tech Connect", `8F 전시 ${TECH_CONNECT.items.length}개`)));
 
   v.append(grid);
   tickCountdown();
@@ -1176,7 +1176,7 @@ function renderExhibits(v) {
   if (state.exTab === "connect") {
     const C = TECH_CONNECT;
     v.append(h("div", { class: "ex-place" },
-      h("div", {}, "📍 KT 판교 빌딩 · ", h("b", {}, C.place.replace(/^KT 판교 빌딩 /, "")), ` · 별도 전시 ${C.items.length}개`),
+      h("div", {}, "📍 KT 판교 빌딩 · ", h("b", {}, C.place.replace(/^KT 판교 빌딩 /, "")), ` · 전시 ${C.items.length}개`),
       h("div", { class: "faint" }, EXHIBIT_HOURS)));
     v.append(h("section", { class: "ex-part", style: `--c:${C.color}` },
       h("ol", { class: "connect-list" }, C.items.map((x, i) => h("li", {},
