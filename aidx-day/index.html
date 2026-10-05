@@ -220,6 +220,50 @@
   .now-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; margin-bottom: 10px; }
   .now-head h3 { margin: 0; font-size: 16px; }
 
+  /* 홈: 행사 구성 카드 */
+  .zones { margin: 0 calc(-1 * var(--gutter)); min-width: 0; }
+  .stack > * { min-width: 0; }
+  .zones-track {
+    display: grid; grid-auto-flow: column; grid-auto-columns: 86%; gap: 12px;
+    overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding: 0 var(--gutter);
+    padding: 2px var(--gutter) 6px; scrollbar-width: none;
+  }
+  .zones-track::-webkit-scrollbar { display: none; }
+  .zone-card {
+    scroll-snap-align: start; display: flex; flex-direction: column; align-items: center; text-align: center;
+    padding: 18px 16px; border-radius: 20px; background: rgba(4, 4, 14, .7); border: 1px solid rgba(255, 255, 255, .14);
+  }
+  .zone-top { align-self: stretch; display: flex; justify-content: space-between; align-items: center; }
+  .zone-no { font-size: 26px; font-weight: 900; letter-spacing: -0.02em; }
+  .zone-floor { font-size: 14px; font-weight: 800; color: #fff; padding: 5px 14px; border-radius: 999px; background: linear-gradient(135deg, #5b4bff, #7b4dff); }
+  .zone-title { margin: 12px 0 0; font-size: 24px; line-height: 1.12; font-weight: 900; letter-spacing: -0.02em; }
+  .zone-title span { display: block; }
+  .zone-sub { margin: 12px 0 0; font-size: 14px; font-weight: 800; color: var(--ink); }
+  .zone-tag { margin: 6px 0 0; font-size: 13px; font-weight: 800; letter-spacing: .02em; color: var(--zc); }
+  .zone-art { width: 110px; height: 110px; object-fit: contain; margin: 14px 0; filter: drop-shadow(0 12px 24px rgba(110, 80, 255, .35)); }
+  .zone-desc { margin: 0; font-size: 14px; line-height: 1.75; color: var(--ink); opacity: .9; }
+  .zone-rows { align-self: stretch; display: grid; gap: 8px; margin-top: auto; }
+  .zone-row {
+    display: grid; grid-template-columns: 40px 1fr; gap: 10px; align-items: center; text-align: left;
+    padding: 10px 12px; border-radius: 12px; background: rgba(20, 20, 50, .8); border: 1px solid rgba(160, 150, 255, .2);
+  }
+  .zr-ico svg { width: 30px; height: 30px; fill: none; stroke: #b9b2ff; stroke-width: 1.5; stroke-linejoin: round; stroke-linecap: round; }
+  .zone-row b { display: block; font-size: 14px; font-weight: 900; color: #c4b8ff; }
+  .zone-row span { font-size: 13px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .zone-dots { display: flex; justify-content: center; gap: 6px; margin-top: 10px; }
+  .zone-dots button { width: 7px; height: 7px; padding: 0; border: 0; border-radius: 999px; background: rgba(255,255,255,.25); cursor: pointer; transition: width .2s; }
+  .zone-dots button.on { width: 20px; background: var(--accent); }
+  @media (min-width: 1000px) {
+    .zones { margin: 0; }
+    .zones-track { grid-auto-flow: row; grid-template-columns: repeat(3, 1fr); overflow: visible; padding: 0; gap: 16px; }
+    .zone-card { padding: 22px 20px; }
+    .zone-title { font-size: 28px; }
+    .zone-art { width: 130px; height: 130px; }
+    .zone-row { grid-template-columns: 34px 1fr; padding: 10px; }
+    .zone-row span { font-size: 12px; }
+    .zone-dots { display: none; }
+  }
+
   .quick { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
   .quick a {
     display: flex; align-items: center; gap: 10px; padding: 14px; border-radius: 16px;
@@ -441,7 +485,7 @@
   .ld-hero p { margin: 0; font-size: 15px; color: var(--ink); line-height: 1.65; }
   .ld-hero .ld-free { margin-top: 10px; font-size: 13px; color: var(--ink-dim); }
   .ld-meter { margin-top: 16px; padding: 14px; border-radius: 14px; background: var(--surface); border: 1px solid var(--border); }
-  .ld-tiles { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; }
+  .ld-tiles { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; }
   .ld-tile {
     text-align: center; font-size: 11px; font-weight: 700; padding: 8px 0; border-radius: 10px;
     color: #cfd6ff; background: rgba(91, 124, 255, .18); border: 1px solid rgba(91, 124, 255, .35);
@@ -464,7 +508,16 @@
   .ld-prize { text-align: center; padding: 16px 8px; border-radius: 14px; background: var(--surface); border: 1px solid var(--border); }
   .ld-prize .i { font-size: 28px; line-height: 1; }
   .ld-prize .r { margin-top: 8px; font-size: 15px; font-weight: 900; }
-  .ld-prize .p { font-size: 13px; color: var(--ink-dim); }
+  .ld-prize .p { font-size: 13px; color: var(--ink-dim); margin-top: 2px; line-height: 1.4; }
+  .ld-prizes > :last-child:nth-child(odd) { grid-column: 1 / -1; }
+  .venue-row { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; }
+  .venue-name { font-weight: 800; font-size: 17px; }
+  .venue-addr { font-size: 13px; color: var(--ink-dim); }
+  .copy-btn {
+    align-self: center; font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 999px; cursor: pointer;
+    color: var(--accent); background: color-mix(in srgb, var(--accent) 12%, transparent); border: 1px solid color-mix(in srgb, var(--accent) 35%, transparent);
+  }
+  .copy-btn.done { color: var(--live); border-color: color-mix(in srgb, var(--live) 45%, transparent); background: color-mix(in srgb, var(--live) 12%, transparent); }
   .route-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 12px; }
   .route-head h3 { margin: 0; }
   .times span small { font-size: 11px; opacity: .8; }
@@ -483,7 +536,9 @@
     .home-grid > :only-child { grid-column: 1 / -1; }
     .rooms { grid-template-columns: 1fr 1fr; }
     .shuttle-grid { grid-template-columns: 1fr 1fr; }
-    .ld-prizes { grid-template-columns: repeat(4, 1fr); }
+    .ld-prizes { grid-template-columns: repeat(5, 1fr); }
+    .ld-prizes > :last-child:nth-child(odd) { grid-column: auto; }
+    .ld-tiles { grid-template-columns: repeat(6, 1fr); }
     .connect-list { grid-template-columns: 1fr 1fr; }
     .ld-info { grid-template-columns: repeat(3, 1fr); }
     .page-head img { width: 88px; }
@@ -574,7 +629,7 @@ const EVENT = {
   title: "AID-X Day",
   tagline: "AI 기술을 넘어, 실제 업무의 궤도에 안착하다.",
   venue: "KT 판교 빌딩",
-  venueAddress: "",   // 주소가 정해지면 넣어 주세요 (비워 두면 숨겨져요)
+  venueAddress: "경기 성남시 수정구 금토로 32",
   mapUrl: "https://map.naver.com/p/search/KT%20%ED%8C%90%EA%B5%90%20%EB%B9%8C%EB%94%A9",
 
   // 행사 일자와 운영 시간
@@ -593,7 +648,7 @@ const EVENT = {
     bus:    { name: "셔틀버스 하차장",    floor: "1F", desc: "광화문사옥 · 우면사옥 셔틀 하차" },
     pro:    { name: "HackaThon Pro-Code", floor: "2F", desc: "" },
     low:    { name: "HackaThon Low-Code", floor: "8F", desc: "" },
-    expo8:  { name: "AX Tech Connect",    floor: "8F", desc: "별도 전시 13개 · 전략회의실 · 교육장 등" },
+    expo8:  { name: "AX Tech Connect",    floor: "8F", desc: "별도 전시 13개 · 캡슐 뽑기 이벤트" },
     lunch:  { name: "Cafeteria",          floor: "B1", desc: "점심식사 공간" },
   },
 
@@ -674,24 +729,47 @@ const EVENT = {
     title: "AID-X DAY Lucky Draw",
     lead: "AID-X DAY 전시와 발표를 관람하며 전시 공간과 발표 장소에 비치된 QR로 만족도 조사에 참여해 주세요.",
     surveys: { exhibit: 4, talk: 2, need: 3 },
+    surveyNames: [
+      { name: "Innovation존 전시" }, { name: "Biz존 전시" }, { name: "Tech존 전시" }, { name: "Work존 전시" },
+      { name: "오전 발표", talk: true }, { name: "오후 발표", talk: true },
+    ],
     steps: [
       { title: "전시·발표 관람", desc: "전시 공간과 발표 장소에 비치된 QR을 찾아 주세요." },
       { title: "QR로 만족도 조사 참여", desc: "총 6개(전시 4개 · 발표 2개) 중 3개 이상 참여해 주세요." },
       { title: "추첨번호 받기", desc: "설문조사 때 입력한 메일 주소로 추첨번호가 발송돼요." },
     ],
     info: [
-      { label: "추첨번호 발급", value: "16:30까지", note: "행사일 16:30 이후에는 발급되지 않아요." },
+      { label: "추첨번호 발급", value: "16:00까지", note: "행사일 16:00 이후에는 발급되지 않아요." },
       { label: "Lucky Draw 추첨", value: "16:30", note: "행사일 16:30부터 진행돼요." },
       { label: "경품 수령", value: "현장 지급", note: "추첨 시 현장에서 본인 확인 후 지급돼요." },
     ],
     prizes: [
-      { rank: "1등", icon: "🥇", prize: "경품" },
-      { rank: "2등", icon: "🥈", prize: "경품" },
-      { rank: "3등", icon: "🥉", prize: "경품" },
-      { rank: "참가상", icon: "🎁", prize: "경품" },
+      { rank: "1등", icon: "🥇", prize: "당일공개" },
+      { rank: "2등", icon: "🥈", prize: "당일공개" },
+      { rank: "3등", icon: "🥉", prize: "인터콘티넨탈 뷔페 식사권" },
+      { rank: "4등", icon: "🎁", prize: "배달의민족 모바일 상품권 5만원" },
+      { rank: "5등", icon: "☕", prize: "스타벅스 모바일 상품권 3만원" },
     ],
     prizeNote: "경품은 행사 운영 상황에 따라 변경될 수 있습니다.",
   },
+
+  // 홈 '행사 구성' 카드 3개
+  zones: [
+    { floor: "1F", title: ["EXHIBITION &", "PRESENTATION"], sub: "네 가지 관점으로 만나는 AX", tag: "BIZ · TECH · WORK · INNOVATION",
+      color: "#c79bff", art: "img/layers.webp",
+      rows: [
+        { label: "EXHIBITION", time: "09:00 – 16:00 | 상시 관람",
+          icon: '<svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="10" rx="1.5"/><path d="M2 19h20l-2-4H4z"/></svg>' },
+        { label: "PRESENTATION", time: "10:10 – 12:00 · 14:10 – 15:00",
+          icon: '<svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3M8 21h8"/></svg>' },
+      ] },
+    { floor: "2F/8F", title: ["HACKATHON", "FINAL ROUND"], sub: "아이디어를 업무에서 동작하는 AI로", tag: "LOW CODE · PRO CODE",
+      color: "#7fb4ff", art: "img/ai.webp",
+      desc: "이틀 간의 도전 끝에 펼쳐지는 Final Round, 업무 아이디어가 실제 AI로 구현되는 과정을 직접 만나보세요." },
+    { floor: "8F", title: ["AX TECH", "CONNECT"], sub: "AI로 미래와 혁신을 연결하다", tag: "TECH INSIGHT",
+      color: "#b48cff", art: "img/ring.webp",
+      desc: "기술과 사람, 연구와 사업을 연결하는 AX의 미래. AI · 데이터 기술이 만들어갈 새로운 고객 경험과 비즈니스의 미래를 직접 체험하세요." },
+  ],
 
   notices: [
     { time: "09.28", text: "행사 안내 페이지가 열렸어요." },
@@ -713,6 +791,7 @@ function h(tag, attrs, ...kids) {
     if (v == null || v === false) continue;
     if (k === "class") el.className = v;
     else if (k === "style") el.style.cssText = v;
+    else if (k === "html") el.innerHTML = v;
     else if (k.startsWith("on")) el.addEventListener(k.slice(2), v);
     else el.setAttribute(k, v === true ? "" : v);
   }
@@ -872,10 +951,8 @@ function renderHome() {
     homeRow.append(card);
   }
 
-  const notice = h("div", { class: "card" }, h("div", { class: "section-label" }, "공지"),
-    h("ul", { class: "notice-list" }, EVENT.notices.map(n => h("li", {}, h("time", {}, n.time), h("span", {}, n.text)))));
-  homeRow.append(notice);
-  grid.append(homeRow);
+  if (homeRow.children.length) grid.append(homeRow);
+  grid.append(zonesBlock());
 
   const ico = {
     program: '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',
@@ -898,6 +975,35 @@ function renderHome() {
 
   v.append(grid);
   tickCountdown();
+}
+
+// 홈: 행사 구성 3파트 (PC 3열, 모바일 캐러셀)
+function zonesBlock() {
+  const track = h("div", { class: "zones-track" }, EVENT.zones.map((z, i) => h("article", { class: "zone-card", style: `--zc:${z.color}` },
+    h("div", { class: "zone-top" }, h("span", { class: "zone-no" }, String(i + 1).padStart(2, "0")), h("span", { class: "zone-floor" }, z.floor)),
+    h("h3", { class: "zone-title" }, z.title.map(x => h("span", {}, x))),
+    h("p", { class: "zone-sub" }, z.sub),
+    h("p", { class: "zone-tag" }, z.tag),
+    h("img", { class: "zone-art", src: z.art, alt: "", "aria-hidden": "true" }),
+    z.rows ? h("div", { class: "zone-rows" }, z.rows.map(r => h("div", { class: "zone-row" },
+      h("span", { class: "zr-ico", html: r.icon }), h("div", {}, h("b", {}, r.label), h("span", {}, r.time)))))
+      : h("p", { class: "zone-desc" }, z.desc))));
+  const dots = h("div", { class: "zone-dots" }, EVENT.zones.map((z, i) =>
+    h("button", { type: "button", "aria-label": `${i + 1}번째 파트`, onclick: () => go(i) })));
+  const go = i => track.scrollTo({ left: track.children[i].offsetLeft - track.offsetLeft, behavior: "smooth" });
+  const cur = () => Math.round(track.scrollLeft / Math.max(1, track.children[0].offsetWidth));
+  const mark = () => [...dots.children].forEach((d, i) => d.classList.toggle("on", i === cur()));
+  track.addEventListener("scroll", () => requestAnimationFrame(mark), { passive: true });
+  // 모바일에서만 자동으로 넘김 (손대면 멈춤)
+  let paused = false;
+  ["touchstart", "pointerdown"].forEach(ev => track.addEventListener(ev, () => { paused = true; }, { passive: true }));
+  clearInterval(window.__zoneTimer);
+  window.__zoneTimer = setInterval(() => {
+    if (paused || !track.isConnected || track.scrollWidth <= track.clientWidth + 4) return;
+    go((cur() + 1) % EVENT.zones.length);
+  }, 4500);
+  setTimeout(mark, 0);
+  return h("section", { class: "zones" }, track, dots);
 }
 
 function nowList(list) {
@@ -1084,6 +1190,27 @@ function renderFloors() {
   v.append(h("div", { class: "floor-layout" }, tabs, card));
 }
 
+// 클립보드 복사 (구형 브라우저는 textarea 방식으로)
+function copyText(text, btn) {
+  const done = ok => {
+    const old = btn.dataset.label || btn.textContent;
+    btn.dataset.label = old;
+    btn.textContent = ok ? "복사됨 ✓" : "복사 실패";
+    btn.classList.toggle("done", ok);
+    clearTimeout(btn._t);
+    btn._t = setTimeout(() => { btn.textContent = old; btn.classList.remove("done"); }, 1600);
+  };
+  const fallback = () => {
+    const ta = document.createElement("textarea");
+    ta.value = text; ta.setAttribute("readonly", ""); ta.style.cssText = "position:fixed;top:-1000px;opacity:0";
+    document.body.appendChild(ta); ta.select();
+    let ok = false; try { ok = document.execCommand("copy"); } catch (e) {}
+    ta.remove(); done(ok);
+  };
+  if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(text).then(() => done(true), fallback);
+  else fallback();
+}
+
 // ---------- 셔틀 ----------
 function renderShuttle() {
   const v = $("view-shuttle");
@@ -1091,8 +1218,10 @@ function renderShuttle() {
   v.append(pageHead("오시는 길", ART.ring));
   v.append(h("div", { class: "card", style: "margin-bottom:16px" },
     h("div", { class: "section-label" }, "행사장"),
-    h("div", { style: "font-weight:800;font-size:17px" }, EVENT.venue),
-    EVENT.venueAddress ? h("div", { class: "muted small" }, EVENT.venueAddress) : null,
+    h("div", { class: "venue-row" },
+      h("span", { class: "venue-name" }, EVENT.venue),
+      EVENT.venueAddress ? h("span", { class: "venue-addr" }, EVENT.venueAddress) : null,
+      EVENT.venueAddress ? h("button", { class: "copy-btn", type: "button", onclick: e => copyText(EVENT.venueAddress, e.currentTarget) }, "주소 복사") : null),
     EVENT.mapUrl ? h("a", { class: "btn", href: EVENT.mapUrl, target: "_blank", rel: "noopener" }, "지도에서 보기") : null));
   const d = dayOf(EVENT.shuttleDay), t = now();
   const isToday = todayDay() && todayDay().id === d.id;
@@ -1119,8 +1248,7 @@ function renderJoin() {
   v.textContent = "";
   v.append(pageHead("이벤트", ART.star));
   const L = EVENT.luckyDraw, sv = L.surveys;
-  const tiles = [...Array(sv.exhibit).fill("전시"), ...Array(sv.talk).fill("발표")]
-    .map((k, i) => h("span", { class: "ld-tile" + (k === "발표" ? " talk" : "") }, `${k} ${k === "전시" ? i + 1 : i - sv.exhibit + 1}`));
+  const tiles = L.surveyNames.map(x => h("span", { class: "ld-tile" + (x.talk ? " talk" : "") }, x.name));
   v.append(h("div", { class: "stack" },
     h("div", { class: "card ld-hero" },
       h("span", { class: "badge", style: "--c:var(--accent-2)" }, "🎁 Lucky Draw"),
