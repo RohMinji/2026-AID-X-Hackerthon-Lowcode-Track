@@ -253,11 +253,11 @@
   .zone-desc { margin: 0; font-size: 15px; line-height: 1.75; color: #ece9ff; }
   .zone-rows { align-self: stretch; display: grid; gap: 10px; }
   .zone-row {
-    display: grid; grid-template-columns: 64px 1fr; align-items: center; text-align: left;
+    display: grid; grid-template-columns: 48px 1fr; align-items: center; text-align: left;
     padding: 8px 14px 8px 8px; border-radius: 14px;
     border: 1.5px solid rgba(130, 100, 255, .75); box-shadow: 0 0 14px rgba(110, 80, 255, .35), inset 0 0 14px rgba(110, 80, 255, .15);
   }
-  .zone-row img { width: 56px; height: auto; display: block; }
+  .zone-row img { width: 39px; height: auto; display: block; margin: 0 auto; }
   .zone-row > div { border-left: 1.5px solid rgba(130, 100, 255, .7); padding-left: 12px; }
   .zone-row b {
     display: block; font-size: 16px; font-weight: 900;
@@ -275,8 +275,8 @@
     .zone-sub { font-size: 15px; }
     .zone-tag { font-size: 14px; }
     .zone-desc { font-size: 13px; letter-spacing: -0.02em; }
-    .zone-row { grid-template-columns: 52px 1fr; padding: 6px 10px 6px 6px; }
-    .zone-row img { width: 46px; }
+    .zone-row { grid-template-columns: 42px 1fr; padding: 6px 10px 6px 6px; }
+    .zone-row img { width: 32px; }
     .zone-row > div { padding-left: 10px; }
     .zone-row b { font-size: 14px; }
     .zone-row span { font-size: 13px; }
@@ -528,6 +528,7 @@
   .ld-prize { text-align: center; padding: 16px 8px; border-radius: 14px; background: var(--surface); border: 1px solid var(--border); }
   .ld-prize .i { font-size: 28px; line-height: 1; }
   .ld-prize .r { margin-top: 8px; font-size: 15px; font-weight: 900; }
+  .ld-prize .p span { display: block; }
   .ld-prize .p { font-size: 13px; color: var(--ink-dim); margin-top: 2px; line-height: 1.4; }
   .ld-prizes > :last-child:nth-child(odd) { grid-column: 1 / -1; }
   .venue-row { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; }
@@ -683,7 +684,7 @@ const EVENT = {
   // 층 안내: map에 평면도 이미지 주소를 넣으면 같이 보여줘요 (예: "floor-1f.png")
   //          facilities에 편의시설을 넣으면 '편의시설' 목록으로 보여줘요
   floors: [
-    { id: "8F", name: "8층", title: "Low-Code 해커톤/전시 영역 배치도", map: "img/floor-8f.webp", facilities: [] },
+    { id: "8F", name: "8층", title: "Low-Code 해커톤/전시 영역 배치도", map: "img/floor-8f.webp", facilities: ["수유실"] },
     { id: "2F", name: "2층", title: "Pro-Code 해커톤 영역 배치도",     map: "img/floor-2f.webp", facilities: [] },
     { id: "1F", name: "1층", title: "발표/전시 영역 배치도",           map: "img/floor-1f.webp", facilities: [] },
     { id: "B1", name: "지하 1층", title: "Cafeteria · 점심식사 공간",   map: "", facilities: [] },
@@ -748,8 +749,8 @@ const EVENT = {
   // 셔틀: 운행일 하루 (shuttleDay = days의 id). times는 [출발 시각, 대수]
   shuttleDay: "d2",
   shuttles: [
-    { name: "광화문사옥 → 판교사옥", times: [["09:00", 1], ["10:00", 2], ["11:00", 2], ["13:00", 2]] },
-    { name: "우면사옥 → 판교사옥",   times: [["10:00", 1], ["11:00", 1]] },
+    { name: "광화문사옥 → 판교사옥", times: [["09:30", 1], ["10:30", 2], ["11:30", 2], ["13:30", 2]] },
+    { name: "우면사옥 → 판교사옥",   times: [["09:30", 1], ["13:30", 1]] },
   ],
 
   // 이벤트 탭: Lucky Draw
@@ -774,9 +775,9 @@ const EVENT = {
     prizes: [
       { rank: "1등", icon: "🥇", prize: "당일공개" },
       { rank: "2등", icon: "🥈", prize: "당일공개" },
-      { rank: "3등", icon: "🥉", prize: "인터콘티넨탈 뷔페 2인 식사권" },
-      { rank: "4등", icon: "🎁", prize: "배달의민족 모바일 상품권 5만원" },
-      { rank: "5등", icon: "☕", prize: "스타벅스 모바일 상품권 3만원" },
+      { rank: "3등", icon: "🥉", prize: ["인터콘티넨탈 뷔페", "2인 식사권"] },
+      { rank: "4등", icon: "🎁", prize: ["배달의민족", "모바일 상품권 5만원"] },
+      { rank: "5등", icon: "☕", prize: ["스타벅스", "모바일 상품권 3만원"] },
     ],
     prizeNote: "경품은 행사 운영 상황에 따라 변경될 수 있습니다.",
   },
@@ -1299,7 +1300,7 @@ function renderJoin() {
 
     h("div", { class: "card" }, h("div", { class: "section-label" }, "🏆 경품 안내"),
       h("div", { class: "ld-prizes" }, L.prizes.map(x => h("div", { class: "ld-prize" },
-        h("div", { class: "i" }, x.icon), h("div", { class: "r" }, x.rank), h("div", { class: "p" }, x.prize)))),
+        h("div", { class: "i" }, x.icon), h("div", { class: "r" }, x.rank), h("div", { class: "p" }, [].concat(x.prize).map(t => h("span", {}, t)))))),
       h("p", { class: "muted small", style: "margin:12px 0 0" }, "※ " + L.prizeNote)),
 
     h("div", { class: "card" }, h("div", { class: "section-label" }, "문의"),
