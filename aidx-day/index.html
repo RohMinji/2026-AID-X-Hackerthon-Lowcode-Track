@@ -220,7 +220,7 @@
   .now-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; margin-bottom: 10px; }
   .now-head h3 { margin: 0; font-size: 16px; }
 
-  /* 홈: 행사 구성 (이미지 3장, 투명 배경) */
+  /* 홈: 행사 구성 3파트 (투명 배경, 글자는 HTML) */
   .zones { margin: 0 calc(-1 * var(--gutter)); min-width: 0; }
   .stack > * { min-width: 0; }
   .zones-track {
@@ -228,16 +228,58 @@
     overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none;
   }
   .zones-track::-webkit-scrollbar { display: none; }
-  .zone-card { scroll-snap-align: center; display: flex; justify-content: center; padding: 0 var(--gutter); }
-  .zone-card img { display: block; width: 100%; max-width: 380px; height: auto; }
-  .zone-dots { display: flex; justify-content: center; gap: 6px; margin-top: 6px; }
+  .zone-card {
+    scroll-snap-align: center; display: flex; flex-direction: column; align-items: center; text-align: center;
+    padding: 6px calc(var(--gutter) + 8px) 4px;
+  }
+  .zone-top { align-self: stretch; display: flex; justify-content: space-between; align-items: center; }
+  .zone-no { font-size: 30px; font-weight: 900; letter-spacing: -0.02em; color: #fff; text-shadow: 0 0 18px rgba(170, 150, 255, .35); }
+  .zone-floor {
+    font-size: 15px; font-weight: 800; color: #fff; padding: 6px 16px; border-radius: 999px;
+    background: linear-gradient(135deg, #5a3cff, #7d4bff); box-shadow: 0 0 18px rgba(110, 70, 255, .55);
+  }
+  .zone-title {
+    margin: 10px 0 0; font-size: 28px; line-height: 1.1; font-weight: 900; letter-spacing: -0.02em; color: #fff;
+    text-shadow: 0 0 24px rgba(170, 150, 255, .3);
+  }
+  .zone-title span { display: block; }
+  .zone-sub { margin: 10px 0 0; font-size: 16px; font-weight: 800; color: #f1eeff; }
+  .zone-tag {
+    margin: 4px 0 0; font-size: 15px; font-weight: 900; letter-spacing: .01em;
+    background: var(--zg); -webkit-background-clip: text; background-clip: text; color: transparent;
+    filter: drop-shadow(0 0 10px var(--zglow));
+  }
+  .zone-art { width: 64%; max-width: 230px; aspect-ratio: 1; object-fit: contain; margin: 10px 0 6px; }
+  .zone-desc { margin: 0; font-size: 15px; line-height: 1.75; color: #ece9ff; }
+  .zone-rows { align-self: stretch; display: grid; gap: 10px; }
+  .zone-row {
+    display: grid; grid-template-columns: 64px 1fr; align-items: center; text-align: left;
+    padding: 8px 14px 8px 8px; border-radius: 14px;
+    border: 1.5px solid rgba(130, 100, 255, .75); box-shadow: 0 0 14px rgba(110, 80, 255, .35), inset 0 0 14px rgba(110, 80, 255, .15);
+  }
+  .zone-row img { width: 56px; height: auto; display: block; }
+  .zone-row > div { border-left: 1.5px solid rgba(130, 100, 255, .7); padding-left: 12px; }
+  .zone-row b {
+    display: block; font-size: 16px; font-weight: 900;
+    background: linear-gradient(90deg, #e1a8ff, #a98bff); -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .zone-row span { display: block; font-size: 15px; font-weight: 700; color: #fff; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .zone-dots { display: flex; justify-content: center; gap: 6px; margin-top: 10px; }
   .zone-dots button { width: 7px; height: 7px; padding: 0; border: 0; border-radius: 999px; background: rgba(255,255,255,.25); cursor: pointer; transition: width .2s; }
   .zone-dots button.on { width: 20px; background: var(--accent); }
   @media (min-width: 1000px) {
     .zones { margin: 8px 0; }
-    .zones-track { grid-auto-flow: row; grid-template-columns: repeat(3, 1fr); overflow: visible; gap: 12px; max-width: 940px; margin: 0 auto; }
+    .zones-track { grid-auto-flow: row; grid-template-columns: repeat(3, 1fr); overflow: visible; gap: 20px; }
     .zone-card { padding: 0; }
-    .zone-card img { max-width: none; }
+    .zone-title { font-size: 26px; }
+    .zone-sub { font-size: 15px; }
+    .zone-tag { font-size: 14px; }
+    .zone-desc { font-size: 13px; letter-spacing: -0.02em; }
+    .zone-row { grid-template-columns: 52px 1fr; padding: 6px 10px 6px 6px; }
+    .zone-row img { width: 46px; }
+    .zone-row > div { padding-left: 10px; }
+    .zone-row b { font-size: 14px; }
+    .zone-row span { font-size: 13px; }
     .zone-dots { display: none; }
   }
 
@@ -732,9 +774,18 @@ const EVENT = {
 
   // 홈 '행사 구성' 카드 3개
   zones: [
-    { img: "img/zone-1.webp", alt: "01 · 1F EXHIBITION & PRESENTATION — 네 가지 관점으로 만나는 AX (BIZ · TECH · WORK · INNOVATION). EXHIBITION 09:00–16:00 상시 관람, PRESENTATION 10:10–12:00 · 14:10–15:00" },
-    { img: "img/zone-2.webp", alt: "02 · 2F/8F HACKATHON FINAL ROUND — 아이디어를 업무에서 동작하는 AI로 (LOW CODE · PRO CODE). 이틀 간의 도전 끝에 펼쳐지는 Final Round, 업무 아이디어가 실제 AI로 구현되는 과정을 직접 만나보세요." },
-    { img: "img/zone-3.webp", alt: "03 · 8F AX TECH CONNECT — AI로 미래와 혁신을 연결하다 (TECH INSIGHT). 기술과 사람, 연구와 사업을 연결하는 AX의 미래를 직접 체험하세요." },
+    { floor: "1F", title: ["EXHIBITION &", "PRESENTATION"], sub: "네 가지 관점으로 만나는 AX", tag: "BIZ · TECH · WORK · INNOVATION",
+      tagGrad: "linear-gradient(90deg, #ff8be0, #c58bff 55%, #ff9ae6)", glow: "rgba(230, 120, 255, .45)", art: "img/zone-layers.webp",
+      rows: [
+        { label: "EXHIBITION", time: "09:00 – 16:00  |  상시 관람", icon: "img/ico-laptop.webp" },
+        { label: "PRESENTATION", time: "10:10 – 12:00 · 14:10 – 15:00", icon: "img/ico-mic.webp" },
+      ] },
+    { floor: "2F/8F", title: ["HACKATHON", "FINAL ROUND"], sub: "아이디어를 업무에서 동작하는 AI로", tag: "LOW CODE · PRO CODE",
+      tagGrad: "linear-gradient(90deg, #39c6ff, #5b8bff)", glow: "rgba(60, 170, 255, .5)", art: "img/zone-ai.webp",
+      desc: ["이틀 간의 도전 끝에 펼쳐지는 Final Round,", "업무 아이디어가 실제 AI로 구현되는", "과정을 직접 만나보세요."] },
+    { floor: "8F", title: ["AX TECH", "CONNECT"], sub: "AI로 미래와 혁신을 연결하다", tag: "TECH INSIGHT",
+      tagGrad: "linear-gradient(90deg, #c08bff, #9d7bff)", glow: "rgba(170, 120, 255, .5)", art: "img/zone-ring.webp",
+      desc: ["기술과 사람, 연구와 사업을 연결하는 AX의 미래.", "AI · 데이터 기술이 만들어갈", "새로운 고객 경험과", "비즈니스의 미래를 직접 체험하세요."] },
   ],
 
   notices: [
@@ -945,8 +996,15 @@ function renderHome() {
 
 // 홈: 행사 구성 3파트 (PC 3열, 모바일 캐러셀)
 function zonesBlock() {
-  const track = h("div", { class: "zones-track" }, EVENT.zones.map(z => h("article", { class: "zone-card" },
-    h("img", { src: z.img, alt: z.alt, width: "566", height: "786" }))));
+  const track = h("div", { class: "zones-track" }, EVENT.zones.map((z, i) => h("article", { class: "zone-card", style: `--zg:${z.tagGrad};--zglow:${z.glow}` },
+    h("div", { class: "zone-top" }, h("span", { class: "zone-no" }, String(i + 1).padStart(2, "0")), h("span", { class: "zone-floor" }, z.floor)),
+    h("h3", { class: "zone-title" }, z.title.map(x => h("span", {}, x))),
+    h("p", { class: "zone-sub" }, z.sub),
+    h("p", { class: "zone-tag" }, z.tag),
+    h("img", { class: "zone-art float", src: z.art, alt: "", "aria-hidden": "true", style: `--r:0deg;animation-delay:${-i * 1.5}s` }),
+    z.rows ? h("div", { class: "zone-rows" }, z.rows.map(r => h("div", { class: "zone-row" },
+      h("img", { src: r.icon, alt: "" }), h("div", {}, h("b", {}, r.label), h("span", {}, r.time)))))
+      : h("p", { class: "zone-desc" }, z.desc.flatMap((x, k) => k ? [h("br"), x] : [x])))));
   const dots = h("div", { class: "zone-dots" }, EVENT.zones.map((z, i) =>
     h("button", { type: "button", "aria-label": `${i + 1}번째 파트`, onclick: () => go(i) })));
   const go = i => track.scrollTo({ left: track.children[i].offsetLeft - track.offsetLeft, behavior: "smooth" });
