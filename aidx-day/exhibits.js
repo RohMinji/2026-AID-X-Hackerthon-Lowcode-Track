@@ -108,7 +108,6 @@ const EXHIBITS = [
 const TECH_CONNECT = {
   name: "AX Tech Connect", place: "KT 판교 빌딩 8F", color: "#f2c46d",
   items: [
-    { title: "토큰팩토리", place: "전략회의실" },
     { title: "KT AI 경쟁력 믿:음 K 3.0 / Arena", place: "교육장" },
     { title: "차세대 음성 에이전트 Full-Duplex Speech to Speech" },
     { title: "나만의 1:1 Agent KT-Claw (모두의 AI)" },
