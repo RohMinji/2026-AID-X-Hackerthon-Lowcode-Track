@@ -226,6 +226,7 @@
     background: var(--panel); border: 1px solid var(--border); text-decoration: none; font-weight: 800; font-size: 15px;
     box-shadow: var(--shadow); transition: transform .15s, border-color .15s;
   }
+  .quick a:last-child:nth-child(odd) { grid-column: 1 / -1; }
   .quick a:hover { transform: translateY(-2px); border-color: rgba(88, 80, 255, .35); }
   .quick a svg { width: 22px; height: 22px; stroke: var(--accent); fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; flex: none; }
   .quick a span small { display: block; font-weight: 500; font-size: 12px; color: var(--ink-dim); }
@@ -282,6 +283,8 @@
   .tc-title { font-size: 15px; font-weight: 800; margin-top: 6px; line-height: 1.4; }
   .tc.is-now { border-color: var(--c); background: color-mix(in srgb, var(--c) 14%, transparent); }
   .tc.is-past { opacity: .5; }
+  .tc.is-break { background: transparent; border-style: dashed; box-shadow: none; }
+  .tc.is-break .tc-title { color: var(--ink-dim); font-weight: 600; }
 
   /* AX Tech Connect 목록 */
   .connect-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
@@ -474,7 +477,8 @@
   @media (min-width: 720px) {
     :root { --gutter: 28px; }
     .ex-grid { grid-template-columns: 1fr 1fr; }
-    .quick { grid-template-columns: repeat(4, 1fr); }
+    .quick { grid-template-columns: repeat(5, 1fr); }
+    .quick a:last-child:nth-child(odd) { grid-column: auto; }
     .home-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
     .home-grid > :only-child { grid-column: 1 / -1; }
     .rooms { grid-template-columns: 1fr 1fr; }
@@ -568,7 +572,7 @@
    ===================================================================== */
 const EVENT = {
   title: "AID-X Day",
-  tagline: "AI와 데이터로 일하는 방식을 바꾸는 이틀",
+  tagline: "AI 기술을 넘어, 실제 업무의 궤도에 안착하다.",
   venue: "KT 판교 빌딩",
   venueAddress: "",   // 주소가 정해지면 넣어 주세요 (비워 두면 숨겨져요)
   mapUrl: "https://map.naver.com/p/search/KT%20%ED%8C%90%EA%B5%90%20%EB%B9%8C%EB%94%A9",
@@ -622,6 +626,9 @@ const EVENT = {
       { no: "Special", zone: "tech", start: "11:40", end: "12:00", title: "KT와 Microsoft 가 함께 그려나가는 AI Governance의 미래" },
       { no: "9",       zone: "tech", start: "14:10", end: "14:30", title: "kode:crew 개발 Story – AI가 만들고 사람이 결정한다" },
       { no: "10",      zone: "tech", start: "14:40", end: "15:00", title: "AI 자동화로 출판사와 협업하는 방식을 바꾸다." },
+      { zone: null, start: "12:00", end: "13:30", title: "점심시간", break: true },
+      { zone: null, start: "16:00", end: "16:30", title: "AID-X Day & 해커톤 시상식" },
+      { zone: null, start: "16:30", end: "17:00", title: "이벤트 & Lucky Draw" },
     ],
   },
 
@@ -630,16 +637,9 @@ const EVENT = {
   programs: {
     day: {
       tab: "AID-X Day", name: "AID-X Day", dates: "10.15 (목)", color: "#b48cff",
-      groups: [
-        { day: "d2", title: "10.15 (목)", items: [
-          { times: [["10:00", "12:00"]], title: "오프닝 및 개회사" },
-          { times: [["10:10", "10:30"], ["10:40", "11:00"], ["11:10", "11:30"]], title: "Biz/Tech/Work 발표세션" },
-          { times: [["12:00", "13:30"]], title: "점심시간", break: true },
-          { times: [["14:10", "14:30"], ["14:40", "15:00"]], title: "Biz/Tech/Work 발표세션" },
-          { times: [["16:00", "16:30"]], title: "AID-X Day & 해커톤 시상식" },
-          { times: [["16:30", "17:00"]], title: "이벤트 & Lucky Draw" },
-        ] },
-      ],
+      chip: "AID-X Day • AX Tech Connect",   // 홈 날짜 칩에 보이는 이름
+      fromTalks: true,                        // 일정은 위 talks(발표 세션)에서 만들어요
+      groups: [],
     },
     hackathon: {
       tab: "HackaThon", name: "AID-X HackaThon", dates: "10.14 (수) – 10.15 (목)", color: "#7f9dff",
@@ -749,6 +749,12 @@ if (nowParam) {
 const now = () => Date.now() + offset;
 const kstDate = t => new Date(t + 9 * 3600e3).toISOString().slice(0, 10);
 
+// AID-X Day 일정 = 발표 세션 목록
+Object.values(EVENT.programs).filter(pr => pr.fromTalks).forEach(pr => {
+  pr.groups = [{ day: EVENT.talks.day, title: pr.dates, items: EVENT.talks.items.map(x =>
+    ({ times: [[x.start, x.end]], title: x.title, break: x.break, zone: x.zone, no: x.no })) }];
+});
+
 // 일정 항목에 절대 시각을 붙여 둠 (여러 회차면 회차별로)
 const ITEMS = [];
 Object.entries(EVENT.programs).forEach(([key, prog]) => prog.groups.forEach(g => {
@@ -811,7 +817,7 @@ function renderHome() {
       h("h1", { class: "logo-h1" }, h("img", { src: LOGO, alt: EVENT.title, width: "1051", height: "268" })),
       h("p", { class: "tagline" }, EVENT.tagline),
       h("div", { class: "meta-row" },
-        Object.values(EVENT.programs).map(pr => h("span", { class: "meta" }, h("b", { class: "meta-k" }, pr.tab), pr.dates)),
+        Object.values(EVENT.programs).map(pr => h("span", { class: "meta" }, h("b", { class: "meta-k" }, pr.chip || pr.tab), pr.dates)),
         h("span", { class: "meta" }, `📍 ${EVENT.venue}`)))));
 
   const grid = h("div", { class: "stack" });
@@ -875,6 +881,7 @@ function renderHome() {
     program: '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',
     floors: '<path d="M12 3l9 5-9 5-9-5 9-5z"/><path d="M3 13l9 5 9-5"/>',
     shuttle: '<rect x="4" y="3" width="16" height="14" rx="3"/><path d="M4 11h16M7 17v3M17 17v3"/>',
+    connect: '<path d="M12 3l2.2 5.8L20 11l-5.8 2.2L12 19l-2.2-5.8L4 11l5.8-2.2z"/>',
     join: '<path d="M9 11l3 3 8-8"/><path d="M20 12v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h9"/>',
   };
   const q = (href, key, label, sub) => {
@@ -886,7 +893,8 @@ function renderHome() {
     q("#program", "program", "프로그램", `일정 · 전시 ${EXHIBITS.length}개`),
     q("#floors", "floors", "층별 안내", "강연장·편의시설"),
     q("#shuttle", "shuttle", "오시는 길", "위치·셔틀"),
-    q("#join", "join", "이벤트", "Lucky Draw")));
+    q("#join", "join", "이벤트", "Lucky Draw"),
+    q("#program/connect", "connect", "AX Tech Connect", `8F 별도 전시 ${TECH_CONNECT.items.length}개`)));
 
   v.append(grid);
   tickCountdown();
@@ -925,6 +933,7 @@ function renderProgram() {
 
   const pr = EVENT.programs[state.prog];
   const t = now();
+  if (pr.fromTalks) { v.append(talksCard(t, pr)); return; }
   const card = h("div", { class: "card", style: `--c:${pr.color}` },
     h("div", { class: "prog-head" }, h("h3", {}, pr.name), h("span", { class: "muted small" }, pr.dates)));
   pr.groups.forEach(g => {
@@ -947,15 +956,14 @@ function renderProgram() {
   });
   if (pr.groups.length > 1) card.append(schedGrid(pr, t));
   v.append(card);
-  if (state.prog === "day") v.append(talksCard(t));
 }
 
 // 발표 세션표: 행 = 시작 시각, 열 = 존 (PC), 모바일은 시각별로 쌓아서
-function talksCard(t) {
+function talksCard(t, pr) {
   const T = EVENT.talks, d = dayOf(T.day), zones = Object.entries(T.zones);
   const starts = [...new Set(T.items.map(x => x.start))].sort();
-  const card = h("div", { class: "card talks", style: "margin-top:16px" },
-    h("div", { class: "prog-head" }, h("h3", { style: "color:var(--ink)" }, "발표 세션"), h("span", { class: "muted small" }, `${d.sub} · 1F`)),
+  const card = h("div", { class: "card talks", style: `--c:${pr.color}` },
+    h("div", { class: "prog-head" }, h("h3", {}, pr.name), h("span", { class: "muted small" }, pr.dates)),
     h("div", { class: "tr tr-head" }, h("div", {}),
       h("div", { class: "tr-cells" }, zones.map(([, z]) => h("div", { class: "tz", style: `--c:${z.color}` }, z.name)))));
   starts.forEach(st => {
@@ -964,10 +972,11 @@ function talksCard(t) {
       const z = x.zone ? T.zones[x.zone] : null;
       const t0 = at(d.date, x.start), t1 = at(d.date, x.end);
       const live = t0 <= t && t < t1;
-      return h("div", { class: "tc" + (z ? "" : " full") + (live ? " is-now" : t >= t1 ? " is-past" : ""), style: `--c:${z ? z.color : "var(--accent)"}` },
+      const label = !x.no ? "" : (x.no === "Intro" || x.no === "Special" ? x.no : "No." + x.no) + " · ";
+      return h("div", { class: "tc" + (z ? "" : " full") + (x.break ? " is-break" : "") + (live ? " is-now" : t >= t1 ? " is-past" : ""), style: `--c:${z ? z.color : "var(--accent)"}` },
         h("div", { class: "tc-meta" },
-          h("span", { class: "badge" }, z ? z.name : "공통"),
-          h("span", { class: "faint small" }, `${x.no === "Intro" || x.no === "Special" ? x.no : "No." + x.no} · ${x.start}–${x.end}`),
+          z || x.no ? h("span", { class: "badge" }, z ? z.name : "공통") : null,
+          h("span", { class: "faint small" }, `${label}${x.start}–${x.end}`),
           live ? h("span", { class: "small", style: "color:var(--live);font-weight:700" }, h("span", { class: "live-dot" }), "진행 중") : null),
         h("div", { class: "tc-title" }, x.title));
     };
@@ -1145,6 +1154,7 @@ function route() {
   const [tab, sub] = (location.hash || "#home").slice(1).split("/");
   state.tab = renderers[tab] ? tab : "home";
   if (state.tab === "program" && (sub === "schedule" || sub === "exhibit")) state.view = sub;
+  if (state.tab === "program" && sub === "connect") { state.view = "exhibit"; state.part = "connect"; }
   document.querySelectorAll(".tab").forEach(a => { if (a.dataset.tab === state.tab) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current"); });
   document.querySelectorAll(".view").forEach(s => s.classList.toggle("active", s.id === "view-" + state.tab));
   renderers[state.tab]();
