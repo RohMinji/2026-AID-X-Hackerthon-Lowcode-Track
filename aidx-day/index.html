@@ -919,6 +919,7 @@ const state = {
   view: "schedule",
   prog: todayDay() && todayDay().id === "d1" ? "hackathon" : "day",
   part: "all",
+  exTab: "day",
   track: "all",
   floor: EVENT.floors.find(f => f.id === "1F") ? "1F" : EVENT.floors[0].id,
   highlightRoom: null,
@@ -1082,7 +1083,7 @@ function renderProgram() {
     }),
     state.view === "schedule"
       ? seg(Object.entries(EVENT.programs).map(([k, pr]) => ({ value: k, label: pr.tab })), state.prog, x => { state.prog = x; renderProgram(); })
-      : null));
+      : seg([{ value: "day", label: "AID-X Day" }, { value: "connect", label: TECH_CONNECT.name }], state.exTab, x => { state.exTab = x; renderProgram(); })));
 
   if (state.view === "exhibit") { renderExhibits(v); return; }
 
@@ -1172,20 +1173,30 @@ function schedGrid(pr, t) {
 
 // ---------- 전시 목록 (상세: agenda01 ~ agenda28) ----------
 function renderExhibits(v) {
+  if (state.exTab === "connect") {
+    const C = TECH_CONNECT;
+    v.append(h("div", { class: "ex-place" },
+      h("div", {}, "📍 KT 판교 빌딩 · ", h("b", {}, C.place.replace(/^KT 판교 빌딩 /, "")), ` · 별도 전시 ${C.items.length}개`),
+      h("div", { class: "faint" }, EXHIBIT_HOURS)));
+    v.append(h("section", { class: "ex-part", style: `--c:${C.color}` },
+      h("ol", { class: "connect-list" }, C.items.map((x, i) => h("li", {},
+        h("span", { class: "n" }, String(i + 1).padStart(2, "0")),
+        h("span", { class: "t" }, x.title),
+        x.place ? h("span", { class: "badge" }, x.place) : null)))));
+    return;
+  }
+
   v.append(h("div", { class: "ex-place" },
-    h("div", {}, "📍 KT 판교 빌딩 · ", h("b", {}, "1F"), " 전시 · ", h("b", {}, TECH_CONNECT.place.replace(/^KT 판교 빌딩 /, "")), ` ${TECH_CONNECT.name}`),
+    h("div", {}, "📍 KT 판교 빌딩 · ", h("b", {}, "1F"), ` · 전시 ${EXHIBITS.length}개`),
     h("div", { class: "faint" }, EXHIBIT_HOURS)));
-  // 카테고리 버튼: 선택한 것이 맨 앞으로, 다시 누르면 선택 해제 → 원래 순서
   const cats = [
     { key: "all", label: `전체 ${EXHIBITS.length}` },
     ...Object.entries(PARTS).map(([k, p]) => ({ key: k, color: p.color, label: `${p.name} ${EXHIBITS.filter(e => e.part === k).length}` })),
-    { key: "connect", color: TECH_CONNECT.color, label: `${TECH_CONNECT.name} ${TECH_CONNECT.items.length}` },
   ];
-  const sel = cats.find(c => c.key === state.part && c.key !== "all");
-  const ordered = sel ? [sel, ...cats.filter(c => c !== sel)] : cats;
-  v.append(chipScroller(h("div", { class: "chips" }, ordered.map(c =>
+  if (!cats.some(c => c.key === state.part)) state.part = "all";
+  v.append(chipScroller(h("div", { class: "chips" }, cats.map(c =>
     h("button", { class: "chip", style: c.color ? `--c:${c.color}` : null, "aria-pressed": String(state.part === c.key),
-      onclick: () => { state.part = state.part === c.key ? "all" : c.key; renderProgram(); } }, c.label)))));
+      onclick: () => { state.part = c.key; renderProgram(); } }, c.label)))));
 
   const parts = Object.entries(PARTS).filter(([k]) => state.part === "all" || state.part === k);
   parts.forEach(([k, p]) => {
@@ -1205,15 +1216,6 @@ function renderExhibits(v) {
           e.summary ? h("div", { class: "ex-sum" }, e.summary) : null,
           h("div", { class: "ex-more" }, "자세히 보기 →"))))));
   });
-  if (state.part === "all" || state.part === "connect") {
-    const C = TECH_CONNECT;
-    v.append(h("section", { class: "ex-part", style: `--c:${C.color}` },
-      h("div", { class: "ex-part-head" }, h("h3", {}, C.name), h("span", { class: "muted small" }, `별도 전시 · ${C.place} · ${C.items.length}개`)),
-      h("ol", { class: "connect-list" }, C.items.map((x, i) => h("li", {},
-        h("span", { class: "n" }, String(i + 1).padStart(2, "0")),
-        h("span", { class: "t" }, x.title),
-        x.place ? h("span", { class: "badge" }, x.place) : null)))));
-  }
 }
 
 // 가로로 넘치는 버튼 줄: 오른쪽 끝에 흐림 + 화살표로 '더 있음' 표시
@@ -1358,7 +1360,7 @@ function route() {
   const [tab, sub] = (location.hash || "#home").slice(1).split("/");
   state.tab = renderers[tab] ? tab : "home";
   if (state.tab === "program" && (sub === "schedule" || sub === "exhibit")) state.view = sub;
-  if (state.tab === "program" && sub === "connect") { state.view = "exhibit"; state.part = "connect"; }
+  if (state.tab === "program" && sub === "connect") { state.view = "exhibit"; state.exTab = "connect"; }
   document.querySelectorAll(".tab").forEach(a => { if (a.dataset.tab === state.tab) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current"); });
   document.querySelectorAll(".view").forEach(s => s.classList.toggle("active", s.id === "view-" + state.tab));
   renderers[state.tab]();
