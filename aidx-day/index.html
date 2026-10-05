@@ -675,8 +675,8 @@ const EVENT = {
     expo1:  { name: "AID-X Day 전시",     floor: "1F", desc: "Innovation · Biz · Tech · Work 전시 29개" },
     cafe:   { name: "카페",               floor: "1F", desc: "" },
     bus:    { name: "셔틀버스 하차장",    floor: "1F", desc: "광화문사옥 · 우면사옥 셔틀 하차" },
-    pro:    { name: "HackaThon Pro-Code", floor: "2F", desc: "" },
-    low:    { name: "HackaThon Low-Code", floor: "8F", desc: "" },
+    pro:    { name: "Hackathon Pro-Code", floor: "2F", desc: "" },
+    low:    { name: "Hackathon Low-Code", floor: "8F", desc: "" },
     expo8:  { name: "AX Tech Connect",    floor: "8F", desc: "별도 전시 13개 · 캡슐 뽑기 이벤트" },
     lunch:  { name: "Cafeteria",          floor: "B1", desc: "점심식사 공간" },
   },
@@ -716,7 +716,7 @@ const EVENT = {
     ],
   },
 
-  // 일정: AID-X Day / HackaThon 두 탭. times는 [시작, 끝] 목록 (여러 회차면 여러 개)
+  // 일정: AID-X Day / Hackathon 두 탭. times는 [시작, 끝] 목록 (여러 회차면 여러 개)
   //       break: true 이면 흐리게 표시 (점심시간 등)
   programs: {
     day: {
@@ -726,7 +726,7 @@ const EVENT = {
       groups: [],
     },
     hackathon: {
-      tab: "HackaThon", name: "AID-X HackaThon", dates: "10.14 (수) – 10.15 (목)", color: "#7f9dff",
+      tab: "Hackathon", name: "AID-X Hackathon", dates: "10.14 (수) – 10.15 (목)", color: "#7f9dff",
       groups: [
         { day: "d1", title: "1일차 · 10.14 (수)", items: [
           { times: [["09:00", "09:30"]], title: "참가자 등록 및 웰컴키트 배부" },
@@ -804,9 +804,9 @@ const EVENT = {
 
   contacts: [
     { label: "AID-X Day", email: "aidx.day@kt.com" },
-    { label: "HackaThon", email: "aidx.hackathon@kt.com" },
+    { label: "Hackathon", email: "aidx.hackathon@kt.com" },
   ],
-  footer: "kt AID-X Day & HackaThon",
+  footer: "kt AID-X Day & Hackathon",
 };
 /* ===================================================================== */
 

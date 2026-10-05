@@ -94,5 +94,5 @@
   side.append(same);
   app.append(h("div", { class: "wrap" }, head, visual,
     h("div", { class: "layout" }, h("div", {}, main, pager), side),
-    h("footer", {}, "kt AID-X Day & HackaThon")));
+    h("footer", {}, "kt AID-X Day & Hackathon")));
 })();
