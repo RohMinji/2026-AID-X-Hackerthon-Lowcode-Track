@@ -918,8 +918,7 @@ const state = {
   day: (todayDay() || EVENT.days[0]).id,
   view: "schedule",
   prog: todayDay() && todayDay().id === "d1" ? "hackathon" : "day",
-  part: "all",
-  exTab: "day",
+  part: "innovation",
   track: "all",
   floor: EVENT.floors.find(f => f.id === "1F") ? "1F" : EVENT.floors[0].id,
   highlightRoom: null,
@@ -1083,7 +1082,7 @@ function renderProgram() {
     }),
     state.view === "schedule"
       ? seg(Object.entries(EVENT.programs).map(([k, pr]) => ({ value: k, label: pr.tab })), state.prog, x => { state.prog = x; renderProgram(); })
-      : seg([{ value: "day", label: "AID-X Day" }, { value: "connect", label: TECH_CONNECT.name }], state.exTab, x => { state.exTab = x; renderProgram(); })));
+      : null));
 
   if (state.view === "exhibit") { renderExhibits(v); return; }
 
@@ -1173,11 +1172,22 @@ function schedGrid(pr, t) {
 
 // ---------- 전시 목록 (상세: agenda01 ~ agenda28) ----------
 function renderExhibits(v) {
-  if (state.exTab === "connect") {
+  // 카테고리: Innovation · Biz · Tech · Work (1F) · AX Tech Connect (8F) — 하나씩 골라 봄
+  const cats = [
+    ...Object.entries(PARTS).map(([k, p]) => ({ key: k, color: p.color, label: `${p.name} ${EXHIBITS.filter(e => e.part === k).length}` })),
+    { key: "connect", color: TECH_CONNECT.color, label: `${TECH_CONNECT.name} ${TECH_CONNECT.items.length}` },
+  ];
+  if (!cats.some(c => c.key === state.part)) state.part = cats[0].key;
+  const isConnect = state.part === "connect";
+  v.append(h("div", { class: "ex-place" },
+    h("div", {}, "📍 KT 판교 빌딩 · ", h("b", {}, isConnect ? TECH_CONNECT.place.replace(/^KT 판교 빌딩 /, "") : "1F")),
+    h("div", { class: "faint" }, EXHIBIT_HOURS)));
+  v.append(chipScroller(h("div", { class: "chips" }, cats.map(c =>
+    h("button", { class: "chip", style: `--c:${c.color}`, "aria-pressed": String(state.part === c.key),
+      onclick: () => { state.part = c.key; renderProgram(); } }, c.label)))));
+
+  if (isConnect) {
     const C = TECH_CONNECT;
-    v.append(h("div", { class: "ex-place" },
-      h("div", {}, "📍 KT 판교 빌딩 · ", h("b", {}, C.place.replace(/^KT 판교 빌딩 /, "")), ` · 전시 ${C.items.length}개`),
-      h("div", { class: "faint" }, EXHIBIT_HOURS)));
     v.append(h("section", { class: "ex-part", style: `--c:${C.color}` },
       h("ol", { class: "connect-list" }, C.items.map((x, i) => h("li", {},
         h("span", { class: "n" }, String(i + 1).padStart(2, "0")),
@@ -1186,36 +1196,17 @@ function renderExhibits(v) {
     return;
   }
 
-  v.append(h("div", { class: "ex-place" },
-    h("div", {}, "📍 KT 판교 빌딩 · ", h("b", {}, "1F"), ` · 전시 ${EXHIBITS.length}개`),
-    h("div", { class: "faint" }, EXHIBIT_HOURS)));
-  const cats = [
-    { key: "all", label: `전체 ${EXHIBITS.length}` },
-    ...Object.entries(PARTS).map(([k, p]) => ({ key: k, color: p.color, label: `${p.name} ${EXHIBITS.filter(e => e.part === k).length}` })),
-  ];
-  if (!cats.some(c => c.key === state.part)) state.part = "all";
-  v.append(chipScroller(h("div", { class: "chips" }, cats.map(c =>
-    h("button", { class: "chip", style: c.color ? `--c:${c.color}` : null, "aria-pressed": String(state.part === c.key),
-      onclick: () => { state.part = c.key; renderProgram(); } }, c.label)))));
-
-  const parts = Object.entries(PARTS).filter(([k]) => state.part === "all" || state.part === k);
-  parts.forEach(([k, p]) => {
-    const list = EXHIBITS.filter(e => e.part === k);
-    if (!list.length) return;
-    v.append(h("section", { class: "ex-part", style: `--c:${p.color}` },
-      h("div", { class: "ex-part-head" },
-        p.icon ? h("img", { src: p.icon, alt: "" }) : null,
-        h("h3", {}, p.name), h("span", { class: "muted small" }, `${list.length}개`)),
-      h("div", { class: "ex-grid" }, list.map(e =>
-        h("a", { class: "ex-card", href: e.id },
-          h("div", { class: "ex-top" },
-            h("span", { class: "ex-no" }, `Agenda ${exNo(e)}`),
-            e.label || e.booth ? h("span", { class: "badge", style: `--c:${p.color}` }, e.label || e.booth) : null),
-          h("div", { class: "ex-title" }, exTitles(e).map(t => h("span", {}, t))),
-          h("div", { class: "ex-team" }, exTeam(e)),
-          e.summary ? h("div", { class: "ex-sum" }, e.summary) : null,
-          h("div", { class: "ex-more" }, "자세히 보기 →"))))));
-  });
+  const p = PARTS[state.part], list = EXHIBITS.filter(e => e.part === state.part);
+  v.append(h("section", { class: "ex-part", style: `--c:${p.color}` },
+    h("div", { class: "ex-grid" }, list.map(e =>
+      h("a", { class: "ex-card", href: e.id },
+        h("div", { class: "ex-top" },
+          h("span", { class: "ex-no" }, `Agenda ${exNo(e)}`),
+          e.label || e.booth ? h("span", { class: "badge", style: `--c:${p.color}` }, e.label || e.booth) : null),
+        h("div", { class: "ex-title" }, exTitles(e).map(t => h("span", {}, t))),
+        h("div", { class: "ex-team" }, exTeam(e)),
+        e.summary ? h("div", { class: "ex-sum" }, e.summary) : null,
+        h("div", { class: "ex-more" }, "자세히 보기 →"))))));
 }
 
 // 가로로 넘치는 버튼 줄: 오른쪽 끝에 흐림 + 화살표로 '더 있음' 표시
@@ -1230,7 +1221,12 @@ function chipScroller(row) {
   };
   row.addEventListener("scroll", update, { passive: true });
   window.addEventListener("resize", update);
-  requestAnimationFrame(update);
+  requestAnimationFrame(() => {
+    // 선택된 버튼이 화면 밖이면 보이도록 스크롤
+    const on = row.querySelector('[aria-pressed="true"]');
+    if (on && on.offsetLeft + on.offsetWidth > row.clientWidth) row.scrollLeft = on.offsetLeft + on.offsetWidth - row.clientWidth + 8;
+    update();
+  });
   return wrap;
 }
 
@@ -1360,7 +1356,7 @@ function route() {
   const [tab, sub] = (location.hash || "#home").slice(1).split("/");
   state.tab = renderers[tab] ? tab : "home";
   if (state.tab === "program" && (sub === "schedule" || sub === "exhibit")) state.view = sub;
-  if (state.tab === "program" && sub === "connect") { state.view = "exhibit"; state.exTab = "connect"; }
+  if (state.tab === "program" && sub === "connect") { state.view = "exhibit"; state.part = "connect"; }
   document.querySelectorAll(".tab").forEach(a => { if (a.dataset.tab === state.tab) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current"); });
   document.querySelectorAll(".view").forEach(s => s.classList.toggle("active", s.id === "view-" + state.tab));
   renderers[state.tab]();
