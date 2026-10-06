@@ -453,6 +453,11 @@
     padding-right: 10px; border-right: 1px solid var(--border);
   }
   .floor-title span { font-size: 15px; font-weight: 700; color: var(--ink-dim); }
+  .floor-tag {
+    align-self: center; font-style: normal; font-size: 11px; font-weight: 800; white-space: nowrap;
+    padding: 3px 9px; border-radius: 999px; color: #9fd0ff;
+    background: rgba(70, 150, 255, .16); border: 1px solid rgba(90, 160, 255, .45);
+  }
   .floor-map-link { position: relative; display: block; }
   .floor-map-link .zoom {
     position: absolute; right: 8px; bottom: 8px; font-size: 11px; font-weight: 700;
@@ -706,8 +711,8 @@ const EVENT = {
   // 층 안내: map에 평면도 이미지 주소를 넣으면 같이 보여줘요 (예: "floor-1f.png")
   //          facilities에 편의시설을 넣으면 '편의시설' 목록으로 보여줘요
   floors: [
-    { id: "8F", name: "8층", title: "Low-Code 해커톤/전시 영역", map: "img/floor-8f.webp", facilities: ["수유실"] },
-    { id: "2F", name: "2층", title: "Pro-Code 해커톤 영역",     map: "img/floor-2f.webp", facilities: [] },
+    { id: "8F", name: "8층", title: "Low-Code 해커톤/전시 영역", tag: "kt 그룹 임직원 전용", map: "img/floor-8f.webp", facilities: ["수유실"] },
+    { id: "2F", name: "2층", title: "Pro-Code 해커톤 영역", tag: "kt 그룹 임직원 전용", map: "img/floor-2f.webp", facilities: [] },
     { id: "1F", name: "1층", title: "발표/전시 영역",           map: "img/floor-1f.webp", facilities: [] },
     { id: "B1", name: "지하 1층", title: "Cafeteria · 점심식사 공간",   map: "", facilities: [] },
   ],
@@ -1240,7 +1245,7 @@ function renderFloors() {
 
   const f = EVENT.floors.find(x => x.id === state.floor);
   const card = h("div", { class: "card stack floor-panel" });
-  card.append(h("div", { class: "floor-title" }, h("b", {}, f.id), h("span", {}, f.title || f.name)));
+  card.append(h("div", { class: "floor-title" }, h("b", {}, f.id), h("span", {}, f.title || f.name), f.tag ? h("em", { class: "floor-tag" }, f.tag) : null));
   if (f.map) card.append(h("a", { class: "floor-map-link", href: f.map, target: "_blank", rel: "noopener", "aria-label": `${f.title} 크게 보기` },
     h("img", { class: "floor-map", src: f.map, alt: `${f.name} ${f.title || "안내도"}` }),
     h("span", { class: "zoom" }, "크게 보기")));
