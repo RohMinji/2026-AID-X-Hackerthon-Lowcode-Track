@@ -35,7 +35,7 @@ const PARTS = {
 };
 
 const EXHIBIT_PLACE = "KT 판교 빌딩 1F";
-const EXHIBIT_HOURS = "10.15 (목) 10:00–17:00";
+const EXHIBIT_HOURS = "10.15 (목) 09:00–16:00";
 
 // 출처: (260923) AID-X DAY 리플릿 아젠다리스트 — 테이블보드 '제목(최종확정)'
 const EXHIBITS = [
