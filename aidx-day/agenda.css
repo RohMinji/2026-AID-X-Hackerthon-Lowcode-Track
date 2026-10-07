@@ -85,12 +85,12 @@ a { color: inherit; }
 }
 .head .row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 12px; }
 .head .num { font-size: 13px; color: var(--ink-faint); font-variant-numeric: tabular-nums; }
-.head h1 { margin: 0 0 8px; font-size: clamp(26px, 6.5vw, 40px); line-height: 1.2; font-weight: 900; letter-spacing: -0.02em; }
+.head h1 { white-space: pre-line; margin: 0 0 8px; font-size: clamp(26px, 6.5vw, 40px); line-height: 1.2; font-weight: 900; letter-spacing: -0.02em; }
 .head h1.multi { font-size: clamp(21px, 5.2vw, 30px); }
 .head h1.multi span { display: block; }
 .head h1.multi span + span { margin-top: 6px; }
 .card p.pending { color: var(--ink-dim); }
-.head .subtitle { margin: -2px 0 12px; font-size: clamp(16px, 4.2vw, 20px); font-weight: 500; line-height: 1.45; opacity: .82; }
+.head .subtitle { white-space: pre-line; margin: -2px 0 12px; font-size: clamp(16px, 4.2vw, 20px); font-weight: 500; line-height: 1.45; opacity: .82; }
 .head .team { color: var(--ink-dim); font-size: 15px; margin-bottom: 12px; }
 .head .summary { font-size: 17px; margin: 0; }
 

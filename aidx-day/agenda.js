@@ -54,7 +54,7 @@
       h("span", { class: "badge" }, part.name),
       x.label ? h("span", { class: "badge" }, x.label) : null,
       x.booth ? h("span", { class: "badge" }, `${x.booth} 부스`) : null,
-      h("span", { class: "num" }, `Agenda ${exNo(x)}`)),
+      h("span", { class: "num" }, exNo(x))),
     titles.length > 1
       ? h("h1", { class: "multi" }, titles.map(t => h("span", {}, t)))
       : h("h1", {}, titles[0]),
@@ -66,7 +66,7 @@
   if (x.image) visual.append(h("img", { src: x.image, alt: exTitleText(x) }));
   else visual.append(h("div", { class: "ph" },
     part.icon ? h("img", { src: part.icon, alt: "", "aria-hidden": "true" }) : null,
-    h("div", { class: "cap" }, h("b", {}, part.name), h("span", {}, x.booth ? `BOOTH ${x.booth}` : `AGENDA ${exNo(x)}`))));
+    h("div", { class: "cap" }, h("b", {}, part.name), h("span", {}, x.booth ? `BOOTH ${x.booth}` : exNo(x)))));
 
   const main = h("div", { class: "grid" },
     h("section", { class: "card" }, h("h2", { class: "label" }, "소개"),

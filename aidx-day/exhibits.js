@@ -7,6 +7,7 @@
    label   : 제목 앞 말머리 (예: "Garage") — 선택
    title   : 전시 제목 (여러 개면 ["(1) ...", "(2) ..."] 배열로)
    sub     : 부제목 — 제목 아래 작고 가는 글씨로 보여요 (선택)
+   ※ 제목·부제목 안의 \n 은 화면에서 줄바꿈돼요
    team    : 사이트에 보이는 담당 조직 (리플릿 테이블보드의 본부/조직)
    org     : 담당 부문 (기록용, 화면에는 안 보여요)
    ── 아래는 준비되는 대로 채우면 돼요. 비어 있으면 화면에서 숨기거나 '준비 중'으로 보여요.
@@ -64,7 +65,7 @@ const EXHIBITS = [
   { id: "agenda11", part: "biz", org: "IT부문", team: "AX플랫폼본부",
     title: "MAGMA BIDW", sub: "‘찾는’ 분석에서 ‘AI에게 묻는’ 분석으로" },
   { id: "agenda12", part: "biz", org: "AX미래기술원/IT부문", team: "Agentic AI Lab · AX플랫폼본부",
-    title: "Orchestrator 기술로 더 똑똑해진 마이케이티 AI Agent" },
+    title: "Orchestrator 기술로 더 똑똑해진\n마이케이티 AI Agent" },
   { id: "agenda13", part: "biz", org: "AX미래기술원", team: "Agentic AI Lab",
     title: "취향까지 이해하는 지니 TV : Evolving Persona" },
   { id: "agenda14", part: "biz", org: "AX미래기술원", team: "Agentic AI Lab",
@@ -92,9 +93,9 @@ const EXHIBITS = [
 
   // ---------------- Work (6) ----------------
   { id: "agenda24", part: "works", org: "IT부문", team: "IT전략본부",
-    title: "kode: - 기획부터 설계/개발 그리고 자산화까지, AI 네이티브 개발 플랫폼" },
+    title: "kode: - 기획부터 설계/개발 그리고 자산화까지,\nAI 네이티브 개발 플랫폼" },
   { id: "agenda25", part: "works", org: "IT부문", team: "AX플랫폼본부",
-    title: "AI로 하는 디자인", sub: "KDS(KT Design System) 기반 기획-디자인-개발을 AI로 연계해 생산성 향상" },
+    title: "AI로 하는 디자인", sub: "KDS(KT Design System) 기반 기획-디자인-개발을\nAI로 연계해 생산성 향상" },
   { id: "agenda26", part: "works", org: "IT부문", team: "AX플랫폼본부",
     title: "AX Works, 전사 AI·Agent 활용을 위한 통합 플랫폼" },
   { id: "agenda27", part: "works", org: "그룹사", team: "kt ds",
@@ -128,7 +129,12 @@ const ALL_EXHIBITS = [...EXHIBITS, ...TECH_CONNECT.items.map(x => ({ ...x, part:
 
 // 화면 표시용 도우미 (목록·상세 페이지 공통)
 const exTitles = e => Array.isArray(e.title) ? e.title : [e.title];
-const exTitleMain = e => (e.label ? `[${e.label}] ` : "") + exTitles(e).join(" / ");
-const exTitleText = e => exTitleMain(e) + (e.sub ? " " + e.sub : "");  // 페이지 제목·미리보기용 (부제목 포함)
+const flat = t => t.replace(/\s*\n\s*/g, " ");
+const exTitleMain = e => flat((e.label ? `[${e.label}] ` : "") + exTitles(e).join(" / "));
+const exTitleText = e => exTitleMain(e) + (e.sub ? " " + flat(e.sub) : "");  // 페이지 제목·미리보기용 (부제목 포함)
 const exTeam = e => e.team;
-const exNo = e => e.id.replace(/\D/g, "");
+// 화면에 보이는 번호 = 분류 안에서의 순서 (Innovation 01, Tech 01 …). 링크 주소(id)와는 별개예요
+const exNo = e => {
+  const part = ALL_EXHIBITS.find(x => x.id === e.id).part;
+  return String(ALL_EXHIBITS.filter(x => x.part === part).findIndex(x => x.id === e.id) + 1).padStart(2, "0");
+};
