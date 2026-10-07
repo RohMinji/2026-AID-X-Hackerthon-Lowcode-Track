@@ -456,6 +456,19 @@
     padding-right: 10px; border-right: 1px solid var(--border);
   }
   .floor-title span { font-size: 15px; font-weight: 700; color: var(--ink-dim); }
+  .capsule {
+    padding: 16px; border-radius: 16px;
+    background: linear-gradient(135deg, rgba(242, 196, 109, .14), rgba(181, 123, 255, .10)); border: 1px solid rgba(242, 196, 109, .4);
+  }
+  .capsule h3 { margin: 8px 0 6px; font-size: 17px; font-weight: 900; }
+  .capsule p { margin: 0; font-size: 14px; line-height: 1.6; color: var(--ink); }
+  .capsule-prizes { display: grid; grid-template-columns: 1fr; gap: 6px; margin-top: 12px; min-width: 0; }
+  .capsule { min-width: 0; }
+  .cp { display: grid; grid-template-columns: 26px 52px 1fr; align-items: center; gap: 6px; padding: 9px 10px; border-radius: 12px; background: var(--surface); border: 1px solid var(--border); }
+  .cp .i { font-size: 18px; line-height: 1; }
+  .cp b { font-size: 13px; color: #f2c46d; white-space: nowrap; }
+  .cp .p { font-size: 13px; }
+  @media (min-width: 1000px) { .capsule-prizes { grid-template-columns: repeat(4, 1fr); } .cp { grid-template-columns: 26px auto 1fr; } }
   .floor-tag {
     align-self: center; font-style: normal; font-size: 11px; font-weight: 800; white-space: nowrap;
     padding: 3px 9px; border-radius: 999px; color: #9fd0ff;
@@ -714,7 +727,17 @@ const EVENT = {
   // 층 안내: map에 평면도 이미지 주소를 넣으면 같이 보여줘요 (예: "floor-1f.png")
   //          facilities에 편의시설을 넣으면 '편의시설' 목록으로 보여줘요
   floors: [
-    { id: "8F", name: "8층", title: "Low-Code 해커톤/전시 영역", tag: "kt 그룹 임직원 전용", map: "img/floor-8f.webp", facilities: ["수유실"] },
+    { id: "8F", name: "8층", title: "Low-Code 해커톤/전시 영역", tag: "kt 그룹 임직원 전용", map: "img/floor-8f.webp",
+      event: {
+        title: "AX Tech Connect | 캡슐 뽑기 이벤트",
+        lead: ["8층 전시를 관람하고 행운의 캡슐을 뽑아보세요!", "QR 코드를 통해 만족도 조사 완료 후 캡슐 뽑기 이벤트에 참여할 수 있어요."],
+        prizes: [
+          { rank: "1등", icon: "🎧", prize: "에어팟" },
+          { rank: "2등", icon: "🥤", prize: "스타벅스 텀블러" },
+          { rank: "3등", icon: "🧴", prize: "조말론 핸드크림" },
+          { rank: "참가상", icon: "🍬", prize: "키캡 또는 젤리" },
+        ],
+      }, facilities: ["수유실"] },
     { id: "2F", name: "2층", title: "Pro-Code 해커톤 영역", tag: "kt 그룹 임직원 전용", map: "img/floor-2f.webp", facilities: [] },
     { id: "1F", name: "1층", title: "발표/전시 영역",           map: "img/floor-1f.webp", facilities: [] },
     { id: "B1", name: "지하 1층", title: "Cafeteria · 점심식사 공간",   map: "", facilities: [] },
@@ -1260,6 +1283,15 @@ function renderFloors() {
       h("h3", {}, r.name), h("div", { class: "d" }, r.desc || "")));
   });
   card.append(rooms.length ? grid : h("p", { class: "muted small" }, "이 층에는 행사 공간이 없어요."));
+  if (f.event) {
+    const E = f.event;
+    card.append(h("div", { class: "capsule" },
+      h("span", { class: "badge", style: "--c:#f2c46d" }, "🎁 8F 이벤트"),
+      h("h3", {}, E.title),
+      E.lead.map(t => h("p", {}, t)),
+      h("div", { class: "capsule-prizes" }, E.prizes.map(x => h("div", { class: "cp" },
+        h("span", { class: "i" }, x.icon), h("b", {}, x.rank), h("span", { class: "p" }, x.prize))))));
+  }
   if (f.facilities && f.facilities.length) {
     card.append(h("div", {}, h("div", { class: "section-label", style: "margin-top:4px" }, "편의시설"),
       h("ul", { class: "facilities" }, f.facilities.map(x => h("li", {}, x)))));
