@@ -116,10 +116,9 @@ const TECH_CONNECT = {
     { id: "agenda35", title: "최적의 AI 선택 Model Router (토큰팩토리)" },
     { id: "agenda36", title: "데이터 의미를 이해하는 KT Ontology 구축" },
     { id: "agenda37", title: "연결된 지식을 분석하는 KT Ontology 활용" },
-    { id: "agenda38", title: "Agentic On 적용 핵심기술" },
-    { id: "agenda39", title: "AI 모델 품질 자동 평가 플랫폼 (AEGIS)" },
-    { id: "agenda40", title: "문서 조각을 잇는 지도 (DocuMap)" },
-    { id: "agenda41", title: "임상 데이터 정밀진단 의료 특화 모델" },
+    { id: "agenda38", title: "AI 모델 품질 자동 평가 플랫폼 (AEGIS)" },
+    { id: "agenda39", title: "문서 조각을 잇는 지도 (DocuMap)" },
+    { id: "agenda40", title: "임상 데이터 정밀진단 의료 특화 모델" },
   ],
 };
 

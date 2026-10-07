@@ -1,4 +1,4 @@
-/* 전시 상세 페이지(agenda01~41) 렌더러 — 내용은 exhibits.js에서 가져와요 */
+/* 전시 상세 페이지(agenda01~40) 렌더러 — 내용은 exhibits.js에서 가져와요 */
 (function () {
   function h(tag, attrs, ...kids) {
     const el = document.createElement(tag);
