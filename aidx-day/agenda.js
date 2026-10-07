@@ -58,6 +58,7 @@
     titles.length > 1
       ? h("h1", { class: "multi" }, titles.map(t => h("span", {}, t)))
       : h("h1", {}, titles[0]),
+    x.sub ? h("p", { class: "subtitle" }, x.sub) : null,
     exTeam(x) ? h("div", { class: "team" }, exTeam(x)) : null,
     x.summary ? h("p", { class: "summary" }, x.summary) : null);
 
@@ -90,13 +91,13 @@
   const group = LIST.filter(e => (e.part === "connect") === isConnect), gi = group.indexOf(x);
   const prev = group[gi - 1], next = group[gi + 1];
   const pager = h("nav", { class: "pager", "aria-label": "이전·다음 전시" },
-    prev ? h("a", { href: prev.id }, h("small", {}, "← 이전 전시"), h("span", {}, exTitleText(prev))) : h("span", { class: "empty" }),
-    next ? h("a", { class: "next", href: next.id }, h("small", {}, "다음 전시 →"), h("span", {}, exTitleText(next))) : h("span", { class: "empty" }));
+    prev ? h("a", { href: prev.id }, h("small", {}, "← 이전 전시"), h("span", {}, exTitleMain(prev))) : h("span", { class: "empty" }),
+    next ? h("a", { class: "next", href: next.id }, h("small", {}, "다음 전시 →"), h("span", {}, exTitleMain(next))) : h("span", { class: "empty" }));
 
   const others = LIST.filter(e => e.part === x.part && e.id !== x.id);
   const same = others.length ? h("section", { class: "card" },
     h("h2", { class: "label" }, isConnect ? `${part.name} 다른 전시` : `${part.name} 존 다른 전시`),
-    h("ul", { class: "same" }, others.map(e => h("li", {}, h("a", { href: e.id }, h("span", { class: "b" }, exNo(e)), h("span", { class: "t" }, exTitleText(e))))))) : null;
+    h("ul", { class: "same" }, others.map(e => h("li", {}, h("a", { href: e.id }, h("span", { class: "b" }, exNo(e)), h("span", { class: "t" }, exTitleMain(e), e.sub ? h("small", {}, e.sub) : null)))))) : null;
 
   side.append(same);
   app.append(h("div", { class: "wrap" }, head, visual,
