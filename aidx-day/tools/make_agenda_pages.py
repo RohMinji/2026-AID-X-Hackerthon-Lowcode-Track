@@ -15,8 +15,8 @@ ROOT = pathlib.Path(__file__).resolve().parent.parent
 # exhibits.js를 node로 읽어서 [id, 제목, 설명] 목록을 얻어요 (node 필요)
 JS = """
 const fs = require("fs");
-eval(fs.readFileSync(process.argv[1], "utf8") + "; globalThis.__E = EXHIBITS; globalThis.__T = exTitleText; globalThis.__M = exTeam;");
-console.log(JSON.stringify(__E.map(e => [e.id, __T(e), e.summary || `${__M(e)} · AID-X Day 전시`])));
+eval(fs.readFileSync(process.argv[1], "utf8") + "; globalThis.__E = ALL_EXHIBITS; globalThis.__T = exTitleText; globalThis.__M = exTeam;");
+console.log(JSON.stringify(__E.map(e => [e.id, __T(e), e.summary || (__M(e) ? `${__M(e)} · AID-X Day 전시` : (e.part === 'connect' ? 'AX Tech Connect · AID-X Day 전시' : 'AID-X Day 전시'))])));
 """
 items = json.loads(subprocess.run(["node", "-e", JS, str(ROOT / "exhibits.js")],
                                   capture_output=True, text=True, check=True).stdout)

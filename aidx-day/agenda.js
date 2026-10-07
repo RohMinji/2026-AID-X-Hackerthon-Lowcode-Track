@@ -1,4 +1,4 @@
-/* 전시 상세 페이지(agenda01~28) 렌더러 — 내용은 exhibits.js에서 가져와요 */
+/* 전시 상세 페이지(agenda01~41) 렌더러 — 내용은 exhibits.js에서 가져와요 */
 (function () {
   function h(tag, attrs, ...kids) {
     const el = document.createElement(tag);
@@ -18,7 +18,8 @@
   const LIST_URL = "./#program/exhibit";
 
   const id = document.body.dataset.id || (location.pathname.match(/agenda\d+/) || [""])[0];
-  const idx = EXHIBITS.findIndex(x => x.id === id);
+  const LIST = ALL_EXHIBITS;
+  const idx = LIST.findIndex(x => x.id === id);
   const app = document.getElementById("app");
 
   const back = h("a", { class: "back", href: LIST_URL });
@@ -38,8 +39,12 @@
     return;
   }
 
-  const x = EXHIBITS[idx];
-  const part = PARTS[x.part] || { name: x.part, color: "#35e0ff" };
+  const x = LIST[idx];
+  const isConnect = x.part === "connect";
+  const part = isConnect ? { name: TECH_CONNECT.name, color: TECH_CONNECT.color, icon: TECH_CONNECT.icon }
+    : PARTS[x.part] || { name: x.part, color: "#35e0ff" };
+  const back2 = topbar.querySelector(".back");
+  if (isConnect) back2.href = "./#program/connect";
   document.documentElement.style.setProperty("--c", part.color);
   document.title = `${exTitleText(x)} · AID-X Day 전시`;
   const titles = exTitles(x);
@@ -49,11 +54,11 @@
       h("span", { class: "badge" }, part.name),
       x.label ? h("span", { class: "badge" }, x.label) : null,
       x.booth ? h("span", { class: "badge" }, `${x.booth} 부스`) : null,
-      h("span", { class: "num" }, `Agenda ${exNo(x)} / ${EXHIBITS.length}`)),
+      h("span", { class: "num" }, `Agenda ${exNo(x)}`)),
     titles.length > 1
       ? h("h1", { class: "multi" }, titles.map(t => h("span", {}, t)))
       : h("h1", {}, titles[0]),
-    h("div", { class: "team" }, exTeam(x)),
+    exTeam(x) ? h("div", { class: "team" }, exTeam(x)) : null,
     x.summary ? h("p", { class: "summary" }, x.summary) : null);
 
   const visual = h("div", { class: "visual" });
@@ -69,8 +74,8 @@
       h("ul", { class: "points" }, x.points.map(p => h("li", {}, p)))) : null);
 
   const infoRows = [
-    ["담당", [exTeam(x)]],
-    ["위치", [EXHIBIT_PLACE + ` · ${part.name} 존` + (x.booth ? ` · ${x.booth} 부스` : ""), h("small", {}, h("a", { href: "./#floors" }, "층별 안내 보기"))]],
+    exTeam(x) ? ["담당", [exTeam(x)]] : null,
+    ["위치", [(isConnect ? TECH_CONNECT.place : EXHIBIT_PLACE + ` · ${part.name} 존`) + (x.booth ? ` · ${x.booth} 부스` : ""), h("small", {}, h("a", { href: "./#floors" }, "층별 안내 보기"))]],
     ["운영", [h("small", { style: "font-size:14px;color:inherit;font-weight:600" }, EXHIBIT_HOURS)]],
     x.demo && x.demo.length ? ["시연", [h("div", { class: "chips time" }, x.demo.map(t => h("span", {}, t)))]] : null,
     x.tags && x.tags.length ? ["태그", [h("div", { class: "chips" }, x.tags.map(t => h("span", {}, "#" + t)))]] : null,
@@ -81,14 +86,16 @@
       h("dl", { class: "info" }, infoRows.map(([k, v]) => h("div", {}, h("dt", {}, k), h("dd", {}, v)))),
       x.link ? h("a", { class: "btn", href: x.link, target: "_blank", rel: "noopener" }, "관련 자료 보기") : null));
 
-  const prev = EXHIBITS[idx - 1], next = EXHIBITS[idx + 1];
+  // AX Tech Connect는 그 안에서만 이전/다음으로 이동
+  const group = LIST.filter(e => (e.part === "connect") === isConnect), gi = group.indexOf(x);
+  const prev = group[gi - 1], next = group[gi + 1];
   const pager = h("nav", { class: "pager", "aria-label": "이전·다음 전시" },
     prev ? h("a", { href: prev.id }, h("small", {}, "← 이전 전시"), h("span", {}, exTitleText(prev))) : h("span", { class: "empty" }),
     next ? h("a", { class: "next", href: next.id }, h("small", {}, "다음 전시 →"), h("span", {}, exTitleText(next))) : h("span", { class: "empty" }));
 
-  const others = EXHIBITS.filter(e => e.part === x.part && e.id !== x.id);
+  const others = LIST.filter(e => e.part === x.part && e.id !== x.id);
   const same = others.length ? h("section", { class: "card" },
-    h("h2", { class: "label" }, `${part.name} 존 다른 전시`),
+    h("h2", { class: "label" }, isConnect ? `${part.name} 다른 전시` : `${part.name} 존 다른 전시`),
     h("ul", { class: "same" }, others.map(e => h("li", {}, h("a", { href: e.id }, h("span", { class: "b" }, exNo(e)), h("span", { class: "t" }, exTitleText(e))))))) : null;
 
   side.append(same);

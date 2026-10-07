@@ -104,24 +104,27 @@ const EXHIBITS = [
     title: "AI Agent 기반 장애 관리 플랫폼" },
 ];
 
-// 별도 전시 · AX Tech Connect (8F) — 상세 페이지 없이 목록만 보여줘요. place가 있으면 장소 표시
+// AX Tech Connect (8F) — agenda30~ 상세 페이지가 있어요. place가 있으면 장소 표시
 const TECH_CONNECT = {
-  name: "AX Tech Connect", place: "KT 판교 빌딩 8F", color: "#f2c46d",
+  name: "AX Tech Connect", place: "KT 판교 빌딩 8F", color: "#f2c46d", icon: "img/ring.webp",
   items: [
-    { title: "KT AI 경쟁력 믿:음 K 3.0 / Arena" },
-    { title: "차세대 음성 에이전트 Full-Duplex Speech to Speech" },
-    { title: "나만의 1:1 Agent KT-Claw (모두의 AI)" },
-    { title: "소상공인 맞춤상담 Agent (모두의 AI)" },
-    { title: "프롬프트 압축 KompaKT (토큰팩토리)" },
-    { title: "최적의 AI 선택 Model Router (토큰팩토리)" },
-    { title: "데이터 의미를 이해하는 KT Ontology 구축" },
-    { title: "연결된 지식을 분석하는 KT Ontology 활용" },
-    { title: "Agentic On 적용 핵심기술" },
-    { title: "AI 모델 품질 자동 평가 플랫폼 (AEGIS)" },
-    { title: "문서 조각을 잇는 지도 (DocuMap)" },
-    { title: "임상 데이터 정밀진단 의료 특화 모델" },
+    { id: "agenda30", title: "KT AI 경쟁력 믿:음 K 3.0 / Arena" },
+    { id: "agenda31", title: "차세대 음성 에이전트 Full-Duplex Speech to Speech" },
+    { id: "agenda32", title: "나만의 1:1 Agent KT-Claw (모두의 AI)" },
+    { id: "agenda33", title: "소상공인 맞춤상담 Agent (모두의 AI)" },
+    { id: "agenda34", title: "프롬프트 압축 KompaKT (토큰팩토리)" },
+    { id: "agenda35", title: "최적의 AI 선택 Model Router (토큰팩토리)" },
+    { id: "agenda36", title: "데이터 의미를 이해하는 KT Ontology 구축" },
+    { id: "agenda37", title: "연결된 지식을 분석하는 KT Ontology 활용" },
+    { id: "agenda38", title: "Agentic On 적용 핵심기술" },
+    { id: "agenda39", title: "AI 모델 품질 자동 평가 플랫폼 (AEGIS)" },
+    { id: "agenda40", title: "문서 조각을 잇는 지도 (DocuMap)" },
+    { id: "agenda41", title: "임상 데이터 정밀진단 의료 특화 모델" },
   ],
 };
+
+// 상세 페이지용 전체 목록: 1F 전시 + AX Tech Connect
+const ALL_EXHIBITS = [...EXHIBITS, ...TECH_CONNECT.items.map(x => ({ ...x, part: "connect", team: x.team || "" }))];
 
 // 화면 표시용 도우미 (목록·상세 페이지 공통)
 const exTitles = e => Array.isArray(e.title) ? e.title : [e.title];
