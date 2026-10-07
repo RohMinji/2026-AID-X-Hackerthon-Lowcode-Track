@@ -229,6 +229,7 @@
     background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent;
   }
   .cd-unit { font-size: 12px; color: var(--ink-dim); }
+  .ended small { display: block; margin-top: 4px; font-size: 14px; font-weight: 600; color: var(--ink-dim); }
   .ended { text-align: center; font-size: 20px; font-weight: 800; color: var(--accent); padding: 8px 0; }
 
   .now-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
@@ -456,7 +457,16 @@
     padding-right: 10px; border-right: 1px solid var(--border);
   }
   .floor-title span { font-size: 15px; font-weight: 700; color: var(--ink-dim); }
+  .floor8-cta {
+    display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 12px; text-decoration: none; color: inherit;
+    background: linear-gradient(135deg, rgba(242, 196, 109, .16), rgba(181, 123, 255, .10)); border-color: rgba(242, 196, 109, .45);
+  }
+  .floor8-cta .cta-ico { font-size: 26px; }
+  .floor8-cta b { display: block; font-size: 15px; font-weight: 900; }
+  .floor8-cta small { display: block; font-size: 12.5px; color: var(--ink-dim); margin-top: 2px; }
+  .floor8-cta .cta-btn { font-size: 13px; font-weight: 800; color: #1a1408; background: #f2c46d; padding: 7px 12px; border-radius: 999px; white-space: nowrap; }
   .capsule {
+    scroll-margin-top: 80px;
     padding: 16px; border-radius: 16px;
     background: linear-gradient(135deg, rgba(242, 196, 109, .14), rgba(181, 123, 255, .10)); border: 1px solid rgba(242, 196, 109, .4);
   }
@@ -705,6 +715,9 @@ const EVENT = {
   mapUrl: "https://map.naver.com/p/search/KT%20%ED%8C%90%EA%B5%90%20%EB%B9%8C%EB%94%A9",
 
   // 행사 일자와 운영 시간
+  // 카운트다운 기준: start 전에는 남은 시간, start~end는 '진행 중', end 이후는 '종료'
+  countdown: { day: "d2", start: "10:00", end: "18:00" },
+
   days: [
     { id: "d1", date: "2026-10-14", label: "1일차", sub: "10.14 (수)", open: "09:00", close: "18:00" },
     { id: "d2", date: "2026-10-15", label: "2일차", sub: "10.15 (목)", open: "09:00", close: "17:00" },
@@ -932,14 +945,12 @@ EVENT.days.forEach(d => { d.t0 = at(d.date, d.open); d.t1 = at(d.date, d.close);
 
 function todayDay() { const k = kstDate(now()); return EVENT.days.find(d => d.date === k); }
 
-// 현재 상태: before(첫날 전) / live(운영 중) / between(일차 사이) / after(종료)
+// 현재 상태: before(시작 전) / live(진행 중) / after(종료)
+const CD = (() => { const d = dayOf(EVENT.countdown.day); return { day: d, t0: at(d.date, EVENT.countdown.start), t1: at(d.date, EVENT.countdown.end) }; })();
 function phase() {
   const t = now();
-  for (let i = 0; i < EVENT.days.length; i++) {
-    const d = EVENT.days[i];
-    if (t < d.t0) return { kind: i === 0 ? "before" : "between", target: d };
-    if (t < d.t1) return { kind: "live", day: d };
-  }
+  if (t < CD.t0) return { kind: "before", target: CD };
+  if (t < CD.t1) return { kind: "live", day: CD.day };
   return { kind: "after" };
 }
 
@@ -1010,7 +1021,7 @@ function renderHome() {
       h("a", { class: "btn", href: "#program/schedule" }, "전체 일정 보기")].filter(Boolean));
   } else {
     cdEls = null;
-    status.append(h("div", { class: "ended" }, "행사가 종료되었어요. 함께해 주셔서 감사합니다!"));
+    status.append(h("div", { class: "ended" }, "종료", h("small", {}, "함께해 주셔서 감사합니다!")));
   }
   grid.append(status);
 
@@ -1285,7 +1296,7 @@ function renderFloors() {
   card.append(rooms.length ? grid : h("p", { class: "muted small" }, "이 층에는 행사 공간이 없어요."));
   if (f.event) {
     const E = f.event;
-    card.append(h("div", { class: "capsule" },
+    card.append(h("div", { class: "capsule", id: "capsule" },
       h("span", { class: "badge", style: "--c:#f2c46d" }, "🎁 8F 이벤트"),
       h("h3", {}, E.title),
       E.lead.map(t => h("p", {}, t)),
@@ -1385,6 +1396,10 @@ function renderJoin() {
         h("div", { class: "i" }, x.icon), h("div", { class: "r" }, x.rank), h("div", { class: "p" }, [].concat(x.prize).map(t => h("span", {}, t)))))),
       h("p", { class: "muted small", style: "margin:12px 0 0" }, "※ " + L.prizeNote)),
 
+    h("a", { class: "card floor8-cta", href: "#floors/8F/capsule" },
+      h("span", { class: "cta-ico" }, "🎁"),
+      h("span", { class: "cta-text" }, h("b", {}, "잠깐! 8층에서도 이벤트가 있어요!"), h("small", {}, "AX Tech Connect | 캡슐 뽑기 이벤트")),
+      h("span", { class: "cta-btn" }, "자세히 보기")),
     h("div", { class: "card" }, h("div", { class: "section-label" }, "문의"),
       h("div", { class: "contact" }, EVENT.contacts.map(c =>
         h("div", { class: "contact-row" }, h("span", { class: "muted" }, c.label), h("a", { href: `mailto:${c.email}` }, c.email)))))));
@@ -1397,11 +1412,14 @@ function route() {
   state.tab = renderers[tab] ? tab : "home";
   if (state.tab === "program" && (sub === "schedule" || sub === "exhibit")) state.view = sub;
   if (state.tab === "program" && sub === "connect") { state.view = "exhibit"; state.part = "connect"; }
+  if (state.tab === "floors" && sub && EVENT.floors.some(f => f.id === sub)) state.floor = sub;
+  const anchor = (location.hash.split("/")[2] || "");
   document.querySelectorAll(".tab").forEach(a => { if (a.dataset.tab === state.tab) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current"); });
   document.querySelectorAll(".view").forEach(s => s.classList.toggle("active", s.id === "view-" + state.tab));
   renderers[state.tab]();
+  if (anchor) requestAnimationFrame(() => { const el = document.getElementById(anchor); if (el) el.scrollIntoView({ behavior: "smooth", block: "start" }); });
 }
-window.addEventListener("hashchange", () => { route(); window.scrollTo(0, 0); });
+window.addEventListener("hashchange", () => { window.scrollTo(0, 0); route(); });
 
 // ---------- 시계 ----------
 function tickCountdown() {
@@ -1418,11 +1436,11 @@ function tickPill() {
   if (p.kind === "before" || p.kind === "between") {
     let s = Math.floor((p.target.t0 - now()) / 1000);
     const d = Math.floor(s / 86400); s %= 86400;
-    pill.append(h("strong", {}, d > 0 ? `D-${d}` : p.target.label), ` ${pad(Math.floor(s / 3600))}:${pad(Math.floor(s % 3600 / 60))}:${pad(s % 60)}`);
+    pill.append(h("strong", {}, d > 0 ? `D-${d}` : "D-Day"), ` ${pad(Math.floor(s / 3600))}:${pad(Math.floor(s % 3600 / 60))}:${pad(s % 60)}`);
   } else if (p.kind === "live") {
-    pill.append(h("span", { class: "live-dot" }), h("strong", {}, `${p.day.label} 진행 중`));
+    pill.append(h("span", { class: "live-dot" }), h("strong", {}, "진행 중"));
   } else {
-    pill.textContent = "행사 종료";
+    pill.textContent = "종료";
   }
 }
 
