@@ -1,7 +1,34 @@
 {
-  "push_date": "20261008T15:24",
-  "push_ID": 5,
+  "push_date": "20261008T14:32",
+  "push_ID": 7,
   "push_results": {
-    "eval_1": {}
+    "eval_1": {
+      "03b5f8b0-b214-49d7-a1a6-89c6772c6f6c": {
+        "agent_name": "Agent A",
+        "agent_type": "agentic",
+        "total": 87.4,
+        "common": 42.6,
+        "custom": 34.8,
+        "mission": 10.0
+      },
+      "6d91c9a2-3a5b-4f61-9c42-12a8f0e4b721": {
+        "agent_name": "Agent B",
+        "agent_type": "workflow",
+        "total": 79.2,
+        "common": 39.5,
+        "custom": 29.7,
+        "mission": 10.0
+      }
+    },
+    "eval_2": {
+      "03b5f8b0-b214-49d7-a1a6-89c6772c6f6c": {
+        "agent_name": "Agent A",
+        "agent_type": "agentic",
+        "total": 90.1,
+        "common": 44.2,
+        "custom": 35.9,
+        "mission": 10.0
+      }
+    }
   }
 }
