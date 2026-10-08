@@ -1,33 +1,57 @@
 {
-  "push_date": "20261008T14:32",
-  "push_ID": 7,
+  "push_date": "20261008T17:52",
+  "push_ID": 6,
   "push_results": {
     "eval_1": {
-      "03b5f8b0-b214-49d7-a1a6-89c6772c6f6c": {
-        "agent_name": "Agent A",
+      "03b5f8b0-b214-49d7-a1a6-89c6772c999c": {
+        "agent_name": "CFO",
         "agent_type": "agentic",
-        "total": 87.4,
-        "common": 42.6,
-        "custom": 34.8,
-        "mission": 10.0
+        "total": 51.0,
+        "common": 0.0,
+        "custom": 35.0,
+        "mission": 16.0
       },
-      "6d91c9a2-3a5b-4f61-9c42-12a8f0e4b721": {
-        "agent_name": "Agent B",
+      "03b5f8b0-b214-49d7-a1a6-89c6777c6f6c": {
+        "agent_name": "CR",
         "agent_type": "workflow",
-        "total": 79.2,
-        "common": 39.5,
-        "custom": 29.7,
-        "mission": 10.0
+        "total": 44.28,
+        "common": 0.0,
+        "custom": 28.28,
+        "mission": 16.0
+      },
+      "03b5f8b0-b214-49d7-a1a6-89c6772c6f6c": {
+        "agent_name": "계약EZ",
+        "agent_type": "agentic",
+        "total": 63.19,
+        "common": 0.0,
+        "custom": 35.19,
+        "mission": 28.0
       }
     },
     "eval_2": {
-      "03b5f8b0-b214-49d7-a1a6-89c6772c6f6c": {
-        "agent_name": "Agent A",
+      "03b5f8b0-b214-49d7-a1a6-89c6772c999c": {
+        "agent_name": "CFO",
         "agent_type": "agentic",
-        "total": 90.1,
-        "common": 44.2,
-        "custom": 35.9,
-        "mission": 10.0
+        "total": 51.0,
+        "common": 0.0,
+        "custom": 35.0,
+        "mission": 16.0
+      },
+      "03b5f8b0-b214-49d7-a1a6-89c6777c6f6c": {
+        "agent_name": "CR",
+        "agent_type": "workflow",
+        "total": 65.46,
+        "common": 0.0,
+        "custom": 37.46,
+        "mission": 28.0
+      },
+      "03b5f8b0-b214-49d7-a1a6-89c6772c6f6c": {
+        "agent_name": "계약EZ",
+        "agent_type": "agentic",
+        "total": 50.0,
+        "common": 0.0,
+        "custom": 22.0,
+        "mission": 28.0
       }
     }
   }
