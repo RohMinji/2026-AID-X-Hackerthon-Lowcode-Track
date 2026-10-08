@@ -1,5 +1,7 @@
 (() => {
-  const { escapeHtml, computeStandings, diffStandings, resolveSnapshots } = window.Leaderboard;
+  const {
+    escapeHtml, computeStandings, diffStandings, resolveSnapshots, isEvalExport, fromEvalExport, withRoster,
+  } = window.Leaderboard;
 
   // Must match the branch the GitHub Pages deploy workflow actually builds
   // from (see .github/workflows/deploy-pages.yml). Update this once the repo
@@ -10,7 +12,9 @@
   const PUBLISHED_PATH = 'leaderboard/published.json';
   const HISTORY_PATH = 'leaderboard/history.json';
 
-  const DRAFT_URL = './results.json';
+  // The scoring pipeline pushes its evaluation export here every round.
+  const DRAFT_URL = './result/result.json';
+  const AGENTS_URL = './agents.json';
   const PUBLISHED_URL = './published.json';
   const HISTORY_URL = './history.json';
   const TOKEN_KEY = 'lb_admin_token';
@@ -48,6 +52,7 @@
   // corrected re-publish is still compared against what people have seen.
   let publishedStandings = null;
   let historyEntries = [];
+  let roster = {};
 
   function setMsg(node, kind, text) {
     node.className = `status-msg show ${kind}`;
@@ -122,6 +127,30 @@
     return '<span class="badge same">-</span>';
   }
 
+  function fmtScore(v) {
+    const r = Math.round(Number(v) * 10) / 10;
+    return Number.isInteger(r) ? String(r) : r.toFixed(1);
+  }
+
+  // Accepts the evaluation export (push_results.eval_n) or the board's own
+  // { event, criteria, teams } shape, and returns the latter.
+  function toBoard(json) {
+    if (isEvalExport(json)) return fromEvalExport(json);
+    if (Array.isArray(json && json.teams)) return json;
+    throw new Error('push_results(채점 결과) 또는 teams 배열이 없습니다. result.json 형식을 확인하세요.');
+  }
+
+  function standingsOf(board) {
+    return computeStandings(withRoster(board, roster));
+  }
+
+  function sourceLabel(board, origin) {
+    const ev = board.event || {};
+    const round = ev.round ? `${ev.round}회차 채점` : '';
+    const when = ev.updated_at ? new Date(ev.updated_at).toLocaleString('ko-KR', { hour12: false, month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }) : '';
+    return [round, when && `${when} 채점`, origin].filter(Boolean).join(' · ');
+  }
+
   function renderDraftTable(maxTotal, diffList) {
     if (!diffList.length) {
       draftTableBody.innerHTML = '<tr><td colspan="5" class="empty-note">불러온 데이터에 팀 정보가 없습니다.</td></tr>';
@@ -132,25 +161,25 @@
         <td class="rank-cell">${t.rank}</td>
         <td class="team-cell">
           <strong>${escapeHtml(t.team)}</strong>
-          <span>${escapeHtml(t.agent || '')}</span>
+          <span>${escapeHtml(t.agent && t.agent !== t.team ? t.agent : (t.agent_type || ''))}</span>
         </td>
         <td class="members-cell">${escapeHtml((t.members || []).join(', '))}</td>
-        <td class="num total-cell">${Math.round(t.total)} / ${maxTotal}</td>
+        <td class="num total-cell">${fmtScore(t.total)} / ${maxTotal}</td>
         <td>${badgeFor(t)}</td>
       </tr>
     `).join('');
   }
 
-  function applyDraft(json, sourceLabel) {
+  function applyDraft(json, label) {
     draftDataRaw = json;
-    draftStandings = computeStandings(json);
+    draftStandings = standingsOf(json);
 
     const diffList = diffStandings(publishedStandings.teams, draftStandings.teams);
     renderDraftTable(draftStandings.maxTotal, diffList);
 
     const changed = diffList.filter((t) => t.change !== 'same').length;
     draftMeta.textContent = `${json.event?.name || ''} · 팀 ${draftStandings.teams.length}개 · ` +
-      `게시본 대비 변동 예상 ${changed}팀 (${sourceLabel})`;
+      `공개 중인 점수 대비 변동 예상 ${changed}팀 (${label})`;
   }
 
   async function fetchJson(url) {
@@ -192,19 +221,22 @@
     draftMeta.textContent = '불러오는 중...';
     draftTableBody.innerHTML = '<tr><td colspan="5" class="empty-note">불러오는 중...</td></tr>';
     try {
-      const [draftJson, publishedJson, historyJson] = await Promise.all([
+      const [draftJson, publishedJson, historyJson, agentsJson] = await Promise.all([
         fetchJson(DRAFT_URL),
         fetchJson(PUBLISHED_URL).catch(() => ({ criteria: [], teams: [] })),
         fetchJson(HISTORY_URL).catch(() => ({ entries: [] })),
+        fetchJson(AGENTS_URL).catch(() => ({ agents: {} })),
       ]);
+      roster = agentsJson.agents || {};
       publishedDataRaw = publishedJson;
-      publishedStandings = computeStandings(visibleOf(publishedJson));
+      publishedStandings = standingsOf(visibleOf(publishedJson));
       renderSchedule(publishedJson);
       if (!revealAtInput.value) revealAtInput.value = toInputValue(nextTopOfHour());
       historyEntries = historyJson.entries || [];
 
       jsonPaste.value = JSON.stringify(draftJson, null, 2);
-      applyDraft(draftJson, 'results.json 기준');
+      const board = toBoard(draftJson);
+      applyDraft(board, sourceLabel(board, 'result/result.json 기준'));
       renderHistoryTable();
     } catch (err) {
       draftMeta.textContent = `불러오기 실패: ${err.message}`;
@@ -220,12 +252,15 @@
       setMsg(pasteMsg, 'err', `JSON 형식 오류: ${err.message}`);
       return;
     }
-    if (!Array.isArray(parsed.teams)) {
-      setMsg(pasteMsg, 'err', '"teams" 배열이 없습니다. results.json 스키마를 확인하세요.');
+    let board;
+    try {
+      board = toBoard(parsed);
+    } catch (err) {
+      setMsg(pasteMsg, 'err', err.message);
       return;
     }
     clearMsg(pasteMsg);
-    applyDraft(parsed, '붙여넣은 내용 기준, 아직 results.json과 다를 수 있음');
+    applyDraft(board, sourceLabel(board, '붙여넣은 내용 기준'));
     setMsg(pasteMsg, 'ok', '붙여넣은 내용으로 미리보기를 갱신했습니다. 게시하면 이 내용이 저장됩니다.');
   });
 
@@ -283,9 +318,9 @@
         <td class="rank-cell">${t.rank <= 3 ? '🏆 ' : ''}${t.rank}</td>
         <td class="team-cell">
           <strong>${escapeHtml(t.team)}</strong>
-          <span>${escapeHtml(t.agent || '')}</span>
+          <span>${escapeHtml(t.agent && t.agent !== t.team ? t.agent : (t.agent_type || ''))}</span>
         </td>
-        <td class="num">${t.prevTotal === null ? '-' : Math.round(t.prevTotal)} → ${Math.round(t.total)}</td>
+        <td class="num">${t.prevTotal === null ? '-' : fmtScore(t.prevTotal)} → ${fmtScore(t.total)}</td>
         <td>${badgeFor(t)}</td>
       </tr>
     `).join('');
@@ -303,7 +338,7 @@
       event: draftDataRaw.event || null,
       criteria: draftDataRaw.criteria || [],
       teams: draftStandings.teams.map((t) => ({
-        team: t.team, agent: t.agent, members: t.members, rank: t.rank, total: t.total, scores: t.scores,
+        appid: t.appid, team: t.team, agent: t.agent, members: t.members, rank: t.rank, total: t.total, scores: t.scores,
       })),
     });
     await githubPutFile(
@@ -372,11 +407,11 @@
       );
 
       setMsg(publishMsg, 'ok', `게시 완료 (commit ${(putData.commit && putData.commit.sha || '').slice(0, 7)}). 실시간 화면에는 ${fmtWhen(revealAt)}에 공개됩니다.`);
-      const before = previous ? computeStandings(previous) : { teams: [] };
+      const before = previous ? standingsOf(previous) : { teams: [] };
       renderReveal(before, draftStandings);
 
       publishedDataRaw = outData;
-      publishedStandings = computeStandings(visibleOf(outData));
+      publishedStandings = standingsOf(visibleOf(outData));
       renderSchedule(outData);
       renderDraftTable(draftStandings.maxTotal, diffStandings(publishedStandings.teams, draftStandings.teams));
     } catch (err) {

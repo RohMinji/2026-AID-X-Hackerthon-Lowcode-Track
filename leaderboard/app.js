@@ -1,5 +1,5 @@
 (() => {
-  const { escapeHtml, computeStandings, diffStandings, resolveSnapshots } = window.Leaderboard;
+  const { escapeHtml, computeStandings, diffStandings, resolveSnapshots, teamKey, withRoster } = window.Leaderboard;
 
   // The board reads published.json (written by the admin page). Scores in it
   // stay hidden until its `reveal_at`; until then the previous snapshot is
@@ -113,8 +113,23 @@
     return `<span class="medal${rank <= 3 ? ` m${rank}` : ''}">${rank}</span>`;
   }
 
+  const TYPE_LABEL = { agentic: 'Agentic', workflow: 'Workflow' };
+
+  // Members when agents.json lists them, otherwise the agent type.
   function members(t) {
-    return escapeHtml((t.members || []).join(', '));
+    if ((t.members || []).length) return escapeHtml(t.members.join(', '));
+    return escapeHtml(TYPE_LABEL[t.agent_type] || t.agent_type || '');
+  }
+
+  // The agent name shown next to the team name; hidden while the team has no
+  // name of its own yet (agents.json empty) and both would read the same.
+  function agentOf(t) {
+    return t.agent && t.agent !== t.team ? t.agent : '';
+  }
+
+  function teamLine(t) {
+    const parts = [agentOf(t) ? escapeHtml(t.team) : '', members(t)].filter(Boolean);
+    return parts.join(' · ');
   }
 
   function count(from, to, { dec = true, delay = 0 } = {}) {
@@ -148,7 +163,11 @@
   function computeView(t) {
     const raw = state.raw || {};
     const snap = resolveSnapshots(raw, t);
-    const base = { visible: snap.visible, previous: snap.previous, revealAt: snap.revealAt };
+    const base = {
+      visible: withRoster(snap.visible, state.agents),
+      previous: withRoster(snap.previous, state.agents),
+      revealAt: snap.revealAt,
+    };
     const waitTarget = snap.pending ? snap.revealAt : nextTopOfHour(t);
     const minute = new Date(t).getMinutes();
 
@@ -208,6 +227,7 @@
       delta: t.prevTotal === null ? null : t.total - t.prevTotal,
     }));
     const basis = view.revealAt !== null ? fmtHM(view.revealAt) : fmtHM(Date.now());
+    const round = view.visible.event && view.visible.event.round;
 
     const screens = [{
       label: '공개',
@@ -216,7 +236,7 @@
         <div class="hero">
           <div class="eyebrow">NEW LEADERBOARD</div>
           <h2 class="hero-title">새로운 리더보드를<br>공개합니다!</h2>
-          <div class="hero-pill">${basis} 점수 기준</div>
+          <div class="hero-pill">${round ? `${round}회차 · ` : ''}${basis} 점수 기준</div>
         </div>`,
     }];
 
@@ -281,7 +301,7 @@
             <div class="rk-rank">${count(fromRank, t.rank, { dec: false, delay })}</div>
             <div class="rk-move">${moveBadge(t)}</div>
             <div class="rk-info">
-              <div class="rk-team">${escapeHtml(t.team)}<span class="rk-agent">${escapeHtml(t.agent || '')}</span></div>
+              <div class="rk-team">${escapeHtml(t.team)}<span class="rk-agent">${escapeHtml(agentOf(t))}</span></div>
               <div class="rk-members">${members(t)}</div>
             </div>
             <div class="rk-path">${t.prevRank !== null ? `${t.prevRank}위 <i>→</i> <b>${t.rank}위</b>` : `<b>${t.rank}위</b> 첫 진입`}</div>
@@ -324,7 +344,7 @@
               <span class="j-to">${top.rank}위</span>
             </div>
             <div class="spot-team">${escapeHtml(top.team)}</div>
-            <div class="spot-agent">${escapeHtml(top.agent || '')}</div>
+            <div class="spot-agent">${escapeHtml(agentOf(top))}</div>
             <div class="spot-members">${members(top)}</div>
             <div class="spot-gain">+${count(0, top.delta, { delay: 600 })}<span class="spot-gain-label">점 상승</span></div>
             <div class="spot-scores">${fmtScore(top.prevTotal)}점 → <b>${fmtScore(top.total)}점</b></div>
@@ -335,7 +355,7 @@
               <div class="card spot-mini" style="--i:${i + 1}">
                 <div class="mini-place">${i + 2}</div>
                 <div class="mini-info">
-                  <div class="mini-team">${escapeHtml(t.team)} <span>${escapeHtml(t.agent || '')}</span></div>
+                  <div class="mini-team">${escapeHtml(t.team)} <span>${escapeHtml(agentOf(t))}</span></div>
                   <div class="mini-path">${t.prevRank}위 → ${t.rank}위</div>
                 </div>
                 <div class="mini-gain">${fmtDelta(t.delta)}</div>
@@ -376,7 +396,7 @@
           <div class="lb-row" style="--i:${i}">
             ${medal(t.rank)}
             <div class="lb-info">
-              <div class="lb-team">${escapeHtml(t.team)}<span class="lb-agent">${escapeHtml(t.agent || '')}</span></div>
+              <div class="lb-team">${escapeHtml(t.team)}<span class="lb-agent">${escapeHtml(agentOf(t))}</span></div>
               <div class="lb-members">${members(t)}</div>
             </div>
             <div class="bar-track"><div class="bar-fill" style="--w:${Math.min(100, t.pct).toFixed(1)}%"></div></div>
@@ -398,7 +418,7 @@
           <div class="podium-card p${t.rank}">
             ${medal(t.rank)}
             <div class="p-team">${escapeHtml(t.team)}</div>
-            <div class="p-agent">${escapeHtml(t.agent || '')}</div>
+            <div class="p-agent">${escapeHtml(agentOf(t))}</div>
             <div class="p-members">${members(t)}</div>
             <div class="p-score">${fmtScore(t.total)}<small> / ${maxTotal}</small></div>
             <div class="p-step">${t.rank}</div>
@@ -407,7 +427,7 @@
   }
 
   function agentInfo(t) {
-    return state.agents[t.team] || {};
+    return state.agents[teamKey(t)] || {};
   }
 
   function agentHero(t, maxTotal) {
@@ -419,7 +439,7 @@
         <div class="agent-copy">
           <div class="agent-rank">${medal(t.rank)}<span>현재 ${t.rank}위 에이전트</span></div>
           <h2 class="agent-name">${escapeHtml(t.agent || t.team)}</h2>
-          <div class="agent-team">${escapeHtml(t.team)} · ${members(t)}</div>
+          <div class="agent-team">${teamLine(t)}</div>
           <p class="agent-tagline">${escapeHtml(a.tagline || '에이전트 소개를 준비하고 있어요')}</p>
           ${a.description ? `<p class="agent-desc">${escapeHtml(a.description)}</p>` : ''}
           ${(a.features || []).length ? `
@@ -450,7 +470,7 @@
           <div class="card agent-card" style="--i:${i}">
             <div class="ac-head">
               ${medal(t.rank)}
-              <div class="ac-title"><div class="ac-name">${escapeHtml(t.agent || t.team)}</div><div class="ac-team">${escapeHtml(t.team)} · ${members(t)}</div></div>
+              <div class="ac-title"><div class="ac-name">${escapeHtml(t.agent || t.team)}</div><div class="ac-team">${teamLine(t)}</div></div>
               <div class="ac-score">${fmtScore(t.total)}<small>/${maxTotal}</small></div>
             </div>
             <p class="ac-tagline">${escapeHtml(a.tagline || '에이전트 소개를 준비하고 있어요')}</p>
@@ -593,7 +613,9 @@
       teams: (json.teams || []).map((t) => {
         const cut = 0.04 + rand() * 0.3;
         const scores = Object.fromEntries(Object.entries(t.scores || {}).map(([k, v]) => [k, Math.max(0, Math.round(Number(v) * (1 - cut)))]));
-        return { ...t, scores };
+        const out = { ...t, scores };
+        if (t.total !== undefined) out.total = Math.round(Number(t.total) * (1 - cut) * 10) / 10;
+        return out;
       }),
     };
     return { ...json, reveal_at: new Date(DEMO_REVEAL_AT).toISOString(), previous };
