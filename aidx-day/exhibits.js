@@ -93,7 +93,7 @@ const EXHIBITS = [
 
   // ---------------- Work (6) ----------------
   { id: "agenda24", part: "works", org: "IT부문", team: "IT전략본부",
-    title: "kode: - 기획부터 설계/개발 그리고 자산화까지,\nAI 네이티브 개발 플랫폼" },
+    title: "kode: series- 기획부터 설계/개발 그리고 자산화까지,\nAI 네이티브 개발 플랫폼" },
   { id: "agenda25", part: "works", org: "IT부문", team: "AX플랫폼본부",
     title: "AI로 하는 디자인", sub: "KDS(KT Design System) 기반 기획-디자인-개발을\nAI로 연계해 생산성 향상" },
   { id: "agenda26", part: "works", org: "IT부문", team: "AX플랫폼본부",
