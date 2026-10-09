@@ -43,7 +43,6 @@
   const fetchStatusEl = el('fetchStatus');
   const scheduleStatusEl = el('scheduleStatus');
 
-  const panelTab = el('panelTab');
   const controlPanel = el('controlPanel');
   const panelClose = el('panelClose');
   const modeSelect = el('modeSelect');
@@ -648,7 +647,6 @@
 
   // ---------- host panel ----------
 
-  panelTab.addEventListener('click', () => { controlPanel.hidden = !controlPanel.hidden; });
   panelClose.addEventListener('click', () => { controlPanel.hidden = true; });
   modeSelect.addEventListener('change', () => {
     state.override = modeSelect.value;
