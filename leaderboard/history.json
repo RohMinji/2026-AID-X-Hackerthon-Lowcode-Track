@@ -1,3 +1,267 @@
 {
-  "entries": []
+  "entries": [
+    {
+      "published_at": "2026-10-11T08:34:09.486Z",
+      "reveal_at": "2026-10-11T08:33:00.000Z",
+      "event": {
+        "name": "2026 AID-X 에이전트 개발 해커톤",
+        "updated_at": "2026-10-08T19:58:00+09:00",
+        "round": 2,
+        "push_id": 7
+      },
+      "criteria": [
+        {
+          "key": "common",
+          "label": "공통",
+          "max": 50
+        },
+        {
+          "key": "custom",
+          "label": "커스텀",
+          "max": 40
+        },
+        {
+          "key": "mission",
+          "label": "미션",
+          "max": 10
+        }
+      ],
+      "teams": [
+        {
+          "appid": "03b5f8b0-b214-49d7-a1a6-89c6777c6f6c",
+          "team": "CR",
+          "agent": "CR",
+          "members": [],
+          "rank": 1,
+          "total": 65.46,
+          "scores": {
+            "common": 0,
+            "custom": 37.46,
+            "mission": 28
+          }
+        },
+        {
+          "appid": "03b5f8b0-b214-49d7-a1a6-89c6772c999c",
+          "team": "CFO",
+          "agent": "CFO",
+          "members": [],
+          "rank": 2,
+          "total": 51,
+          "scores": {
+            "common": 0,
+            "custom": 35,
+            "mission": 16
+          }
+        },
+        {
+          "appid": "03b5f8b0-b214-49d7-a1a6-89c6772c6f6c",
+          "team": "계약EZ",
+          "agent": "계약EZ",
+          "members": [],
+          "rank": 3,
+          "total": 50,
+          "scores": {
+            "common": 0,
+            "custom": 22,
+            "mission": 28
+          }
+        },
+        {
+          "appid": "40cea5e1-42ce-4582-af9e-33e94d0e26b4",
+          "team": "관쟁이",
+          "agent": "관쟁이",
+          "members": [],
+          "rank": 4,
+          "total": 0,
+          "scores": {
+            "common": 0,
+            "custom": 0,
+            "mission": 0
+          }
+        },
+        {
+          "appid": "c3afcff0-3771-4abd-8572-b6b5841b7e10",
+          "team": "누수제로",
+          "agent": "누수제로",
+          "members": [],
+          "rank": 5,
+          "total": 0,
+          "scores": {
+            "common": 0,
+            "custom": 0,
+            "mission": 0
+          }
+        },
+        {
+          "appid": "0e7b5b42-5f5a-47f6-8319-31b59395a12e",
+          "team": "역량E",
+          "agent": "역량E",
+          "members": [],
+          "rank": 6,
+          "total": 0,
+          "scores": {
+            "common": 0,
+            "custom": 0,
+            "mission": 0
+          }
+        },
+        {
+          "appid": "9972f1f0-be01-43c5-acb1-cb00c082671d",
+          "team": "케이티데몬헌터스2",
+          "agent": "케이티데몬헌터스2",
+          "members": [],
+          "rank": 7,
+          "total": 0,
+          "scores": {
+            "common": 0,
+            "custom": 0,
+            "mission": 0
+          }
+        },
+        {
+          "appid": "96b889ee-f85c-4f12-9cbe-0d7510c5b695",
+          "team": "퇴근전략실",
+          "agent": "퇴근전략실",
+          "members": [],
+          "rank": 8,
+          "total": 0,
+          "scores": {
+            "common": 0,
+            "custom": 0,
+            "mission": 0
+          }
+        },
+        {
+          "appid": "ab98c29b-43e1-4da7-a719-fe64183b9297",
+          "team": "플러스알파",
+          "agent": "플러스알파",
+          "members": [],
+          "rank": 9,
+          "total": 0,
+          "scores": {
+            "common": 0,
+            "custom": 0,
+            "mission": 0
+          }
+        },
+        {
+          "appid": "ee588188-3955-4255-bcbd-3aab467c31ac",
+          "team": "AIeS",
+          "agent": "AIeS",
+          "members": [],
+          "rank": 10,
+          "total": 0,
+          "scores": {
+            "common": 0,
+            "custom": 0,
+            "mission": 0
+          }
+        },
+        {
+          "appid": "46fa38cc-46c1-f111-aaad-7ced8dff5c1a",
+          "team": "AX프로젝트무물봇",
+          "agent": "AX프로젝트무물봇",
+          "members": [],
+          "rank": 11,
+          "total": 0,
+          "scores": {
+            "common": 0,
+            "custom": 0,
+            "mission": 0
+          }
+        },
+        {
+          "appid": "082df3d8-21c1-f111-aaad-002248ecf2a5",
+          "team": "DealFlowAI",
+          "agent": "DealFlowAI",
+          "members": [],
+          "rank": 12,
+          "total": 0,
+          "scores": {
+            "common": 0,
+            "custom": 0,
+            "mission": 0
+          }
+        },
+        {
+          "appid": "7106de51-acc2-f111-a05a-000d3a82743f",
+          "team": "ENG지원팀",
+          "agent": "ENG지원팀",
+          "members": [],
+          "rank": 13,
+          "total": 0,
+          "scores": {
+            "common": 0,
+            "custom": 0,
+            "mission": 0
+          }
+        },
+        {
+          "appid": "ddead4bc-a937-4001-bde3-7956a5077759",
+          "team": "Entron",
+          "agent": "Entron",
+          "members": [],
+          "rank": 14,
+          "total": 0,
+          "scores": {
+            "common": 0,
+            "custom": 0,
+            "mission": 0
+          }
+        },
+        {
+          "appid": "7f4ee2f3-1fbe-f111-aaad-002248ee0781",
+          "team": "MAX",
+          "agent": "MAX",
+          "members": [],
+          "rank": 15,
+          "total": 0,
+          "scores": {
+            "common": 0,
+            "custom": 0,
+            "mission": 0
+          }
+        },
+        {
+          "appid": "3599cafd-67c1-f111-aaad-002248edbba9",
+          "team": "REDRED",
+          "agent": "REDRED",
+          "members": [],
+          "rank": 16,
+          "total": 0,
+          "scores": {
+            "common": 0,
+            "custom": 0,
+            "mission": 0
+          }
+        },
+        {
+          "appid": "8d092d68-04e5-4afd-91e5-1c3cb5799a34",
+          "team": "SolveIT",
+          "agent": "SolveIT",
+          "members": [],
+          "rank": 17,
+          "total": 0,
+          "scores": {
+            "common": 0,
+            "custom": 0,
+            "mission": 0
+          }
+        },
+        {
+          "appid": "85ade485-5e8d-f011-b4cc-6045bd1df16d",
+          "team": "Team길잡이",
+          "agent": "Team길잡이",
+          "members": [],
+          "rank": 18,
+          "total": 0,
+          "scores": {
+            "common": 0,
+            "custom": 0,
+            "mission": 0
+          }
+        }
+      ]
+    }
+  ]
 }
