@@ -82,6 +82,10 @@ window.Leaderboard = (() => {
     return t.appid || t.team;
   }
 
+  // Event name shown on every page (header, status table, admin) and written
+  // into published.json.
+  const EVENT_NAME = 'AID-X 해커톤 Low-Code';
+
   // Score items of the evaluation export (result/result.json). Only the sum
   // of `max` (the full score) is used on screen; the item names shown on the
   // board come from schedule.json.
@@ -125,7 +129,7 @@ window.Leaderboard = (() => {
     }));
     return {
       event: {
-        name: eventName || '2026 AID-X 에이전트 개발 해커톤',
+        name: eventName || EVENT_NAME,
         updated_at: parsePushDate(json.push_date),
         round: last.n,
         push_id: json.push_ID ?? null,
@@ -201,6 +205,6 @@ window.Leaderboard = (() => {
 
   return {
     escapeHtml, fmtDateTime, medalFor, computeStandings, diffStandings, resolveSnapshots,
-    teamKey, isEvalExport, fromEvalExport, withRoster, rosterEntry, sameName, peopleOf, EVAL_CRITERIA,
+    teamKey, isEvalExport, fromEvalExport, withRoster, rosterEntry, sameName, peopleOf, EVAL_CRITERIA, EVENT_NAME,
   };
 })();

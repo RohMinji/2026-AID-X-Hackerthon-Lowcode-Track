@@ -41,7 +41,7 @@
       const json = resolveSnapshots(raw).visible || { criteria: [], teams: [] };
       const { maxTotal, teams } = computeStandings(withRoster(json, agents.agents || {}));
 
-      eventNameEl.textContent = raw.event?.name || '해커톤 현황';
+      eventNameEl.textContent = window.Leaderboard.EVENT_NAME;
       eventNoteEl.textContent = raw.event?.note || '';
       updatedAtEl.textContent = `마지막 갱신 ${fmtDateTime(json.reveal_at || json.event?.updated_at)}`;
       renderTable(maxTotal, teams);

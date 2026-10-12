@@ -1,6 +1,6 @@
 {
   "event": {
-    "name": "2026 AID-X 에이전트 개발 해커톤",
+    "name": "AID-X 해커톤 Low-Code",
     "updated_at": "2026-10-08T19:58:00+09:00",
     "round": 2,
     "push_id": 7
@@ -261,7 +261,7 @@
   "reveal_at": "2026-10-11T08:33:00.000Z",
   "previous": {
     "event": {
-      "name": "2026 AID-X 에이전트 개발 해커톤",
+      "name": "AID-X 해커톤 Low-Code",
       "updated_at": "2026-08-27T09:00:00+09:00",
       "note": "채점 에이전트가 자동으로 갱신하는 라이브 리더보드입니다"
     },

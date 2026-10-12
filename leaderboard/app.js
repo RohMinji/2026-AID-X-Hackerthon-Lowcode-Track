@@ -45,7 +45,6 @@
   const stage = el('stage');
   const viewport = el('viewport');
   const screenDots = el('screenDots');
-  const eventNameEl = el('eventName');
   const modeLabelEl = el('modeLabel');
   const clockEl = el('clock');
   const updatedAtEl = el('updatedAt');
@@ -903,7 +902,6 @@
         state.schedule = scheduleText ? { ...DEFAULT_SCHEDULE, ...JSON.parse(scheduleText) } : DEFAULT_SCHEDULE;
         state.scheduleText = scheduleText;
       } catch { /* keep the last good schedule */ }
-      eventNameEl.textContent = (json.event && json.event.name) || '해커톤 라이브 리더보드';
       fetchStatusEl.textContent = `상태: 정상 (${new Date().toLocaleTimeString('ko-KR', { hour12: false })})`;
       tick();
     } catch (err) {

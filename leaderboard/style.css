@@ -85,24 +85,38 @@ html, body {
 
 .topbar-left { display: flex; align-items: center; gap: 1.6rem; min-width: 0; }
 
-.brand-mark {
-  font-weight: 900;
-  font-size: 2.2rem;
-  letter-spacing: 0.04em;
-  background: var(--grad);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
-
-.event-name {
+.brand {
   margin: 0;
-  font-size: 2.2rem;
-  font-weight: 700;
-  color: var(--ink-2);
+  font-size: 3.4rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--ink);
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+}
+.brand-x { font-weight: 900; letter-spacing: -0.03em; }
+
+/* Track badge, matched to the Pro-Code board's glossy capsule */
+.track-pill {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  padding: 0.6rem 2.2rem 0.7rem;
+  border-radius: 99rem;
+  font-size: 2.8rem;
+  font-weight: 900;
+  letter-spacing: -0.01em;
+  line-height: 1;
+  color: #fff;
+  white-space: nowrap;
+  text-shadow: 0 0.1rem 0.3rem rgba(16, 10, 70, 0.35);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.32) 0%, rgba(255, 255, 255, 0.06) 48%, rgba(255, 255, 255, 0) 52%),
+    linear-gradient(100deg, #1f33d6 0%, #3d3cf2 45%, #7a45f5 85%, #9b4cf3 100%);
+  border: 0.22rem solid #b7b0ff;
+  box-shadow:
+    0 0 0 0.25rem rgba(122, 92, 255, 0.18),
+    0 0.8rem 2.2rem rgba(70, 60, 240, 0.35),
+    inset 0 -0.35rem 0.7rem rgba(20, 10, 90, 0.35);
 }
 
 .topbar-right { display: flex; align-items: center; gap: 2rem; }
