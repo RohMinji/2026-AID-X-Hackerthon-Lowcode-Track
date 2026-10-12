@@ -155,25 +155,43 @@ window.Leaderboard = (() => {
 
   // Overlays agents.json onto a snapshot: team name, org, leader, members.
   // Teams marked "hidden" (test teams) are dropped, so rankings are computed
-  // without them.
+  // without them. Teams listed in agents.json but missing from the results
+  // (e.g. scored outside the pipeline, no appid yet) are added with 0 points
+  // so every team is always on the board.
   function withRoster(json, roster) {
     if (!json || !roster) return json;
-    return {
-      ...json,
-      teams: (json.teams || [])
-        .filter((t) => { const r = rosterEntry(roster, t); return !(r && r.hidden); })
-        .map((t) => {
-          const r = rosterEntry(roster, t);
-          if (!r) return t;
-          return {
-            ...t,
-            team: r.team || t.team,
-            org: r.org || t.org || '',
-            leader: r.leader || t.leader || '',
-            members: Array.isArray(r.members) && r.members.length ? r.members : t.members,
-          };
-        }),
-    };
+    const used = new Set();
+    const teams = (json.teams || [])
+      .filter((t) => { const r = rosterEntry(roster, t); return !(r && r.hidden); })
+      .map((t) => {
+        const r = rosterEntry(roster, t);
+        if (!r) return t;
+        used.add(r);
+        return {
+          ...t,
+          team: r.team || t.team,
+          org: r.org || t.org || '',
+          leader: r.leader || t.leader || '',
+          members: Array.isArray(r.members) && r.members.length ? r.members : t.members,
+        };
+      });
+    if ((json.teams || []).length) {
+      Object.entries(roster).forEach(([key, r]) => {
+        if (!r || r.hidden || used.has(r) || !(r.team || r.agent_name)) return;
+        teams.push({
+          appid: key,
+          team: r.team || r.agent_name,
+          agent: r.agent_name || r.team,
+          agent_type: r.agent_type || '',
+          org: r.org || '',
+          leader: r.leader || '',
+          members: Array.isArray(r.members) ? r.members : [],
+          total: 0,
+          scores: {},
+        });
+      });
+    }
+    return { ...json, teams };
   }
 
   // Leader first, then the other members.

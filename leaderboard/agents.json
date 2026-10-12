@@ -181,18 +181,6 @@
       ],
       "tagline": "보안과 인프라 운영을 더 스마트하게 만드는 AI Assistant"
     },
-    "appid-미확인-AX-Ray": {
-      "agent_name": "AX-Ray",
-      "team": "AX-Ray",
-      "org": "kt commerce",
-      "leader": "이동훈",
-      "members": [
-        "추종민",
-        "황수한"
-      ],
-      "tagline": "보안 리스크를 탐지하고 개선 포인트를 제시하는 AI 진단 에이전트",
-      "note": "appid 미확인 (KT 테넌트 아님, 직접 테스트 예정) — result.json의 agent_name이 AX-Ray면 이름으로 자동 연결"
-    },
     "03b5f8b0-b214-49d7-a1a6-89c6772c999c": {
       "agent_name": "CFO",
       "hidden": true,
@@ -207,6 +195,18 @@
       "agent_name": "계약EZ",
       "hidden": true,
       "note": "테스트용 팀 — 화면과 순위에서 제외"
+    },
+    "AX-Ray": {
+      "agent_name": "AX-Ray",
+      "team": "AX-Ray",
+      "org": "kt commerce",
+      "leader": "이동훈",
+      "members": [
+        "추종민",
+        "황수한"
+      ],
+      "tagline": "보안 리스크를 탐지하고 개선 포인트를 제시하는 AI 진단 에이전트",
+      "note": "appid 없음 (KT 테넌트 아님, 직접 테스트). 결과에 없어도 0점으로 항상 표시됩니다. 점수를 result.json에 넣을 때는 키를 \"AX-Ray\" 또는 agent_name을 \"AX-Ray\"로 하면 이 팀으로 연결됩니다."
     }
   }
 }
