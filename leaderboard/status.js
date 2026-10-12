@@ -21,7 +21,7 @@
         <td class="rank-cell">${t.rank <= 3 ? `<span class="medal">${medalFor(t.rank)}</span>` : ''}${t.rank}</td>
         <td class="team-cell">
           <strong>${escapeHtml(t.team)}</strong>
-          <span>${escapeHtml(t.agent && t.agent !== t.team ? t.agent : (t.agent_type || ''))}</span>
+          <span>${escapeHtml(t.agent && !window.Leaderboard.sameName(t.agent, t.team) ? t.agent : (t.agent_type || ''))}</span>
         </td>
         <td class="members-cell">${escapeHtml((t.members || []).join(', '))}</td>
         <td class="num total-cell">${Math.round(t.total * 10) / 10} / ${maxTotal}</td>

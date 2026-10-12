@@ -161,7 +161,7 @@
         <td class="rank-cell">${t.rank}</td>
         <td class="team-cell">
           <strong>${escapeHtml(t.team)}</strong>
-          <span>${escapeHtml(t.agent && t.agent !== t.team ? t.agent : (t.agent_type || ''))}</span>
+          <span>${escapeHtml(t.agent && !window.Leaderboard.sameName(t.agent, t.team) ? t.agent : (t.agent_type || ''))}</span>
         </td>
         <td class="members-cell">${escapeHtml((t.members || []).join(', '))}</td>
         <td class="num total-cell">${fmtScore(t.total)} / ${maxTotal}</td>
@@ -318,7 +318,7 @@
         <td class="rank-cell">${t.rank <= 3 ? '🏆 ' : ''}${t.rank}</td>
         <td class="team-cell">
           <strong>${escapeHtml(t.team)}</strong>
-          <span>${escapeHtml(t.agent && t.agent !== t.team ? t.agent : (t.agent_type || ''))}</span>
+          <span>${escapeHtml(t.agent && !window.Leaderboard.sameName(t.agent, t.team) ? t.agent : (t.agent_type || ''))}</span>
         </td>
         <td class="num">${t.prevTotal === null ? '-' : fmtScore(t.prevTotal)} → ${fmtScore(t.total)}</td>
         <td>${badgeFor(t)}</td>

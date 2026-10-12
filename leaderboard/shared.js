@@ -137,12 +137,28 @@ window.Leaderboard = (() => {
 
   // Overlays team names, members and intro copy from agents.json (keyed by
   // appid) onto a board snapshot, so names can be fixed without re-publishing.
+  // "DealFlow AI" and "DealFlowAI" are the same team.
+  function sameName(a, b) {
+    const norm = (s) => String(s || '').toLowerCase().replace(/[\s\-_.·]/g, '');
+    return !!norm(a) && norm(a) === norm(b);
+  }
+
+  // agents.json entry for a team: by appid, or else by name (agent_name or
+  // team written in agents.json against the agent name in the results), so a
+  // team listed before its appid is known still gets its name and intro.
+  function rosterEntry(roster, t) {
+    if (!roster || !t) return null;
+    if (roster[teamKey(t)]) return roster[teamKey(t)];
+    const names = [t.agent, t.team].filter(Boolean);
+    return Object.values(roster).find((r) => r && names.some((n) => sameName(n, r.agent_name) || sameName(n, r.team))) || null;
+  }
+
   function withRoster(json, roster) {
     if (!json || !roster) return json;
     return {
       ...json,
       teams: (json.teams || []).map((t) => {
-        const r = roster[teamKey(t)];
+        const r = rosterEntry(roster, t);
         if (!r) return t;
         return {
           ...t,
@@ -155,6 +171,6 @@ window.Leaderboard = (() => {
 
   return {
     escapeHtml, fmtDateTime, medalFor, computeStandings, diffStandings, resolveSnapshots,
-    teamKey, isEvalExport, fromEvalExport, withRoster, EVAL_CRITERIA,
+    teamKey, isEvalExport, fromEvalExport, withRoster, rosterEntry, sameName, EVAL_CRITERIA,
   };
 })();

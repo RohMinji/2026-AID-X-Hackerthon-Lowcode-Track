@@ -1,5 +1,7 @@
 (() => {
-  const { escapeHtml, computeStandings, diffStandings, resolveSnapshots, teamKey, withRoster } = window.Leaderboard;
+  const {
+    escapeHtml, computeStandings, diffStandings, resolveSnapshots, withRoster, rosterEntry, sameName,
+  } = window.Leaderboard;
 
   // The board reads published.json (written by the admin page). Scores in it
   // stay hidden until its `reveal_at`; until then the previous snapshot is
@@ -130,7 +132,7 @@
   // The agent name shown next to the team name; hidden while the team has no
   // name of its own yet (agents.json empty) and both would read the same.
   function agentOf(t) {
-    return t.agent && t.agent !== t.team ? t.agent : '';
+    return t.agent && !sameName(t.agent, t.team) ? t.agent : '';
   }
 
   function teamLine(t) {
@@ -217,7 +219,8 @@
     let target = null;
     if (state.override !== 'auto') {
       mode = state.override;
-      target = snap.pending ? snap.revealAt : (lastDeadline ?? t) + revealDelayMs();
+      if (snap.pending) target = snap.revealAt;
+      else if (lastDeadline !== null) target = lastDeadline + revealDelayMs();
     } else if (final !== null && t >= final) {
       mode = 'final';
     } else if (snap.revealAt !== null && t >= snap.revealAt && t < snap.revealAt + revealWindowMs()) {
@@ -592,7 +595,7 @@
   // ---------- status / final ----------
 
   function agentInfo(t) {
-    return state.agents[teamKey(t)] || {};
+    return rosterEntry(state.agents, t) || {};
   }
 
   function agentHero(t, maxTotal, prefix) {
@@ -605,7 +608,7 @@
         <div class="agent-hero">
           <div class="agent-copy">
             <div class="agent-rank">${medal(t.rank)}<span>${prefix} ${t.rank}위 에이전트</span></div>
-            <h2 class="agent-name">${escapeHtml(t.agent || t.team)}</h2>
+            <h2 class="agent-name">${escapeHtml(t.team || t.agent)}</h2>
             <div class="agent-team">${teamLine(t)}</div>
             <p class="agent-tagline">${escapeHtml(a.tagline || '에이전트 소개를 준비하고 있어요')}</p>
             ${a.description ? `<p class="agent-desc">${escapeHtml(a.description)}</p>` : ''}
@@ -640,7 +643,7 @@
             <div class="card agent-card" style="--i:${i}">
               <div class="ac-head">
                 ${medal(t.rank)}
-                <div class="ac-title"><div class="ac-name">${escapeHtml(t.agent || t.team)}</div><div class="ac-team">${teamLine(t)}</div></div>
+                <div class="ac-title"><div class="ac-name">${escapeHtml(t.team || t.agent)}</div><div class="ac-team">${teamLine(t)}</div></div>
                 <div class="ac-score">${fmtScore(t.total)}<small>/${maxTotal}</small></div>
               </div>
               <p class="ac-tagline">${escapeHtml(a.tagline || '에이전트 소개를 준비하고 있어요')}</p>
