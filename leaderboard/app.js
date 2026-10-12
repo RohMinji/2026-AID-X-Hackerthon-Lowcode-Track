@@ -1,6 +1,6 @@
 (() => {
   const {
-    escapeHtml, computeStandings, diffStandings, resolveSnapshots, withRoster, rosterEntry, sameName,
+    escapeHtml, computeStandings, diffStandings, resolveSnapshots, withRoster, rosterEntry, sameName, peopleOf,
   } = window.Leaderboard;
 
   // The board reads published.json (written by the admin page). Scores in it
@@ -123,10 +123,10 @@
 
   const TYPE_LABEL = { agentic: 'Agentic', workflow: 'Workflow' };
 
-  // Members when agents.json lists them, otherwise the agent type.
+  // "소속 · 팀장, 팀원, 팀원" from agents.json, otherwise the agent type.
   function members(t) {
-    if ((t.members || []).length) return escapeHtml(t.members.join(', '));
-    return escapeHtml(TYPE_LABEL[t.agent_type] || t.agent_type || '');
+    const line = [t.org, peopleOf(t).join(', ')].filter(Boolean).join(' · ');
+    return escapeHtml(line || TYPE_LABEL[t.agent_type] || t.agent_type || '');
   }
 
   // The agent name shown next to the team name; hidden while the team has no
@@ -135,8 +135,14 @@
     return t.agent && !sameName(t.agent, t.team) ? t.agent : '';
   }
 
+  // Longer form for the agent intro screens: 소속 · 팀장 ○○○ · 팀원 ○○○, ○○○
   function teamLine(t) {
-    return [agentOf(t) ? escapeHtml(t.team) : '', members(t)].filter(Boolean).join(' · ');
+    const others = (t.members || []).filter(Boolean);
+    const people = t.leader
+      ? [`팀장 ${t.leader}`, others.length ? `팀원 ${others.join(', ')}` : ''].filter(Boolean).join(' · ')
+      : others.join(', ');
+    const parts = [agentOf(t) ? t.team : '', t.org, people].filter(Boolean).map((x) => escapeHtml(x));
+    return parts.length ? parts.join(' · ') : members(t);
   }
 
   function count(from, to, { dec = true, delay = 0 } = {}) {

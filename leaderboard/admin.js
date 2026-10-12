@@ -163,7 +163,7 @@
           <strong>${escapeHtml(t.team)}</strong>
           <span>${escapeHtml(t.agent && !window.Leaderboard.sameName(t.agent, t.team) ? t.agent : (t.agent_type || ''))}</span>
         </td>
-        <td class="members-cell">${escapeHtml((t.members || []).join(', '))}</td>
+        <td class="members-cell">${escapeHtml([t.org, window.Leaderboard.peopleOf(t).join(', ')].filter(Boolean).join(' · '))}</td>
         <td class="num total-cell">${fmtScore(t.total)} / ${maxTotal}</td>
         <td>${badgeFor(t)}</td>
       </tr>
@@ -338,7 +338,7 @@
       event: draftDataRaw.event || null,
       criteria: draftDataRaw.criteria || [],
       teams: draftStandings.teams.map((t) => ({
-        appid: t.appid, team: t.team, agent: t.agent, members: t.members, rank: t.rank, total: t.total, scores: t.scores,
+        appid: t.appid, team: t.team, agent: t.agent, org: t.org, leader: t.leader, members: t.members, rank: t.rank, total: t.total, scores: t.scores,
       })),
     });
     await githubPutFile(

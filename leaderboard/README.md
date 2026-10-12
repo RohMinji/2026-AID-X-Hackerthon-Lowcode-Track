@@ -182,9 +182,13 @@ QR은 `vendor/qrcode.js`로 화면에서 바로 그리므로 링크만 바꾸면
 {
   "agents": {
     "03b5f8b0-b214-49d7-a1a6-89c6772c6f6c": {   // result.json의 appid
-      "agent_name": "Agent A",          // 알아보기 위한 메모 (화면에는 result.json 값 사용)
+      "agent_name": "Agent A",          // 결과의 agent_name (appid를 모를 때 이름으로 연결하는 데 사용)
+      "app_name": "앱 이름",              // 참고용 메모 (화면에 표시하지 않음)
       "team": "팀 이름",                 // 비워 두면 agent_name이 팀 이름 자리에 표시됨
-      "members": ["팀원1", "팀원2"],      // 비워 두면 agent_type(Agentic/Workflow) 표시
+      "org": "소속",
+      "leader": "팀장",
+      "members": ["팀원1", "팀원2"],      // org·leader·members가 모두 비면 agent_type(Agentic/Workflow) 표시
+      "hidden": false,                  // true면 화면과 순위에서 제외 (테스트용 팀)
       "tagline": "한 줄 소개",
       "description": "두세 문장 설명 (1~3위 화면, 4~7위 카드에 표시)",
       "features": ["핵심 기능 1", "핵심 기능 2", "핵심 기능 3"]

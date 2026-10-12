@@ -153,24 +153,36 @@ window.Leaderboard = (() => {
     return Object.values(roster).find((r) => r && names.some((n) => sameName(n, r.agent_name) || sameName(n, r.team))) || null;
   }
 
+  // Overlays agents.json onto a snapshot: team name, org, leader, members.
+  // Teams marked "hidden" (test teams) are dropped, so rankings are computed
+  // without them.
   function withRoster(json, roster) {
     if (!json || !roster) return json;
     return {
       ...json,
-      teams: (json.teams || []).map((t) => {
-        const r = rosterEntry(roster, t);
-        if (!r) return t;
-        return {
-          ...t,
-          team: r.team || t.team,
-          members: Array.isArray(r.members) && r.members.length ? r.members : t.members,
-        };
-      }),
+      teams: (json.teams || [])
+        .filter((t) => { const r = rosterEntry(roster, t); return !(r && r.hidden); })
+        .map((t) => {
+          const r = rosterEntry(roster, t);
+          if (!r) return t;
+          return {
+            ...t,
+            team: r.team || t.team,
+            org: r.org || t.org || '',
+            leader: r.leader || t.leader || '',
+            members: Array.isArray(r.members) && r.members.length ? r.members : t.members,
+          };
+        }),
     };
+  }
+
+  // Leader first, then the other members.
+  function peopleOf(t) {
+    return [t.leader, ...(t.members || [])].filter(Boolean);
   }
 
   return {
     escapeHtml, fmtDateTime, medalFor, computeStandings, diffStandings, resolveSnapshots,
-    teamKey, isEvalExport, fromEvalExport, withRoster, rosterEntry, sameName, EVAL_CRITERIA,
+    teamKey, isEvalExport, fromEvalExport, withRoster, rosterEntry, sameName, peopleOf, EVAL_CRITERIA,
   };
 })();
