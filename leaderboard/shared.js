@@ -203,7 +203,28 @@ window.Leaderboard = (() => {
     return [t.leader, ...(t.members || [])].filter(Boolean);
   }
 
+  // schedule.json deadlines as sorted timestamps. "HH:MM" entries fall on
+  // schedule.date (or on the day of `t` when no date is set, so the schedule
+  // can be rehearsed on any day); "YYYY-MM-DD HH:MM" entries are absolute
+  // (e.g. a next-morning round).
+  function deadlinesOf(schedule, t = Date.now()) {
+    const sch = schedule || {};
+    const day = sch.date ? new Date(`${sch.date}T00:00:00`) : new Date(t);
+    return (sch.deadlines || [])
+      .map((d) => {
+        const str = String(d).trim();
+        if (/^\d{4}-\d{2}-\d{2}/.test(str)) return new Date(str.replace(' ', 'T')).getTime();
+        const [h, m] = str.split(':').map(Number);
+        const at = new Date(day);
+        at.setHours(h, m, 0, 0);
+        return at.getTime();
+      })
+      .filter(Number.isFinite)
+      .sort((x, y) => x - y);
+  }
+
   return {
+    deadlinesOf,
     escapeHtml, fmtDateTime, medalFor, computeStandings, diffStandings, resolveSnapshots,
     teamKey, isEvalExport, fromEvalExport, withRoster, rosterEntry, sameName, peopleOf, EVAL_CRITERIA, EVENT_NAME,
   };

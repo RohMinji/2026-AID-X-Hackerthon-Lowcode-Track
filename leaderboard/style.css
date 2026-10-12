@@ -789,19 +789,19 @@ html, body {
 
 /* ---------------- Remaining chances ---------------- */
 
-.remain { position: relative; z-index: 1; margin: auto 0; display: flex; flex-direction: column; align-items: flex-start; }
+.remain { position: relative; z-index: 1; margin: auto 0; width: 100%; display: flex; flex-direction: column; align-items: flex-start; }
 .remain-title { margin: 1.6rem 0 0; font-size: 8rem; font-weight: 900; letter-spacing: -0.03em; line-height: 1.1; }
 .remain-title b { font-size: 12rem; background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; margin: 0 0.4rem; }
 .remain-next { margin-top: 2.6rem; display: flex; align-items: center; gap: 2.4rem; font-size: 3.4rem; font-weight: 700; color: var(--ink-2); }
 .remain-next strong { color: var(--ink); font-size: 4.4rem; font-variant-numeric: tabular-nums; }
 .remain-count { padding: 1rem 2.4rem; border-radius: 99rem; background: var(--soft); border: 1px solid var(--line); font-size: 2.6rem; }
 .remain-count b { color: var(--blue); font-variant-numeric: tabular-nums; margin-left: 0.6rem; }
-.remain-times { margin-top: 5rem; display: grid; grid-template-columns: repeat(var(--n, 6), 17rem); gap: 1.8rem; }
-.rt-day { font-size: 1.6rem; font-weight: 800; color: var(--violet); }
+.remain-times { margin-top: 5rem; width: 100%; display: grid; grid-template-columns: repeat(var(--n, 6), minmax(0, 1fr)); gap: 1.6rem; }
+.rt-day { font-size: 1.8rem; font-weight: 800; color: var(--violet); min-height: 2.2rem; }
 .rt { display: flex; flex-direction: column; gap: 0.6rem; padding: 2rem 2.2rem; border-radius: 2rem; background: var(--card); border: 1px solid var(--line); box-shadow: var(--shadow); }
 .screen.enter .rt { animation: rise 0.6s cubic-bezier(.2, .8, .2, 1) both; animation-delay: calc(0.2s + var(--i) * 0.08s); }
 .rt-no { font-size: 1.8rem; font-weight: 700; color: var(--ink-3); }
-.rt-time { font-size: 4rem; font-weight: 900; font-variant-numeric: tabular-nums; }
+.rt-time { font-size: 4.2rem; font-weight: 900; font-variant-numeric: tabular-nums; }
 .rt-state { font-size: 1.8rem; font-weight: 800; color: var(--ink-3); }
 .rt.done { opacity: 0.45; box-shadow: none; }
 .rt.done .rt-time { text-decoration: line-through; text-decoration-thickness: 0.3rem; }

@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>AID-X 해커톤 Low-Code 채점 접수</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
+<link rel="stylesheet" href="style.css?v=20261013" />
+<style>
+  /* Standalone page: one fixed screen, no rotation footer. */
+  .qr-page .screen { padding-bottom: 4rem; }
+  .qr-page .qr-box { width: 62rem; height: 62rem; }
+  .qr-remain { margin-top: 2.2rem; font-size: 2.6rem; font-weight: 700; color: var(--ink-2); }
+  .qr-remain b { color: var(--blue); font-size: 3.2rem; margin: 0 0.3rem; }
+  .qr-closed { margin-top: 3rem; font-size: 3.4rem; font-weight: 800; color: var(--ink-2); }
+</style>
+</head>
+<body>
+
+<div class="stage qr-page" data-mode="status">
+  <div class="backdrop" aria-hidden="true">
+    <span class="blob blob-a"></span>
+    <span class="blob blob-b"></span>
+    <span class="blob blob-c"></span>
+  </div>
+
+  <header class="topbar">
+    <div class="topbar-left">
+      <h1 class="brand"><span class="brand-x">AID-X</span> 해커톤</h1>
+      <span class="track-pill">Low-Code</span>
+    </div>
+    <div class="topbar-right">
+      <span class="clock" id="clock">--:--:--</span>
+    </div>
+  </header>
+
+  <main class="viewport">
+    <section class="screen active enter">
+      <img class="deco d-bottom-right-sm" src="assets/cursor.png" alt="">
+      <img class="deco d-top-right" src="assets/sparkle.png" alt="">
+      <div class="qr-wrap">
+        <div class="qr-left">
+          <div class="qr-box card" id="qrBox"></div>
+          <div class="qr-url" id="qrUrl"></div>
+        </div>
+        <div class="qr-copy">
+          <div class="eyebrow">SUBMIT</div>
+          <h2 class="qr-title">채점 접수는<br>QR로 신청하세요</h2>
+          <div id="deadline"></div>
+          <div class="qr-guide-title" id="guideTitle" hidden>모바일 QR 인식 방법</div>
+          <ol class="qr-steps" id="guide"></ol>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script src="vendor/qrcode.js"></script>
+<script src="shared.js?v=20261013"></script>
+<script>
+(() => {
+  // Reads the form link, guide steps and deadlines from schedule.json, so
+  // the page follows any change there without a redeploy.
+  const { escapeHtml, deadlinesOf } = window.Leaderboard;
+  const el = (id) => document.getElementById(id);
+  const pad2 = (n) => String(n).padStart(2, '0');
+  let schedule = null;
+  let lastUrl = '';
+
+  function fmtHM(ms) {
+    const d = new Date(ms);
+    return `${pad2(d.getHours())}:${pad2(d.getMinutes())}`;
+  }
+
+  function fmtWhen(ms) {
+    const d = new Date(ms);
+    return d.toDateString() === new Date().toDateString() ? fmtHM(ms) : `${d.getMonth() + 1}/${d.getDate()} ${fmtHM(ms)}`;
+  }
+
+  function fmtRemain(ms) {
+    const total = Math.max(0, Math.ceil(ms / 1000));
+    const h = Math.floor(total / 3600);
+    const m = Math.floor((total % 3600) / 60);
+    const s = total % 60;
+    return h > 0 ? `${h}:${pad2(m)}:${pad2(s)}` : `${pad2(m)}:${pad2(s)}`;
+  }
+
+  function render() {
+    const form = (schedule && schedule.form) || {};
+    if (form.url && form.url !== lastUrl) {
+      const qr = window.qrcode(0, 'M');
+      qr.addData(form.url);
+      qr.make();
+      el('qrBox').innerHTML = qr.createSvgTag({ cellSize: 8, margin: 0, scalable: true });
+      el('qrUrl').textContent = form.url.replace(/^https?:\/\//, '');
+      lastUrl = form.url;
+    }
+    const guide = form.guide || [];
+    el('guideTitle').hidden = !guide.length;
+    el('guide').innerHTML = guide.map((g, i) => `<li style="--i:${i}"><span>${i + 1}</span>${escapeHtml(g)}</li>`).join('');
+    renderDeadline();
+  }
+
+  function renderDeadline() {
+    const now = Date.now();
+    const upcoming = deadlinesOf(schedule, now).filter((d) => d > now);
+    const next = upcoming[0];
+    el('deadline').innerHTML = next
+      ? `<div class="qr-deadline">다음 접수 마감 <strong>${fmtWhen(next)}</strong>
+           <span>마감까지 <b>${fmtRemain(next - now)}</b></span></div>
+         <div class="qr-remain">남은 접수 기회 <b>${upcoming.length}</b>회</div>`
+      : '<div class="qr-closed">모든 접수가 마감되었습니다</div>';
+  }
+
+  async function load() {
+    try {
+      const res = await fetch(`schedule.json?_=${Date.now()}`, { cache: 'no-store' });
+      if (res.ok) schedule = await res.json();
+    } catch { /* keep the last good schedule */ }
+    render();
+  }
+
+  setInterval(() => {
+    const d = new Date();
+    el('clock').textContent = [d.getHours(), d.getMinutes(), d.getSeconds()].map(pad2).join(':');
+    if (schedule) renderDeadline();
+  }, 1000);
+  load();
+  setInterval(load, 60000);
+})();
+</script>
+</body>
+</html>

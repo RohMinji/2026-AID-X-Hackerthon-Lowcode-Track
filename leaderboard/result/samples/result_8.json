@@ -1,0 +1,916 @@
+{
+  "push_date": "20261015T08:55",
+  "push_ID": 8,
+  "push_results": {
+    "eval_1": {
+      "46fa38cc-46c1-f111-aaad-7ced8dff5c1a": {
+        "agent_name": "AX프로젝트무물봇",
+        "agent_type": "agentic",
+        "total": 50.5,
+        "common": 25.6,
+        "custom": 15.6,
+        "mission": 9.3
+      },
+      "ddead4bc-a937-4001-bde3-7956a5077759": {
+        "agent_name": "Entron",
+        "agent_type": "agentic",
+        "total": 34.0,
+        "common": 17.5,
+        "custom": 10.5,
+        "mission": 6.0
+      },
+      "96b889ee-f85c-4f12-9cbe-0d7510c5b695": {
+        "agent_name": "퇴근전략실",
+        "agent_type": "agentic",
+        "total": 77.1,
+        "common": 39.1,
+        "custom": 23.3,
+        "mission": 14.7
+      },
+      "082df3d8-21c1-f111-aaad-002248ecf2a5": {
+        "agent_name": "DealFlowAI",
+        "agent_type": "agentic",
+        "total": 60.2,
+        "common": 30.6,
+        "custom": 16.8,
+        "mission": 12.8
+      },
+      "85ade485-5e8d-f011-b4cc-6045bd1df16d": {
+        "agent_name": "Team길잡이",
+        "agent_type": "agentic",
+        "total": 47.5,
+        "common": 24.7,
+        "custom": 13.4,
+        "mission": 9.4
+      },
+      "9972f1f0-be01-43c5-acb1-cb00c082671d": {
+        "agent_name": "케이티데몬헌터스2",
+        "agent_type": "workflow",
+        "total": 58.2,
+        "common": 28.7,
+        "custom": 15.9,
+        "mission": 13.6
+      },
+      "c3afcff0-3771-4abd-8572-b6b5841b7e10": {
+        "agent_name": "누수제로",
+        "agent_type": "agentic",
+        "total": 78.5,
+        "common": 41.9,
+        "custom": 22.4,
+        "mission": 14.2
+      },
+      "ab98c29b-43e1-4da7-a719-fe64183b9297": {
+        "agent_name": "플러스알파",
+        "agent_type": "agentic",
+        "total": 67.8,
+        "common": 32.3,
+        "custom": 22.1,
+        "mission": 13.4
+      },
+      "7f4ee2f3-1fbe-f111-aaad-002248ee0781": {
+        "agent_name": "MAX",
+        "agent_type": "workflow",
+        "total": 83.7,
+        "common": 41.5,
+        "custom": 24.7,
+        "mission": 17.5
+      },
+      "0e7b5b42-5f5a-47f6-8319-31b59395a12e": {
+        "agent_name": "역량E",
+        "agent_type": "agentic",
+        "total": 57.3,
+        "common": 28.4,
+        "custom": 17.7,
+        "mission": 11.2
+      },
+      "3599cafd-67c1-f111-aaad-002248edbba9": {
+        "agent_name": "REDRED",
+        "agent_type": "agentic",
+        "total": 48.1,
+        "common": 23.6,
+        "custom": 15.1,
+        "mission": 9.4
+      },
+      "8d092d68-04e5-4afd-91e5-1c3cb5799a34": {
+        "agent_name": "SolveIT",
+        "agent_type": "workflow",
+        "total": 38.1,
+        "common": 18.5,
+        "custom": 11.8,
+        "mission": 7.8
+      },
+      "40cea5e1-42ce-4582-af9e-33e94d0e26b4": {
+        "agent_name": "관쟁이",
+        "agent_type": "agentic",
+        "total": 61.7,
+        "common": 31.8,
+        "custom": 17.8,
+        "mission": 12.1
+      },
+      "7106de51-acc2-f111-a05a-000d3a82743f": {
+        "agent_name": "ENG지원팀",
+        "agent_type": "agentic",
+        "total": 52.1,
+        "common": 24.8,
+        "custom": 15.1,
+        "mission": 12.2
+      },
+      "ee588188-3955-4255-bcbd-3aab467c31ac": {
+        "agent_name": "AIeS",
+        "agent_type": "agentic",
+        "total": 83.6,
+        "common": 39.6,
+        "custom": 25.5,
+        "mission": 18.5
+      },
+      "AX-Ray": {
+        "agent_name": "AX-Ray",
+        "agent_type": "agentic",
+        "total": 74.6,
+        "common": 37.9,
+        "custom": 20.5,
+        "mission": 16.2
+      }
+    },
+    "eval_2": {
+      "46fa38cc-46c1-f111-aaad-7ced8dff5c1a": {
+        "agent_name": "AX프로젝트무물봇",
+        "agent_type": "agentic",
+        "total": 66.7,
+        "common": 34.8,
+        "custom": 18.5,
+        "mission": 13.4
+      },
+      "ddead4bc-a937-4001-bde3-7956a5077759": {
+        "agent_name": "Entron",
+        "agent_type": "agentic",
+        "total": 34.0,
+        "common": 17.5,
+        "custom": 10.5,
+        "mission": 6.0
+      },
+      "96b889ee-f85c-4f12-9cbe-0d7510c5b695": {
+        "agent_name": "퇴근전략실",
+        "agent_type": "agentic",
+        "total": 81.1,
+        "common": 41.2,
+        "custom": 23.2,
+        "mission": 16.7
+      },
+      "082df3d8-21c1-f111-aaad-002248ecf2a5": {
+        "agent_name": "DealFlowAI",
+        "agent_type": "agentic",
+        "total": 66.9,
+        "common": 31.1,
+        "custom": 21.8,
+        "mission": 14.0
+      },
+      "85ade485-5e8d-f011-b4cc-6045bd1df16d": {
+        "agent_name": "Team길잡이",
+        "agent_type": "agentic",
+        "total": 47.5,
+        "common": 24.7,
+        "custom": 13.4,
+        "mission": 9.4
+      },
+      "9972f1f0-be01-43c5-acb1-cb00c082671d": {
+        "agent_name": "케이티데몬헌터스2",
+        "agent_type": "workflow",
+        "total": 62.5,
+        "common": 30.5,
+        "custom": 18.7,
+        "mission": 13.3
+      },
+      "c3afcff0-3771-4abd-8572-b6b5841b7e10": {
+        "agent_name": "누수제로",
+        "agent_type": "agentic",
+        "total": 75.3,
+        "common": 37.3,
+        "custom": 23.2,
+        "mission": 14.8
+      },
+      "ab98c29b-43e1-4da7-a719-fe64183b9297": {
+        "agent_name": "플러스알파",
+        "agent_type": "agentic",
+        "total": 73.7,
+        "common": 37.4,
+        "custom": 23.3,
+        "mission": 13.0
+      },
+      "7f4ee2f3-1fbe-f111-aaad-002248ee0781": {
+        "agent_name": "MAX",
+        "agent_type": "workflow",
+        "total": 74.2,
+        "common": 37.3,
+        "custom": 22.1,
+        "mission": 14.8
+      },
+      "0e7b5b42-5f5a-47f6-8319-31b59395a12e": {
+        "agent_name": "역량E",
+        "agent_type": "agentic",
+        "total": 54.7,
+        "common": 27.1,
+        "custom": 15.5,
+        "mission": 12.1
+      },
+      "3599cafd-67c1-f111-aaad-002248edbba9": {
+        "agent_name": "REDRED",
+        "agent_type": "agentic",
+        "total": 52.6,
+        "common": 27.8,
+        "custom": 16.8,
+        "mission": 8.0
+      },
+      "8d092d68-04e5-4afd-91e5-1c3cb5799a34": {
+        "agent_name": "SolveIT",
+        "agent_type": "workflow",
+        "total": 37.6,
+        "common": 17.9,
+        "custom": 10.4,
+        "mission": 9.3
+      },
+      "40cea5e1-42ce-4582-af9e-33e94d0e26b4": {
+        "agent_name": "관쟁이",
+        "agent_type": "agentic",
+        "total": 61.7,
+        "common": 31.8,
+        "custom": 17.8,
+        "mission": 12.1
+      },
+      "7106de51-acc2-f111-a05a-000d3a82743f": {
+        "agent_name": "ENG지원팀",
+        "agent_type": "agentic",
+        "total": 59.3,
+        "common": 31.0,
+        "custom": 17.2,
+        "mission": 11.1
+      },
+      "ee588188-3955-4255-bcbd-3aab467c31ac": {
+        "agent_name": "AIeS",
+        "agent_type": "agentic",
+        "total": 86.5,
+        "common": 42.0,
+        "custom": 26.2,
+        "mission": 18.3
+      },
+      "AX-Ray": {
+        "agent_name": "AX-Ray",
+        "agent_type": "agentic",
+        "total": 74.3,
+        "common": 36.3,
+        "custom": 21.5,
+        "mission": 16.5
+      }
+    },
+    "eval_3": {
+      "46fa38cc-46c1-f111-aaad-7ced8dff5c1a": {
+        "agent_name": "AX프로젝트무물봇",
+        "agent_type": "agentic",
+        "total": 66.7,
+        "common": 34.8,
+        "custom": 18.5,
+        "mission": 13.4
+      },
+      "ddead4bc-a937-4001-bde3-7956a5077759": {
+        "agent_name": "Entron",
+        "agent_type": "agentic",
+        "total": 34.0,
+        "common": 17.5,
+        "custom": 10.5,
+        "mission": 6.0
+      },
+      "96b889ee-f85c-4f12-9cbe-0d7510c5b695": {
+        "agent_name": "퇴근전략실",
+        "agent_type": "agentic",
+        "total": 81.1,
+        "common": 41.2,
+        "custom": 23.2,
+        "mission": 16.7
+      },
+      "082df3d8-21c1-f111-aaad-002248ecf2a5": {
+        "agent_name": "DealFlowAI",
+        "agent_type": "agentic",
+        "total": 66.9,
+        "common": 31.1,
+        "custom": 21.8,
+        "mission": 14.0
+      },
+      "85ade485-5e8d-f011-b4cc-6045bd1df16d": {
+        "agent_name": "Team길잡이",
+        "agent_type": "agentic",
+        "total": 47.5,
+        "common": 24.7,
+        "custom": 13.4,
+        "mission": 9.4
+      },
+      "9972f1f0-be01-43c5-acb1-cb00c082671d": {
+        "agent_name": "케이티데몬헌터스2",
+        "agent_type": "workflow",
+        "total": 64.2,
+        "common": 34.3,
+        "custom": 18.9,
+        "mission": 11.0
+      },
+      "c3afcff0-3771-4abd-8572-b6b5841b7e10": {
+        "agent_name": "누수제로",
+        "agent_type": "agentic",
+        "total": 79.3,
+        "common": 39.8,
+        "custom": 23.3,
+        "mission": 16.2
+      },
+      "ab98c29b-43e1-4da7-a719-fe64183b9297": {
+        "agent_name": "플러스알파",
+        "agent_type": "agentic",
+        "total": 76.9,
+        "common": 36.8,
+        "custom": 23.8,
+        "mission": 16.3
+      },
+      "7f4ee2f3-1fbe-f111-aaad-002248ee0781": {
+        "agent_name": "MAX",
+        "agent_type": "workflow",
+        "total": 74.2,
+        "common": 37.3,
+        "custom": 22.1,
+        "mission": 14.8
+      },
+      "0e7b5b42-5f5a-47f6-8319-31b59395a12e": {
+        "agent_name": "역량E",
+        "agent_type": "agentic",
+        "total": 69.5,
+        "common": 32.8,
+        "custom": 21.5,
+        "mission": 15.2
+      },
+      "3599cafd-67c1-f111-aaad-002248edbba9": {
+        "agent_name": "REDRED",
+        "agent_type": "agentic",
+        "total": 61.0,
+        "common": 30.5,
+        "custom": 18.9,
+        "mission": 11.6
+      },
+      "8d092d68-04e5-4afd-91e5-1c3cb5799a34": {
+        "agent_name": "SolveIT",
+        "agent_type": "workflow",
+        "total": 47.6,
+        "common": 24.1,
+        "custom": 13.6,
+        "mission": 9.9
+      },
+      "40cea5e1-42ce-4582-af9e-33e94d0e26b4": {
+        "agent_name": "관쟁이",
+        "agent_type": "agentic",
+        "total": 61.7,
+        "common": 31.8,
+        "custom": 17.8,
+        "mission": 12.1
+      },
+      "7106de51-acc2-f111-a05a-000d3a82743f": {
+        "agent_name": "ENG지원팀",
+        "agent_type": "agentic",
+        "total": 59.3,
+        "common": 31.0,
+        "custom": 17.2,
+        "mission": 11.1
+      },
+      "ee588188-3955-4255-bcbd-3aab467c31ac": {
+        "agent_name": "AIeS",
+        "agent_type": "agentic",
+        "total": 86.5,
+        "common": 42.0,
+        "custom": 26.2,
+        "mission": 18.3
+      },
+      "AX-Ray": {
+        "agent_name": "AX-Ray",
+        "agent_type": "agentic",
+        "total": 73.2,
+        "common": 36.3,
+        "custom": 23.8,
+        "mission": 13.1
+      }
+    },
+    "eval_4": {
+      "46fa38cc-46c1-f111-aaad-7ced8dff5c1a": {
+        "agent_name": "AX프로젝트무물봇",
+        "agent_type": "agentic",
+        "total": 66.7,
+        "common": 34.8,
+        "custom": 18.5,
+        "mission": 13.4
+      },
+      "ddead4bc-a937-4001-bde3-7956a5077759": {
+        "agent_name": "Entron",
+        "agent_type": "agentic",
+        "total": 34.0,
+        "common": 17.5,
+        "custom": 10.5,
+        "mission": 6.0
+      },
+      "96b889ee-f85c-4f12-9cbe-0d7510c5b695": {
+        "agent_name": "퇴근전략실",
+        "agent_type": "agentic",
+        "total": 81.1,
+        "common": 41.2,
+        "custom": 23.2,
+        "mission": 16.7
+      },
+      "082df3d8-21c1-f111-aaad-002248ecf2a5": {
+        "agent_name": "DealFlowAI",
+        "agent_type": "agentic",
+        "total": 66.9,
+        "common": 31.1,
+        "custom": 21.8,
+        "mission": 14.0
+      },
+      "85ade485-5e8d-f011-b4cc-6045bd1df16d": {
+        "agent_name": "Team길잡이",
+        "agent_type": "agentic",
+        "total": 47.5,
+        "common": 24.7,
+        "custom": 13.4,
+        "mission": 9.4
+      },
+      "9972f1f0-be01-43c5-acb1-cb00c082671d": {
+        "agent_name": "케이티데몬헌터스2",
+        "agent_type": "workflow",
+        "total": 70.8,
+        "common": 36.7,
+        "custom": 19.3,
+        "mission": 14.8
+      },
+      "c3afcff0-3771-4abd-8572-b6b5841b7e10": {
+        "agent_name": "누수제로",
+        "agent_type": "agentic",
+        "total": 79.3,
+        "common": 39.8,
+        "custom": 23.3,
+        "mission": 16.2
+      },
+      "ab98c29b-43e1-4da7-a719-fe64183b9297": {
+        "agent_name": "플러스알파",
+        "agent_type": "agentic",
+        "total": 76.9,
+        "common": 36.8,
+        "custom": 23.8,
+        "mission": 16.3
+      },
+      "7f4ee2f3-1fbe-f111-aaad-002248ee0781": {
+        "agent_name": "MAX",
+        "agent_type": "workflow",
+        "total": 83.3,
+        "common": 41.5,
+        "custom": 26.1,
+        "mission": 15.7
+      },
+      "0e7b5b42-5f5a-47f6-8319-31b59395a12e": {
+        "agent_name": "역량E",
+        "agent_type": "agentic",
+        "total": 69.5,
+        "common": 32.8,
+        "custom": 21.5,
+        "mission": 15.2
+      },
+      "3599cafd-67c1-f111-aaad-002248edbba9": {
+        "agent_name": "REDRED",
+        "agent_type": "agentic",
+        "total": 61.0,
+        "common": 30.5,
+        "custom": 18.9,
+        "mission": 11.6
+      },
+      "8d092d68-04e5-4afd-91e5-1c3cb5799a34": {
+        "agent_name": "SolveIT",
+        "agent_type": "workflow",
+        "total": 47.9,
+        "common": 22.0,
+        "custom": 14.9,
+        "mission": 11.0
+      },
+      "40cea5e1-42ce-4582-af9e-33e94d0e26b4": {
+        "agent_name": "관쟁이",
+        "agent_type": "agentic",
+        "total": 61.7,
+        "common": 31.8,
+        "custom": 17.8,
+        "mission": 12.1
+      },
+      "7106de51-acc2-f111-a05a-000d3a82743f": {
+        "agent_name": "ENG지원팀",
+        "agent_type": "agentic",
+        "total": 59.3,
+        "common": 31.0,
+        "custom": 17.2,
+        "mission": 11.1
+      },
+      "ee588188-3955-4255-bcbd-3aab467c31ac": {
+        "agent_name": "AIeS",
+        "agent_type": "agentic",
+        "total": 86.5,
+        "common": 42.0,
+        "custom": 26.2,
+        "mission": 18.3
+      },
+      "AX-Ray": {
+        "agent_name": "AX-Ray",
+        "agent_type": "agentic",
+        "total": 73.2,
+        "common": 36.3,
+        "custom": 23.8,
+        "mission": 13.1
+      }
+    },
+    "eval_5": {
+      "46fa38cc-46c1-f111-aaad-7ced8dff5c1a": {
+        "agent_name": "AX프로젝트무물봇",
+        "agent_type": "agentic",
+        "total": 62.4,
+        "common": 29.3,
+        "custom": 20.3,
+        "mission": 12.8
+      },
+      "ddead4bc-a937-4001-bde3-7956a5077759": {
+        "agent_name": "Entron",
+        "agent_type": "agentic",
+        "total": 34.0,
+        "common": 17.5,
+        "custom": 10.5,
+        "mission": 6.0
+      },
+      "96b889ee-f85c-4f12-9cbe-0d7510c5b695": {
+        "agent_name": "퇴근전략실",
+        "agent_type": "agentic",
+        "total": 81.1,
+        "common": 41.2,
+        "custom": 23.2,
+        "mission": 16.7
+      },
+      "082df3d8-21c1-f111-aaad-002248ecf2a5": {
+        "agent_name": "DealFlowAI",
+        "agent_type": "agentic",
+        "total": 55.7,
+        "common": 28.9,
+        "custom": 16.9,
+        "mission": 9.9
+      },
+      "85ade485-5e8d-f011-b4cc-6045bd1df16d": {
+        "agent_name": "Team길잡이",
+        "agent_type": "agentic",
+        "total": 47.5,
+        "common": 24.7,
+        "custom": 13.4,
+        "mission": 9.4
+      },
+      "9972f1f0-be01-43c5-acb1-cb00c082671d": {
+        "agent_name": "케이티데몬헌터스2",
+        "agent_type": "workflow",
+        "total": 70.8,
+        "common": 36.7,
+        "custom": 19.3,
+        "mission": 14.8
+      },
+      "c3afcff0-3771-4abd-8572-b6b5841b7e10": {
+        "agent_name": "누수제로",
+        "agent_type": "agentic",
+        "total": 94.9,
+        "common": 48.4,
+        "custom": 28.8,
+        "mission": 17.7
+      },
+      "ab98c29b-43e1-4da7-a719-fe64183b9297": {
+        "agent_name": "플러스알파",
+        "agent_type": "agentic",
+        "total": 76.9,
+        "common": 36.8,
+        "custom": 23.8,
+        "mission": 16.3
+      },
+      "7f4ee2f3-1fbe-f111-aaad-002248ee0781": {
+        "agent_name": "MAX",
+        "agent_type": "workflow",
+        "total": 83.3,
+        "common": 41.5,
+        "custom": 26.1,
+        "mission": 15.7
+      },
+      "0e7b5b42-5f5a-47f6-8319-31b59395a12e": {
+        "agent_name": "역량E",
+        "agent_type": "agentic",
+        "total": 69.5,
+        "common": 32.8,
+        "custom": 21.5,
+        "mission": 15.2
+      },
+      "3599cafd-67c1-f111-aaad-002248edbba9": {
+        "agent_name": "REDRED",
+        "agent_type": "agentic",
+        "total": 61.0,
+        "common": 30.5,
+        "custom": 18.9,
+        "mission": 11.6
+      },
+      "8d092d68-04e5-4afd-91e5-1c3cb5799a34": {
+        "agent_name": "SolveIT",
+        "agent_type": "workflow",
+        "total": 47.9,
+        "common": 22.0,
+        "custom": 14.9,
+        "mission": 11.0
+      },
+      "40cea5e1-42ce-4582-af9e-33e94d0e26b4": {
+        "agent_name": "관쟁이",
+        "agent_type": "agentic",
+        "total": 61.7,
+        "common": 31.8,
+        "custom": 17.8,
+        "mission": 12.1
+      },
+      "7106de51-acc2-f111-a05a-000d3a82743f": {
+        "agent_name": "ENG지원팀",
+        "agent_type": "agentic",
+        "total": 59.3,
+        "common": 31.0,
+        "custom": 17.2,
+        "mission": 11.1
+      },
+      "ee588188-3955-4255-bcbd-3aab467c31ac": {
+        "agent_name": "AIeS",
+        "agent_type": "agentic",
+        "total": 91.1,
+        "common": 45.1,
+        "custom": 27.1,
+        "mission": 18.9
+      },
+      "AX-Ray": {
+        "agent_name": "AX-Ray",
+        "agent_type": "agentic",
+        "total": 82.0,
+        "common": 42.2,
+        "custom": 23.0,
+        "mission": 16.8
+      }
+    },
+    "eval_6": {
+      "46fa38cc-46c1-f111-aaad-7ced8dff5c1a": {
+        "agent_name": "AX프로젝트무물봇",
+        "agent_type": "agentic",
+        "total": 62.4,
+        "common": 29.3,
+        "custom": 20.3,
+        "mission": 12.8
+      },
+      "ddead4bc-a937-4001-bde3-7956a5077759": {
+        "agent_name": "Entron",
+        "agent_type": "agentic",
+        "total": 37.5,
+        "common": 18.5,
+        "custom": 9.5,
+        "mission": 9.5
+      },
+      "96b889ee-f85c-4f12-9cbe-0d7510c5b695": {
+        "agent_name": "퇴근전략실",
+        "agent_type": "agentic",
+        "total": 81.1,
+        "common": 41.2,
+        "custom": 23.2,
+        "mission": 16.7
+      },
+      "082df3d8-21c1-f111-aaad-002248ecf2a5": {
+        "agent_name": "DealFlowAI",
+        "agent_type": "agentic",
+        "total": 66.0,
+        "common": 33.7,
+        "custom": 18.1,
+        "mission": 14.2
+      },
+      "85ade485-5e8d-f011-b4cc-6045bd1df16d": {
+        "agent_name": "Team길잡이",
+        "agent_type": "agentic",
+        "total": 55.5,
+        "common": 27.4,
+        "custom": 18.1,
+        "mission": 10.0
+      },
+      "9972f1f0-be01-43c5-acb1-cb00c082671d": {
+        "agent_name": "케이티데몬헌터스2",
+        "agent_type": "workflow",
+        "total": 70.8,
+        "common": 36.7,
+        "custom": 19.3,
+        "mission": 14.8
+      },
+      "c3afcff0-3771-4abd-8572-b6b5841b7e10": {
+        "agent_name": "누수제로",
+        "agent_type": "agentic",
+        "total": 94.9,
+        "common": 48.4,
+        "custom": 28.8,
+        "mission": 17.7
+      },
+      "ab98c29b-43e1-4da7-a719-fe64183b9297": {
+        "agent_name": "플러스알파",
+        "agent_type": "agentic",
+        "total": 76.9,
+        "common": 36.8,
+        "custom": 23.8,
+        "mission": 16.3
+      },
+      "7f4ee2f3-1fbe-f111-aaad-002248ee0781": {
+        "agent_name": "MAX",
+        "agent_type": "workflow",
+        "total": 91.9,
+        "common": 48.2,
+        "custom": 26.0,
+        "mission": 17.7
+      },
+      "0e7b5b42-5f5a-47f6-8319-31b59395a12e": {
+        "agent_name": "역량E",
+        "agent_type": "agentic",
+        "total": 70.3,
+        "common": 34.9,
+        "custom": 22.9,
+        "mission": 12.5
+      },
+      "3599cafd-67c1-f111-aaad-002248edbba9": {
+        "agent_name": "REDRED",
+        "agent_type": "agentic",
+        "total": 61.0,
+        "common": 30.5,
+        "custom": 18.9,
+        "mission": 11.6
+      },
+      "8d092d68-04e5-4afd-91e5-1c3cb5799a34": {
+        "agent_name": "SolveIT",
+        "agent_type": "workflow",
+        "total": 47.9,
+        "common": 22.0,
+        "custom": 14.9,
+        "mission": 11.0
+      },
+      "40cea5e1-42ce-4582-af9e-33e94d0e26b4": {
+        "agent_name": "관쟁이",
+        "agent_type": "agentic",
+        "total": 61.7,
+        "common": 31.8,
+        "custom": 17.8,
+        "mission": 12.1
+      },
+      "7106de51-acc2-f111-a05a-000d3a82743f": {
+        "agent_name": "ENG지원팀",
+        "agent_type": "agentic",
+        "total": 59.3,
+        "common": 31.0,
+        "custom": 17.2,
+        "mission": 11.1
+      },
+      "ee588188-3955-4255-bcbd-3aab467c31ac": {
+        "agent_name": "AIeS",
+        "agent_type": "agentic",
+        "total": 92.8,
+        "common": 46.3,
+        "custom": 28.3,
+        "mission": 18.2
+      },
+      "AX-Ray": {
+        "agent_name": "AX-Ray",
+        "agent_type": "agentic",
+        "total": 82.0,
+        "common": 42.2,
+        "custom": 23.0,
+        "mission": 16.8
+      }
+    },
+    "eval_7": {
+      "46fa38cc-46c1-f111-aaad-7ced8dff5c1a": {
+        "agent_name": "AX프로젝트무물봇",
+        "agent_type": "agentic",
+        "total": 62.4,
+        "common": 29.3,
+        "custom": 20.3,
+        "mission": 12.8
+      },
+      "ddead4bc-a937-4001-bde3-7956a5077759": {
+        "agent_name": "Entron",
+        "agent_type": "agentic",
+        "total": 47.1,
+        "common": 21.5,
+        "custom": 14.7,
+        "mission": 10.9
+      },
+      "96b889ee-f85c-4f12-9cbe-0d7510c5b695": {
+        "agent_name": "퇴근전략실",
+        "agent_type": "agentic",
+        "total": 82.2,
+        "common": 40.1,
+        "custom": 26.9,
+        "mission": 15.2
+      },
+      "082df3d8-21c1-f111-aaad-002248ecf2a5": {
+        "agent_name": "DealFlowAI",
+        "agent_type": "agentic",
+        "total": 78.6,
+        "common": 39.6,
+        "custom": 24.9,
+        "mission": 14.1
+      },
+      "85ade485-5e8d-f011-b4cc-6045bd1df16d": {
+        "agent_name": "Team길잡이",
+        "agent_type": "agentic",
+        "total": 55.5,
+        "common": 27.4,
+        "custom": 18.1,
+        "mission": 10.0
+      },
+      "9972f1f0-be01-43c5-acb1-cb00c082671d": {
+        "agent_name": "케이티데몬헌터스2",
+        "agent_type": "workflow",
+        "total": 72.2,
+        "common": 38.6,
+        "custom": 20.8,
+        "mission": 12.8
+      },
+      "c3afcff0-3771-4abd-8572-b6b5841b7e10": {
+        "agent_name": "누수제로",
+        "agent_type": "agentic",
+        "total": 94.9,
+        "common": 48.4,
+        "custom": 28.8,
+        "mission": 17.7
+      },
+      "ab98c29b-43e1-4da7-a719-fe64183b9297": {
+        "agent_name": "플러스알파",
+        "agent_type": "agentic",
+        "total": 78.6,
+        "common": 37.6,
+        "custom": 23.9,
+        "mission": 17.1
+      },
+      "7f4ee2f3-1fbe-f111-aaad-002248ee0781": {
+        "agent_name": "MAX",
+        "agent_type": "workflow",
+        "total": 95.5,
+        "common": 47.8,
+        "custom": 27.7,
+        "mission": 20
+      },
+      "0e7b5b42-5f5a-47f6-8319-31b59395a12e": {
+        "agent_name": "역량E",
+        "agent_type": "agentic",
+        "total": 70.3,
+        "common": 34.9,
+        "custom": 22.9,
+        "mission": 12.5
+      },
+      "3599cafd-67c1-f111-aaad-002248edbba9": {
+        "agent_name": "REDRED",
+        "agent_type": "agentic",
+        "total": 72.2,
+        "common": 35.5,
+        "custom": 22.6,
+        "mission": 14.1
+      },
+      "8d092d68-04e5-4afd-91e5-1c3cb5799a34": {
+        "agent_name": "SolveIT",
+        "agent_type": "workflow",
+        "total": 44.8,
+        "common": 22.5,
+        "custom": 13.5,
+        "mission": 8.8
+      },
+      "40cea5e1-42ce-4582-af9e-33e94d0e26b4": {
+        "agent_name": "관쟁이",
+        "agent_type": "agentic",
+        "total": 69.8,
+        "common": 33.2,
+        "custom": 21.3,
+        "mission": 15.3
+      },
+      "7106de51-acc2-f111-a05a-000d3a82743f": {
+        "agent_name": "ENG지원팀",
+        "agent_type": "agentic",
+        "total": 59.3,
+        "common": 31.0,
+        "custom": 17.2,
+        "mission": 11.1
+      },
+      "ee588188-3955-4255-bcbd-3aab467c31ac": {
+        "agent_name": "AIeS",
+        "agent_type": "agentic",
+        "total": 92.8,
+        "common": 46.3,
+        "custom": 28.3,
+        "mission": 18.2
+      },
+      "AX-Ray": {
+        "agent_name": "AX-Ray",
+        "agent_type": "agentic",
+        "total": 92.7,
+        "common": 48.1,
+        "custom": 26.9,
+        "mission": 17.7
+      }
+    }
+  }
+}

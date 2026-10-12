@@ -1,6 +1,7 @@
 (() => {
   const {
     escapeHtml, computeStandings, diffStandings, resolveSnapshots, withRoster, rosterEntry, sameName, peopleOf,
+    deadlinesOf,
   } = window.Leaderboard;
 
   // The board reads published.json (written by the admin page). Scores in it
@@ -171,26 +172,8 @@
 
   // ---------- schedule ----------
 
-  function atTime(dayMs, hm) {
-    const [h, m] = String(hm).split(':').map(Number);
-    const d = new Date(dayMs);
-    d.setHours(h || 0, m || 0, 0, 0);
-    return d.getTime();
-  }
-
-  // Deadlines as timestamps. "HH:MM" entries fall on the event date (or on
-  // the day of `t` when no date is set, so the schedule can be rehearsed on
-  // any day); "YYYY-MM-DD HH:MM" entries are absolute (e.g. a next-morning
-  // round).
   function deadlinesAt(t) {
-    const sch = state.schedule;
-    const day = sch.date ? new Date(`${sch.date}T00:00:00`).getTime() : t;
-    return (sch.deadlines || [])
-      .map((d) => (/^\d{4}-\d{2}-\d{2}/.test(String(d))
-        ? new Date(String(d).trim().replace(' ', 'T')).getTime()
-        : atTime(day, d)))
-      .filter(Number.isFinite)
-      .sort((a, b) => a - b);
+    return deadlinesOf(state.schedule, t);
   }
 
   // "08:30" when on the same day as now, "10/15 08:30" otherwise.
@@ -301,7 +284,7 @@
         const upcoming = view.deadlines.filter((d) => d > now);
         const next = upcoming[0];
         return `
-          ${deco([['ring', 'd-right'], ['sparkle', 'd-top-left-sm']])}
+          ${deco([['ring', 'd-top-right'], ['sparkle', 'd-top-left-sm']])}
           <div class="remain">
             <div class="eyebrow">SUBMISSIONS</div>
             ${next ? `
@@ -310,13 +293,18 @@
                 <span class="remain-count">마감까지 <b data-countdown-to="${next}">${fmtRemain(next - now)}</b></span></div>`
               : '<h2 class="remain-title">모든 접수가 마감되었습니다</h2>'}
             <div class="remain-times" style="--n:${view.deadlines.length}">
-              ${view.deadlines.map((d, i) => `
+              ${view.deadlines.map((d, i) => {
+                // The date goes on the first card and wherever the day changes.
+                const day = new Date(d);
+                const newDay = i === 0 || day.toDateString() !== new Date(view.deadlines[i - 1]).toDateString();
+                return `
                 <div class="rt ${d <= now ? 'done' : d === next ? 'next' : ''}" style="--i:${i}">
                   <span class="rt-no">${i + 1}회차</span>
+                  <span class="rt-day">${newDay ? `${day.getMonth() + 1}/${day.getDate()}` : '&nbsp;'}</span>
                   <span class="rt-time">${fmtHM(d)}</span>
-                  ${new Date(d).toDateString() !== new Date(view.deadlines[0]).toDateString() ? `<span class="rt-day">${new Date(d).getMonth() + 1}/${new Date(d).getDate()}</span>` : ''}
                   <span class="rt-state">${d <= now ? '마감' : d === next ? '접수 중' : '예정'}</span>
-                </div>`).join('')}
+                </div>`;
+              }).join('')}
             </div>
           </div>`;
       },
@@ -343,44 +331,6 @@
           </div>`;
       },
     };
-  }
-
-  function qrScreen(view) {
-    const form = state.schedule.form || {};
-    if (!form.url) return null;
-    return {
-      label: '채점 접수',
-      html: () => {
-        const now = Date.now();
-        const next = view.deadlines.find((d) => d > now);
-        return `
-          <div class="qr-wrap">
-            <div class="qr-left">
-              <div class="qr-box card">${qrSvg(form.url)}</div>
-              <div class="qr-url">${escapeHtml(form.url.replace(/^https?:\/\//, ''))}</div>
-            </div>
-            <div class="qr-copy">
-              <div class="eyebrow">SUBMIT</div>
-              <h2 class="qr-title">채점 접수는<br>QR로 신청하세요</h2>
-              ${next ? `<div class="qr-deadline">다음 접수 마감 <strong>${fmtWhen(next)}</strong>
-                <span>마감까지 <b data-countdown-to="${next}">${fmtRemain(next - now)}</b></span></div>` : ''}
-              ${(form.guide || []).length ? `
-                <div class="qr-guide-title">모바일 QR 인식 방법</div>
-                <ol class="qr-steps">
-                  ${form.guide.map((g, i) => `<li style="--i:${i}"><span>${i + 1}</span>${escapeHtml(g)}</li>`).join('')}
-                </ol>` : ''}
-            </div>
-          </div>`;
-      },
-    };
-  }
-
-  function qrSvg(url) {
-    if (typeof window.qrcode !== 'function') return '';
-    const qr = window.qrcode(0, 'M');
-    qr.addData(url);
-    qr.make();
-    return qr.createSvgTag({ cellSize: 8, margin: 0, scalable: true });
   }
 
   // ---------- leaderboard pages ----------
@@ -531,17 +481,14 @@
     if (scoring) screens.push(scoring);
     if (view.hasBoard) {
       const a = analyse(view);
-      chunk(a.curr.teams, ROWS_PER_PAGE).forEach((page) => screens.push(boardPage(page, a.curr.maxTotal, a.basis)));
+      // Lower ranks first, everywhere.
+      chunk(a.curr.teams, ROWS_PER_PAGE).reverse().forEach((page) => screens.push(boardPage(page, a.curr.maxTotal, a.basis)));
       screens.push(...highlightScreens(a));
       screens.push(...topAgentScreens(a.curr.teams, a.curr.maxTotal, '현재'));
       if (scoring) screens.push({ ...scoring });
     }
     screens.push(criteriaScreen());
-    if (view.deadlines.some((d) => d > Date.now())) {
-      const qr = qrScreen(view);
-      if (qr) screens.push(qr);
-      screens.push(remainingScreen(view));
-    }
+    if (view.deadlines.some((d) => d > Date.now())) screens.push(remainingScreen(view));
     return screens;
   }
 
@@ -712,10 +659,12 @@
     };
   }
 
+  // 4–7위 first, then 3위, 2위, 1위 (lower ranks first).
   function topAgentScreens(teams, maxTotal, prefix) {
-    const screens = teams.slice(0, 3).map((t) => agentHero(t, maxTotal, prefix));
+    const screens = [];
     const next = teams.slice(3, TOP_N);
     if (next.length) screens.push(agentGrid(next, maxTotal));
+    teams.slice(0, 3).reverse().forEach((t) => screens.push(agentHero(t, maxTotal, prefix)));
     return screens;
   }
 
