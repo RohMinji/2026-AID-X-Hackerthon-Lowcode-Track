@@ -458,6 +458,8 @@
     padding-right: 10px; border-right: 1px solid var(--border);
   }
   .floor-title span { font-size: 15px; font-weight: 700; color: var(--ink-dim); }
+  .shuttle-dir { font-size: 13px; font-weight: 800; color: var(--ink-dim); letter-spacing: .04em; margin: 4px 0 10px; }
+  .shuttle-grid + .shuttle-dir { margin-top: 18px; }
   .floor8-cta {
     display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 12px; text-decoration: none; color: inherit;
     background: linear-gradient(135deg, rgba(242, 196, 109, .07), rgba(181, 123, 255, .05)); border-color: rgba(242, 196, 109, .22);
@@ -813,11 +815,12 @@ const EVENT = {
     },
   },
 
-  // 셔틀: 운행일 하루 (shuttleDay = days의 id). times는 [출발 시각, 대수]
+  // 셔틀: 운행일 하루 (shuttleDay = days의 id). times는 [출발 시각, 대수], out: true면 판교사옥에서 나가는 노선
   shuttleDay: "d2",
   shuttles: [
     { name: "광화문사옥 → 판교사옥", times: [["09:30", 1], ["10:30", 2], ["11:30", 2], ["13:30", 2]] },
     { name: "우면사옥 → 판교사옥",   times: [["09:30", 1], ["13:30", 1]] },
+    { name: "판교사옥 → 양재역/강남역", out: true, times: [["17:10", 2], ["17:20", 2], ["17:30", 2], ["17:35", 1]] },
   ],
 
   // 이벤트 탭: Lucky Draw
@@ -1353,8 +1356,11 @@ function renderShuttle() {
   const d = dayOf(EVENT.shuttleDay), t = now();
   const isToday = todayDay() && todayDay().id === d.id;
   v.append(h("div", { class: "section-label", style: "margin-top:8px" }, `셔틀 버스 · ${d.sub} 운행`));
+  const groups = [["In · 판교사옥으로", EVENT.shuttles.filter(r => !r.out)], ["Out · 판교사옥에서", EVENT.shuttles.filter(r => r.out)]];
+  groups.filter(([, rs]) => rs.length).forEach(([label, rs]) => {
+  v.append(h("div", { class: "shuttle-dir" }, label));
   const grid = h("div", { class: "stack shuttle-grid", style: "display:grid" });
-  EVENT.shuttles.forEach(r => {
+  rs.forEach(r => {
     const abs = r.times.map(([x]) => at(d.date, x));
     const nextIdx = isToday ? abs.findIndex(x => x > t) : -1;
     const total = r.times.reduce((n, [, c]) => n + c, 0);
@@ -1367,6 +1373,7 @@ function renderShuttle() {
         h("span", { class: isToday && abs[i] <= t ? "past" : i === nextIdx ? "next" : "" }, x, c > 1 ? h("small", {}, ` ${c}대`) : null)))));
   });
   v.append(grid);
+  });
 }
 
 // ---------- 참여 방법 ----------
