@@ -693,3 +693,141 @@ html, body {
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
 }
+
+/* ==========================================================================
+   Round-based screens (criteria, remaining chances, QR, moves, rivalry)
+   ========================================================================== */
+
+.screen-head.compact { margin-bottom: 1.6rem; }
+.screen-head.compact .screen-title { font-size: 4.4rem; margin-top: 0.4rem; }
+
+.dots span.spent { opacity: 0.25; }
+
+/* ---------------- Dense leaderboard (8 rows) ---------------- */
+
+.lb-list.dense { gap: 1rem; }
+.lb-list.dense > * { max-height: none; }
+.lb-list.dense .lb-row { grid-template-columns: 5.6rem minmax(0, 1fr) 44rem 15rem; padding: 0 2.6rem; }
+.lb-list.dense .medal { width: 5.6rem; height: 5.6rem; font-size: 2.4rem; border-radius: 1.6rem; }
+.lb-list.dense .lb-team { font-size: 2.7rem; }
+.lb-list.dense .lb-agent { font-size: 2rem; }
+.lb-list.dense .lb-members { font-size: 1.6rem; margin-top: 0.1rem; }
+.lb-list.dense .lb-score { font-size: 3.4rem; }
+
+/* ---------------- Board with rank moves ---------------- */
+
+.mv-list { position: relative; display: flex; flex-direction: column; gap: 1rem; flex: 1; min-height: 0; }
+
+.mv-row {
+  position: relative;
+  flex: 1 1 0;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 6rem 10rem minmax(0, 1fr) 21rem 19rem;
+  align-items: center;
+  gap: 2.2rem;
+  padding: 0 2.6rem;
+  border-radius: 2rem;
+  background: var(--card);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow);
+  transition: box-shadow 0.4s ease, border-color 0.4s ease;
+}
+.mv-row.lifting { box-shadow: 0 2.4rem 5rem rgba(51, 71, 255, 0.18), 0 0.4rem 1rem rgba(18, 22, 58, 0.08); }
+.mv-row.lifting.is-up { border-color: #9fdcbd; background: #f6fdf9; }
+.mv-row.lifting.is-down { border-color: #f3b9c4; background: #fff8f9; }
+.mv-row.is-up { border-color: #c9ecd9; }
+.mv-row.is-down { border-color: #f6d3da; }
+
+.mv-rank { font-size: 4rem; font-weight: 900; text-align: center; font-variant-numeric: tabular-nums; }
+.mv-move .move { min-width: 9rem; font-size: 2.1rem; padding: 0.7rem 1rem; }
+.mv-team { font-size: 2.7rem; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mv-agent { margin-left: 1.2rem; font-size: 2rem; font-weight: 600; color: var(--blue); }
+.mv-members { margin-top: 0.1rem; font-size: 1.6rem; color: var(--ink-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mv-path { font-size: 2rem; color: var(--ink-3); text-align: center; font-variant-numeric: tabular-nums; }
+.mv-path i { font-style: normal; margin: 0 0.5rem; }
+.mv-path b { color: var(--ink); font-weight: 800; }
+.mv-score { display: flex; align-items: baseline; justify-content: flex-end; gap: 1.2rem; font-variant-numeric: tabular-nums; }
+.mv-total { font-size: 3.4rem; font-weight: 900; }
+.mv-total small { font-size: 1.6rem; font-weight: 600; color: var(--ink-3); margin-left: 0.3rem; }
+.mv-delta { font-size: 2rem; font-weight: 800; min-width: 6.5rem; text-align: right; }
+.mv-delta.plus { color: var(--up); }
+.mv-delta.minus { color: var(--down); }
+.mv-delta.zero { color: var(--ink-3); }
+
+/* ---------------- Scoring criteria ---------------- */
+
+.crit { position: relative; z-index: 1; flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 4.4rem; max-width: 150rem; }
+.crit-bar { display: flex; height: 2.4rem; border-radius: 99rem; overflow: hidden; background: var(--soft); }
+.crit-bar span { width: var(--w); height: 100%; }
+.screen.enter .crit-bar span { animation: grow 1.2s cubic-bezier(.2, .8, .2, 1) both 0.2s; }
+.cb0 { background: linear-gradient(100deg, #2f45ff, #5a63ff); }
+.cb1 { background: linear-gradient(100deg, #6a5cff, #9b6bff); }
+.cb2 { background: linear-gradient(100deg, #b36bff, #e07bd8); }
+.crit-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3rem; }
+.crit-card { position: relative; padding: 4rem 4rem 3.6rem; }
+.screen.enter .crit-card { animation: rise 0.7s cubic-bezier(.2, .8, .2, 1) both; animation-delay: calc(0.2s + var(--i) * 0.12s); }
+.crit-dot { display: block; width: 4rem; height: 0.8rem; border-radius: 99rem; }
+.crit-name { margin-top: 2.4rem; font-size: 4rem; font-weight: 900; }
+.crit-desc { margin: 1.2rem 0 0; font-size: 2.2rem; line-height: 1.5; color: var(--ink-2); }
+.crit-points { margin-top: 3rem; font-size: 9rem; line-height: 1; font-weight: 900; font-variant-numeric: tabular-nums; background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.crit-points small { font-size: 3rem; margin-left: 0.6rem; }
+
+/* ---------------- Remaining chances ---------------- */
+
+.remain { position: relative; z-index: 1; margin: auto 0; display: flex; flex-direction: column; align-items: flex-start; }
+.remain-title { margin: 1.6rem 0 0; font-size: 8rem; font-weight: 900; letter-spacing: -0.03em; line-height: 1.1; }
+.remain-title b { font-size: 12rem; background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; margin: 0 0.4rem; }
+.remain-next { margin-top: 2.6rem; display: flex; align-items: center; gap: 2.4rem; font-size: 3.4rem; font-weight: 700; color: var(--ink-2); }
+.remain-next strong { color: var(--ink); font-size: 4.4rem; font-variant-numeric: tabular-nums; }
+.remain-count { padding: 1rem 2.4rem; border-radius: 99rem; background: var(--soft); border: 1px solid var(--line); font-size: 2.6rem; }
+.remain-count b { color: var(--blue); font-variant-numeric: tabular-nums; margin-left: 0.6rem; }
+.remain-times { margin-top: 5rem; display: grid; grid-template-columns: repeat(6, 17rem); gap: 1.8rem; }
+.rt { display: flex; flex-direction: column; gap: 0.6rem; padding: 2rem 2.2rem; border-radius: 2rem; background: var(--card); border: 1px solid var(--line); box-shadow: var(--shadow); }
+.screen.enter .rt { animation: rise 0.6s cubic-bezier(.2, .8, .2, 1) both; animation-delay: calc(0.2s + var(--i) * 0.08s); }
+.rt-no { font-size: 1.8rem; font-weight: 700; color: var(--ink-3); }
+.rt-time { font-size: 4rem; font-weight: 900; font-variant-numeric: tabular-nums; }
+.rt-state { font-size: 1.8rem; font-weight: 800; color: var(--ink-3); }
+.rt.done { opacity: 0.45; box-shadow: none; }
+.rt.done .rt-time { text-decoration: line-through; text-decoration-thickness: 0.3rem; }
+.rt.next { border: 0.3rem solid var(--blue); }
+.rt.next .rt-state { color: var(--blue); }
+
+/* ---------------- Form QR ---------------- */
+
+.qr-wrap { position: relative; z-index: 1; flex: 1; display: grid; grid-template-columns: auto 1fr; gap: 8rem; align-items: center; padding: 0 2rem; }
+.qr-left { display: flex; flex-direction: column; align-items: center; gap: 2rem; }
+.qr-box { width: 56rem; height: 56rem; padding: 4rem; display: grid; place-items: center; }
+.qr-box svg { width: 100%; height: 100%; display: block; }
+.screen.enter .qr-box { animation: pop 0.8s cubic-bezier(.2, .9, .3, 1.2) both 0.1s; }
+.qr-url { font-size: 2rem; font-weight: 600; color: var(--ink-3); }
+.qr-title { margin: 1.6rem 0 0; font-size: 7.4rem; line-height: 1.15; font-weight: 900; letter-spacing: -0.03em; }
+.qr-deadline { margin-top: 3rem; display: flex; align-items: center; gap: 2rem; flex-wrap: wrap; font-size: 3rem; font-weight: 700; color: var(--ink-2); }
+.qr-deadline strong { color: var(--ink); font-size: 4rem; font-variant-numeric: tabular-nums; }
+.qr-deadline span { padding: 0.8rem 2rem; border-radius: 99rem; background: var(--soft); border: 1px solid var(--line); font-size: 2.4rem; }
+.qr-deadline b { color: var(--blue); font-variant-numeric: tabular-nums; margin-left: 0.4rem; }
+.qr-guide-title { margin-top: 4.4rem; font-size: 2.4rem; font-weight: 800; color: var(--blue); letter-spacing: 0.04em; }
+.qr-steps { list-style: none; margin: 1.8rem 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 1.2rem 1.4rem; max-width: 96rem; }
+.qr-steps li { display: flex; align-items: center; gap: 1.2rem; padding: 1.2rem 2.2rem 1.2rem 1.2rem; border-radius: 99rem; background: var(--card); border: 1px solid var(--line); box-shadow: var(--shadow); font-size: 2.4rem; font-weight: 700; }
+.qr-steps li span { display: grid; place-items: center; width: 4rem; height: 4rem; border-radius: 50%; background: var(--grad); color: #fff; font-size: 2rem; font-weight: 900; }
+.screen.enter .qr-steps li { animation: rise 0.5s cubic-bezier(.2, .8, .2, 1) both; animation-delay: calc(0.3s + var(--i) * 0.08s); }
+
+/* ---------------- Closest race ---------------- */
+
+.vs { position: relative; z-index: 1; flex: 1; display: grid; grid-template-columns: 1fr 22rem 1fr; align-items: center; gap: 2rem; padding: 0 6rem 4rem; }
+.vs-card { display: flex; flex-direction: column; align-items: center; text-align: center; padding: 5rem 3rem; }
+.vs-card .medal { width: 8rem; height: 8rem; font-size: 3.6rem; border-radius: 2.4rem; }
+.vs-rank { display: inline-block; padding: 0.8rem 2.6rem; border-radius: 99rem; background: var(--soft); font-size: 3.4rem; font-weight: 900; color: var(--blue); }
+.vs-team { margin-top: 1rem; font-size: 5.4rem; font-weight: 900; letter-spacing: -0.02em; }
+.vs-agent { margin-top: 0.6rem; font-size: 2.6rem; font-weight: 700; color: var(--blue); }
+.vs-score { margin-top: 3rem; font-size: 8rem; line-height: 1; font-weight: 900; font-variant-numeric: tabular-nums; }
+.vs-score small { font-size: 2.4rem; color: var(--ink-3); font-weight: 600; margin-left: 0.4rem; }
+.screen.enter .vs-card.left { animation: slideIn 0.7s cubic-bezier(.2, .8, .2, 1) both 0.1s; }
+.screen.enter .vs-card.right { animation: slideInRight 0.7s cubic-bezier(.2, .8, .2, 1) both 0.1s; }
+.vs-mid { display: flex; flex-direction: column; align-items: center; gap: 2.4rem; }
+.vs-badge { display: grid; place-items: center; width: 14rem; height: 14rem; border-radius: 50%; background: var(--grad); color: #fff; font-size: 5rem; font-weight: 900; box-shadow: 0 1.6rem 4rem rgba(76, 72, 255, 0.35); }
+.screen.enter .vs-badge { animation: pop 0.7s cubic-bezier(.2, .9, .3, 1.5) both 0.5s; }
+.vs-gap { font-size: 3rem; font-weight: 800; color: var(--ink-2); white-space: nowrap; }
+.vs-gap b { font-size: 4.4rem; color: var(--down); font-variant-numeric: tabular-nums; }
+
+@keyframes slideInRight { from { opacity: 0; transform: translateX(4rem); } to { opacity: 1; transform: none; } }

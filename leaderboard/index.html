@@ -53,9 +53,10 @@
       <label for="modeSelect">화면 모드</label>
       <select id="modeSelect">
         <option value="auto">자동 (시간에 따라)</option>
-        <option value="wait">채점 대기</option>
-        <option value="reveal">점수 공개</option>
+        <option value="wait">채점 중 (접수 마감 ~ 공개)</option>
+        <option value="reveal">점수 공개 (공개 후 5분)</option>
         <option value="status">현황 공개</option>
+        <option value="final">최종 결과</option>
       </select>
     </div>
     <div class="panel-row">
@@ -78,6 +79,7 @@
 
 </div>
 
+<script src="vendor/qrcode.js"></script>
 <script src="shared.js"></script>
 <script src="app.js"></script>
 </body>

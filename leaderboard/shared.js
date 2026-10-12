@@ -82,11 +82,13 @@ window.Leaderboard = (() => {
     return t.appid || t.team;
   }
 
-  // Score items of the evaluation export (result/result.json).
+  // Score items of the evaluation export (result/result.json). Only the sum
+  // of `max` (the full score) is used on screen; the item names shown on the
+  // board come from schedule.json.
   const EVAL_CRITERIA = [
-    { key: 'common', label: '공통', max: 50 },
-    { key: 'custom', label: '커스텀', max: 40 },
-    { key: 'mission', label: '미션', max: 10 },
+    { key: 'common', label: '성능개선', max: 50 },
+    { key: 'custom', label: '개별미션', max: 30 },
+    { key: 'mission', label: '크레딧 미션', max: 20 },
   ];
 
   function isEvalExport(json) {

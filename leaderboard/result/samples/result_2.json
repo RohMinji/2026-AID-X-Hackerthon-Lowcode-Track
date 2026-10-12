@@ -1,265 +1,265 @@
 {
-  "push_date": "20261008T09:32",
+  "push_date": "20261008T14:45",
   "push_ID": 2,
   "push_results": {
     "eval_1": {
       "03b5f8b0-b214-49d7-a1a6-89c6772c6f6c": {
         "agent_name": "Agent A",
         "agent_type": "agentic",
-        "total": 59.2,
-        "common": 31.3,
-        "custom": 22.9,
-        "mission": 5.0
+        "total": 50.5,
+        "common": 25.2,
+        "custom": 16.2,
+        "mission": 9.1
       },
       "6d91c9a2-3a5b-4f61-9c42-12a8f0e4b721": {
         "agent_name": "Agent B",
         "agent_type": "workflow",
-        "total": 84.1,
-        "common": 40.4,
-        "custom": 33.7,
-        "mission": 10.0
+        "total": 79.2,
+        "common": 39.5,
+        "custom": 22.1,
+        "mission": 17.6
       },
       "36fde8a7-b707-468a-b72c-ff9d16339a8d": {
         "agent_name": "Agent C",
         "agent_type": "agentic",
-        "total": 66.1,
-        "common": 32.4,
-        "custom": 23.7,
-        "mission": 10.0
+        "total": 63.2,
+        "common": 30.9,
+        "custom": 18.5,
+        "mission": 13.8
       },
       "91163553-1f2c-41b8-a8df-16a237f5229d": {
         "agent_name": "Agent D",
         "agent_type": "workflow",
-        "total": 70.9,
-        "common": 35.1,
-        "custom": 25.8,
-        "mission": 10.0
+        "total": 74.6,
+        "common": 37.5,
+        "custom": 23.0,
+        "mission": 14.1
       },
       "4960e378-3cbf-46a4-b97c-86895d562e72": {
         "agent_name": "Agent E",
         "agent_type": "agentic",
-        "total": 89.7,
-        "common": 43.3,
-        "custom": 36.4,
-        "mission": 10.0
+        "total": 82.7,
+        "common": 40.6,
+        "custom": 23.9,
+        "mission": 18.2
       },
       "dcd3ef16-d226-472e-8d8c-de5c17f890c3": {
         "agent_name": "Agent F",
         "agent_type": "workflow",
-        "total": 52.7,
-        "common": 26.4,
-        "custom": 21.3,
-        "mission": 5.0
+        "total": 61.6,
+        "common": 31.2,
+        "custom": 17.6,
+        "mission": 12.8
       },
       "76737685-fced-4c34-b6b9-dc697e6dbbec": {
         "agent_name": "Agent G",
         "agent_type": "agentic",
-        "total": 48.9,
-        "common": 22.8,
-        "custom": 21.1,
-        "mission": 5.0
+        "total": 48.5,
+        "common": 23.9,
+        "custom": 14.9,
+        "mission": 9.7
       },
       "104676a5-7d87-421a-819a-25ad13f57f23": {
         "agent_name": "Agent H",
         "agent_type": "workflow",
-        "total": 62.1,
-        "common": 31.0,
-        "custom": 26.1,
-        "mission": 5.0
+        "total": 62.8,
+        "common": 30.7,
+        "custom": 18.4,
+        "mission": 13.7
       },
       "210a1f2d-5147-40fa-9137-7fe99bb9ffff": {
         "agent_name": "Agent I",
         "agent_type": "agentic",
-        "total": 49.8,
-        "common": 26.9,
-        "custom": 22.9,
-        "mission": 0.0
+        "total": 60.7,
+        "common": 31.4,
+        "custom": 17.9,
+        "mission": 11.4
       },
       "cc80353a-aa41-4c25-9ea2-c9acbc71734a": {
         "agent_name": "Agent J",
         "agent_type": "workflow",
-        "total": 60.0,
-        "common": 30.6,
-        "custom": 24.4,
-        "mission": 5.0
+        "total": 59.2,
+        "common": 28.0,
+        "custom": 18.0,
+        "mission": 13.2
       },
       "15ad6df5-2b89-4026-b209-a52fca962cd7": {
         "agent_name": "Agent K",
         "agent_type": "agentic",
-        "total": 53.8,
-        "common": 26.1,
-        "custom": 22.7,
-        "mission": 5.0
+        "total": 60.6,
+        "common": 32.1,
+        "custom": 17.0,
+        "mission": 11.5
       },
       "876cc471-0475-4083-9b63-bedcc739b797": {
         "agent_name": "Agent L",
         "agent_type": "workflow",
-        "total": 64.5,
-        "common": 30.8,
-        "custom": 23.7,
-        "mission": 10.0
+        "total": 59.4,
+        "common": 31.6,
+        "custom": 16.6,
+        "mission": 11.2
       },
       "b3ec75e1-c427-4934-9a31-f00485628d93": {
         "agent_name": "Agent M",
         "agent_type": "agentic",
-        "total": 52.0,
-        "common": 24.8,
-        "custom": 17.2,
-        "mission": 10.0
+        "total": 53.2,
+        "common": 27.5,
+        "custom": 15.0,
+        "mission": 10.7
       },
       "244ef0a0-6e92-458a-a768-9a260add4615": {
         "agent_name": "Agent N",
         "agent_type": "workflow",
-        "total": 78.4,
-        "common": 39.0,
-        "custom": 29.4,
-        "mission": 10.0
+        "total": 79.6,
+        "common": 41.4,
+        "custom": 22.6,
+        "mission": 15.6
       },
       "12d94fd4-c3e5-4f24-ab25-aa976fcb4543": {
         "agent_name": "Agent O",
         "agent_type": "agentic",
-        "total": 56.3,
-        "common": 27.5,
-        "custom": 23.8,
-        "mission": 5.0
+        "total": 54.2,
+        "common": 27.3,
+        "custom": 16.6,
+        "mission": 10.3
       },
       "e14c9ede-c485-4b54-92ef-6cff1da221a2": {
         "agent_name": "Agent P",
         "agent_type": "workflow",
-        "total": 66.0,
-        "common": 32.5,
-        "custom": 23.5,
-        "mission": 10.0
+        "total": 56.2,
+        "common": 27.6,
+        "custom": 17.1,
+        "mission": 11.5
       }
     },
     "eval_2": {
       "03b5f8b0-b214-49d7-a1a6-89c6772c6f6c": {
         "agent_name": "Agent A",
         "agent_type": "agentic",
-        "total": 59.2,
-        "common": 31.3,
-        "custom": 22.9,
-        "mission": 5.0
+        "total": 50.5,
+        "common": 25.2,
+        "custom": 16.2,
+        "mission": 9.1
       },
       "6d91c9a2-3a5b-4f61-9c42-12a8f0e4b721": {
         "agent_name": "Agent B",
         "agent_type": "workflow",
-        "total": 85.6,
-        "common": 41.9,
-        "custom": 33.7,
-        "mission": 10.0
+        "total": 90.4,
+        "common": 44.0,
+        "custom": 28.0,
+        "mission": 18.4
       },
       "36fde8a7-b707-468a-b72c-ff9d16339a8d": {
         "agent_name": "Agent C",
         "agent_type": "agentic",
-        "total": 66.1,
-        "common": 32.4,
-        "custom": 23.7,
-        "mission": 10.0
+        "total": 63.2,
+        "common": 30.9,
+        "custom": 18.5,
+        "mission": 13.8
       },
       "91163553-1f2c-41b8-a8df-16a237f5229d": {
         "agent_name": "Agent D",
         "agent_type": "workflow",
-        "total": 70.9,
-        "common": 35.1,
-        "custom": 25.8,
-        "mission": 10.0
+        "total": 74.6,
+        "common": 37.5,
+        "custom": 23.0,
+        "mission": 14.1
       },
       "4960e378-3cbf-46a4-b97c-86895d562e72": {
         "agent_name": "Agent E",
         "agent_type": "agentic",
-        "total": 89.7,
-        "common": 43.3,
-        "custom": 36.4,
-        "mission": 10.0
+        "total": 82.7,
+        "common": 40.6,
+        "custom": 23.9,
+        "mission": 18.2
       },
       "dcd3ef16-d226-472e-8d8c-de5c17f890c3": {
         "agent_name": "Agent F",
         "agent_type": "workflow",
-        "total": 52.7,
-        "common": 26.4,
-        "custom": 21.3,
-        "mission": 5.0
+        "total": 56.6,
+        "common": 27.7,
+        "custom": 16.9,
+        "mission": 12.0
       },
       "76737685-fced-4c34-b6b9-dc697e6dbbec": {
         "agent_name": "Agent G",
         "agent_type": "agentic",
-        "total": 44.9,
-        "common": 24.5,
-        "custom": 20.4,
-        "mission": 0.0
+        "total": 48.5,
+        "common": 23.9,
+        "custom": 14.9,
+        "mission": 9.7
       },
       "104676a5-7d87-421a-819a-25ad13f57f23": {
         "agent_name": "Agent H",
         "agent_type": "workflow",
-        "total": 69.8,
-        "common": 34.2,
-        "custom": 25.6,
-        "mission": 10.0
+        "total": 62.8,
+        "common": 30.7,
+        "custom": 18.4,
+        "mission": 13.7
       },
       "210a1f2d-5147-40fa-9137-7fe99bb9ffff": {
         "agent_name": "Agent I",
         "agent_type": "agentic",
-        "total": 49.8,
-        "common": 26.9,
-        "custom": 22.9,
-        "mission": 0.0
+        "total": 61.5,
+        "common": 30.8,
+        "custom": 17.6,
+        "mission": 13.1
       },
       "cc80353a-aa41-4c25-9ea2-c9acbc71734a": {
         "agent_name": "Agent J",
         "agent_type": "workflow",
-        "total": 65.3,
-        "common": 31.7,
-        "custom": 23.6,
-        "mission": 10.0
+        "total": 65.7,
+        "common": 33.2,
+        "custom": 18.7,
+        "mission": 13.8
       },
       "15ad6df5-2b89-4026-b209-a52fca962cd7": {
         "agent_name": "Agent K",
         "agent_type": "agentic",
-        "total": 67.4,
-        "common": 30.9,
-        "custom": 26.5,
-        "mission": 10.0
+        "total": 60.6,
+        "common": 32.1,
+        "custom": 17.0,
+        "mission": 11.5
       },
       "876cc471-0475-4083-9b63-bedcc739b797": {
         "agent_name": "Agent L",
         "agent_type": "workflow",
-        "total": 64.5,
-        "common": 30.8,
-        "custom": 23.7,
-        "mission": 10.0
+        "total": 63.2,
+        "common": 32.0,
+        "custom": 19.0,
+        "mission": 12.2
       },
       "b3ec75e1-c427-4934-9a31-f00485628d93": {
         "agent_name": "Agent M",
         "agent_type": "agentic",
-        "total": 52.0,
-        "common": 24.8,
-        "custom": 17.2,
-        "mission": 10.0
+        "total": 53.2,
+        "common": 27.5,
+        "custom": 15.0,
+        "mission": 10.7
       },
       "244ef0a0-6e92-458a-a768-9a260add4615": {
         "agent_name": "Agent N",
         "agent_type": "workflow",
-        "total": 78.4,
-        "common": 39.0,
-        "custom": 29.4,
-        "mission": 10.0
+        "total": 79.3,
+        "common": 39.4,
+        "custom": 22.2,
+        "mission": 17.7
       },
       "12d94fd4-c3e5-4f24-ab25-aa976fcb4543": {
         "agent_name": "Agent O",
         "agent_type": "agentic",
-        "total": 61.8,
-        "common": 31.6,
-        "custom": 25.2,
-        "mission": 5.0
+        "total": 54.2,
+        "common": 27.3,
+        "custom": 16.6,
+        "mission": 10.3
       },
       "e14c9ede-c485-4b54-92ef-6cff1da221a2": {
         "agent_name": "Agent P",
         "agent_type": "workflow",
-        "total": 66.0,
-        "common": 32.5,
-        "custom": 23.5,
-        "mission": 10.0
+        "total": 58.0,
+        "common": 28.6,
+        "custom": 17.0,
+        "mission": 12.4
       }
     }
   }
