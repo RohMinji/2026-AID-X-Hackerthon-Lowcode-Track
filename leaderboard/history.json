@@ -262,6 +262,323 @@
           }
         }
       ]
+    },
+    {
+      "published_at": "2026-10-12T12:21:16.401Z",
+      "reveal_at": "2026-10-12T12:20:00.000Z",
+      "event": {
+        "name": "AID-X 해커톤 Low-Code",
+        "updated_at": "2026-10-14T13:45:00+09:00",
+        "round": 1,
+        "push_id": 1
+      },
+      "criteria": [
+        {
+          "key": "common",
+          "label": "성능개선",
+          "max": 50
+        },
+        {
+          "key": "custom",
+          "label": "개별미션",
+          "max": 30
+        },
+        {
+          "key": "mission",
+          "label": "크레딧 미션",
+          "max": 20
+        }
+      ],
+      "teams": [
+        {
+          "appid": "7f4ee2f3-1fbe-f111-aaad-002248ee0781",
+          "team": "MAX",
+          "agent": "MAX",
+          "org": "Customer부문",
+          "leader": "강부진",
+          "members": [
+            "문성수",
+            "윤소연"
+          ],
+          "rank": 1,
+          "total": 83.7,
+          "scores": {
+            "common": 41.5,
+            "custom": 24.7,
+            "mission": 17.5
+          }
+        },
+        {
+          "appid": "ee588188-3955-4255-bcbd-3aab467c31ac",
+          "team": "AIeS",
+          "agent": "AIeS",
+          "org": "kt estate",
+          "leader": "황의석",
+          "members": [
+            "김현호",
+            "추종민"
+          ],
+          "rank": 2,
+          "total": 83.6,
+          "scores": {
+            "common": 39.6,
+            "custom": 25.5,
+            "mission": 18.5
+          }
+        },
+        {
+          "appid": "c3afcff0-3771-4abd-8572-b6b5841b7e10",
+          "team": "누수제로",
+          "agent": "누수제로",
+          "org": "네트워크부문",
+          "leader": "원은숙",
+          "members": [
+            "김정빈",
+            "고성원"
+          ],
+          "rank": 3,
+          "total": 78.5,
+          "scores": {
+            "common": 41.9,
+            "custom": 22.4,
+            "mission": 14.2
+          }
+        },
+        {
+          "appid": "96b889ee-f85c-4f12-9cbe-0d7510c5b695",
+          "team": "퇴근전략실",
+          "agent": "퇴근전략실",
+          "org": "Enterprise부문",
+          "leader": "박종하",
+          "members": [
+            "홍소영",
+            "이혜미"
+          ],
+          "rank": 4,
+          "total": 77.1,
+          "scores": {
+            "common": 39.1,
+            "custom": 23.3,
+            "mission": 14.7
+          }
+        },
+        {
+          "appid": "AX-Ray",
+          "team": "AX-Ray",
+          "agent": "AX-Ray",
+          "org": "kt commerce",
+          "leader": "이동훈",
+          "members": [
+            "추종민",
+            "황수한"
+          ],
+          "rank": 5,
+          "total": 74.6,
+          "scores": {
+            "common": 37.9,
+            "custom": 20.5,
+            "mission": 16.2
+          }
+        },
+        {
+          "appid": "ab98c29b-43e1-4da7-a719-fe64183b9297",
+          "team": "플러스알파",
+          "agent": "플러스알파",
+          "org": "준법지원실",
+          "leader": "임나리",
+          "members": [
+            "박영선",
+            "이현하"
+          ],
+          "rank": 6,
+          "total": 67.8,
+          "scores": {
+            "common": 32.3,
+            "custom": 22.1,
+            "mission": 13.4
+          }
+        },
+        {
+          "appid": "40cea5e1-42ce-4582-af9e-33e94d0e26b4",
+          "team": "관쟁이",
+          "agent": "관쟁이",
+          "org": "네트워크부문",
+          "leader": "이훈하",
+          "members": [
+            "이환우",
+            "권예지"
+          ],
+          "rank": 7,
+          "total": 61.7,
+          "scores": {
+            "common": 31.8,
+            "custom": 17.8,
+            "mission": 12.1
+          }
+        },
+        {
+          "appid": "082df3d8-21c1-f111-aaad-002248ecf2a5",
+          "team": "DealFlow AI",
+          "agent": "DealFlowAI",
+          "org": "전략실",
+          "leader": "김정훈",
+          "members": [
+            "황설욱",
+            "오삼수"
+          ],
+          "rank": 8,
+          "total": 60.2,
+          "scores": {
+            "common": 30.6,
+            "custom": 16.8,
+            "mission": 12.8
+          }
+        },
+        {
+          "appid": "9972f1f0-be01-43c5-acb1-cb00c082671d",
+          "team": "케이티데몬헌터스2",
+          "agent": "케이티데몬헌터스2",
+          "org": "네트워크부문",
+          "leader": "문지영",
+          "members": [
+            "신민지",
+            "여규민"
+          ],
+          "rank": 9,
+          "total": 58.2,
+          "scores": {
+            "common": 28.7,
+            "custom": 15.9,
+            "mission": 13.6
+          }
+        },
+        {
+          "appid": "0e7b5b42-5f5a-47f6-8319-31b59395a12e",
+          "team": "역량E",
+          "agent": "역량E",
+          "org": "Enterprise부문",
+          "leader": "원재희",
+          "members": [
+            "장새영",
+            "이충환"
+          ],
+          "rank": 10,
+          "total": 57.3,
+          "scores": {
+            "common": 28.4,
+            "custom": 17.7,
+            "mission": 11.2
+          }
+        },
+        {
+          "appid": "7106de51-acc2-f111-a05a-000d3a82743f",
+          "team": "ENG지원팀",
+          "agent": "ENG지원팀",
+          "org": "kt estate",
+          "leader": "천대영",
+          "members": [
+            "임영빈",
+            "김효은"
+          ],
+          "rank": 11,
+          "total": 52.1,
+          "scores": {
+            "common": 24.8,
+            "custom": 15.1,
+            "mission": 12.2
+          }
+        },
+        {
+          "appid": "46fa38cc-46c1-f111-aaad-7ced8dff5c1a",
+          "team": "AX프로젝트무물봇",
+          "agent": "AX프로젝트무물봇",
+          "org": "AX사업부문",
+          "leader": "모효경",
+          "members": [
+            "김설란",
+            "이미진"
+          ],
+          "rank": 12,
+          "total": 50.5,
+          "scores": {
+            "common": 25.6,
+            "custom": 15.6,
+            "mission": 9.3
+          }
+        },
+        {
+          "appid": "3599cafd-67c1-f111-aaad-002248edbba9",
+          "team": "REDRED",
+          "agent": "REDRED",
+          "org": "AX사업부문",
+          "leader": "홍준호",
+          "members": [
+            "한석현",
+            "김보원"
+          ],
+          "rank": 13,
+          "total": 48.1,
+          "scores": {
+            "common": 23.6,
+            "custom": 15.1,
+            "mission": 9.4
+          }
+        },
+        {
+          "appid": "85ade485-5e8d-f011-b4cc-6045bd1df16d",
+          "team": "Team 길잡이",
+          "agent": "Team길잡이",
+          "org": "Enterprise부문",
+          "leader": "김동우",
+          "members": [
+            "조현배",
+            "예영실"
+          ],
+          "rank": 14,
+          "total": 47.5,
+          "scores": {
+            "common": 24.7,
+            "custom": 13.4,
+            "mission": 9.4
+          }
+        },
+        {
+          "appid": "8d092d68-04e5-4afd-91e5-1c3cb5799a34",
+          "team": "Solve IT",
+          "agent": "SolveIT",
+          "org": "네트워크부문",
+          "leader": "김경수",
+          "members": [
+            "김자겸",
+            "박경호"
+          ],
+          "rank": 15,
+          "total": 38.1,
+          "scores": {
+            "common": 18.5,
+            "custom": 11.8,
+            "mission": 7.8
+          }
+        },
+        {
+          "appid": "ddead4bc-a937-4001-bde3-7956a5077759",
+          "team": "Entron",
+          "agent": "Entron",
+          "org": "Enterprise부문",
+          "leader": "김현우",
+          "members": [
+            "이정욱",
+            "김윤형"
+          ],
+          "rank": 16,
+          "total": 34,
+          "scores": {
+            "common": 17.5,
+            "custom": 10.5,
+            "mission": 6
+          }
+        }
+      ]
     }
   ]
 }
