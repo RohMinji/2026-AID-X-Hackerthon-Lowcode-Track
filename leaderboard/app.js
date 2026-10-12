@@ -14,6 +14,7 @@
   const SCREEN_MS = 10000;
 
   const ROWS_PER_PAGE = 8;
+  const REVEAL_REPEATS = 3;
   const TOP_N = 7;
   const MIN = 60 * 1000;
 
@@ -177,12 +178,27 @@
     return d.getTime();
   }
 
-  // Deadlines as timestamps on the event date (or on the day of `t` when no
-  // date is set, so the schedule can be rehearsed on any day).
+  // Deadlines as timestamps. "HH:MM" entries fall on the event date (or on
+  // the day of `t` when no date is set, so the schedule can be rehearsed on
+  // any day); "YYYY-MM-DD HH:MM" entries are absolute (e.g. a next-morning
+  // round).
   function deadlinesAt(t) {
     const sch = state.schedule;
     const day = sch.date ? new Date(`${sch.date}T00:00:00`).getTime() : t;
-    return (sch.deadlines || []).map((hm) => atTime(day, hm)).filter(Number.isFinite).sort((a, b) => a - b);
+    return (sch.deadlines || [])
+      .map((d) => (/^\d{4}-\d{2}-\d{2}/.test(String(d))
+        ? new Date(String(d).trim().replace(' ', 'T')).getTime()
+        : atTime(day, d)))
+      .filter(Number.isFinite)
+      .sort((a, b) => a - b);
+  }
+
+  // "08:30" when on the same day as now, "10/15 08:30" otherwise.
+  function fmtWhen(ms) {
+    const d = new Date(ms);
+    const today = new Date();
+    const sameDay = d.toDateString() === today.toDateString();
+    return sameDay ? fmtHM(ms) : `${d.getMonth() + 1}/${d.getDate()} ${fmtHM(ms)}`;
   }
 
   function finalAt() {
@@ -290,14 +306,15 @@
             <div class="eyebrow">SUBMISSIONS</div>
             ${next ? `
               <h2 class="remain-title">남은 접수 기회 <b>${upcoming.length}</b>회</h2>
-              <div class="remain-next">다음 접수 마감 <strong>${fmtHM(next)}</strong>
+              <div class="remain-next">다음 접수 마감 <strong>${fmtWhen(next)}</strong>
                 <span class="remain-count">마감까지 <b data-countdown-to="${next}">${fmtRemain(next - now)}</b></span></div>`
               : '<h2 class="remain-title">모든 접수가 마감되었습니다</h2>'}
-            <div class="remain-times">
+            <div class="remain-times" style="--n:${view.deadlines.length}">
               ${view.deadlines.map((d, i) => `
                 <div class="rt ${d <= now ? 'done' : d === next ? 'next' : ''}" style="--i:${i}">
                   <span class="rt-no">${i + 1}회차</span>
                   <span class="rt-time">${fmtHM(d)}</span>
+                  ${new Date(d).toDateString() !== new Date(view.deadlines[0]).toDateString() ? `<span class="rt-day">${new Date(d).getMonth() + 1}/${new Date(d).getDate()}</span>` : ''}
                   <span class="rt-state">${d <= now ? '마감' : d === next ? '접수 중' : '예정'}</span>
                 </div>`).join('')}
             </div>
@@ -345,7 +362,7 @@
             <div class="qr-copy">
               <div class="eyebrow">SUBMIT</div>
               <h2 class="qr-title">채점 접수는<br>QR로 신청하세요</h2>
-              ${next ? `<div class="qr-deadline">다음 접수 마감 <strong>${fmtHM(next)}</strong>
+              ${next ? `<div class="qr-deadline">다음 접수 마감 <strong>${fmtWhen(next)}</strong>
                 <span>마감까지 <b data-countdown-to="${next}">${fmtRemain(next - now)}</b></span></div>` : ''}
               ${(form.guide || []).length ? `
                 <div class="qr-guide-title">모바일 QR 인식 방법</div>
@@ -460,36 +477,26 @@
     };
   }
 
-  // ---------- reveal ----------
+  // ---------- reveal & regular rotation ----------
 
-  function revealScreens(view) {
+  // Standings of the visible round compared with the round before it.
+  function analyse(view) {
     const curr = computeStandings(view.visible);
     const prev = view.previous ? computeStandings(view.previous) : null;
     const diff = diffStandings(prev ? prev.teams : [], curr.teams).map((t) => ({
       ...t,
       delta: t.prevTotal === null ? null : t.total - t.prevTotal,
     }));
-    const basis = basisOf(view);
-    const round = view.visible.event && view.visible.event.round;
+    return { curr, diff, basis: basisOf(view), round: view.visible.event && view.visible.event.round };
+  }
 
-    const screens = [{
-      label: '공개',
-      once: true,
-      html: () => `
-        ${deco([['ai', 'd-left'], ['ring', 'd-right-sm'], ['sparkle', 'd-top-right'], ['sparkle', 'd-bottom-left-xs']])}
-        <div class="hero">
-          <div class="eyebrow">NEW LEADERBOARD</div>
-          <h2 class="hero-title">점수를<br>공개합니다!</h2>
-          <div class="hero-pill">${round ? `${round}회차 · ` : ''}${basis} 점수 기준</div>
-        </div>`,
-    }];
-
-    // Lower half first, building up to the top of the table.
-    chunk(diff, ROWS_PER_PAGE).reverse().forEach((page) => screens.push(moveBoardPage(page, curr.maxTotal, basis)));
-
-    const withDelta = diff.filter((t) => t.delta !== null);
+  // Dark horse, rising stars (new Top 7 entries, one screen each) and the
+  // closest race. Dark horse and rising stars need a previous round.
+  function highlightScreens(a) {
+    const screens = [];
+    const withDelta = a.diff.filter((t) => t.delta !== null);
+    const byGain = (x, y) => (y.delta - x.delta) || (x.rank - y.rank);
     if (withDelta.length) {
-      const byGain = (a, b) => (b.delta - a.delta) || (a.rank - b.rank);
       screens.push({
         label: '다크호스',
         html: () => spotlight({
@@ -510,10 +517,55 @@
         });
       });
     }
-
-    const rivals = closestPair(curr.teams);
-    if (rivals) screens.push({ label: '치열한 경쟁', html: () => rivalry(rivals, curr.maxTotal) });
+    const rivals = closestPair(a.curr.teams);
+    if (rivals) screens.push({ label: '치열한 경쟁', html: () => rivalry(rivals, a.curr.maxTotal) });
     return screens;
+  }
+
+  // The loop shown whenever there is no one-off sequence to play:
+  // board, dark horse, rising stars, closest race, Top 7 agents, scoring
+  // items, form QR, remaining chances. `scoring` (the "채점 중" screen) is put
+  // first and again after the agents while a round is being scored.
+  function regularScreens(view, scoring) {
+    const screens = [];
+    if (scoring) screens.push(scoring);
+    if (view.hasBoard) {
+      const a = analyse(view);
+      chunk(a.curr.teams, ROWS_PER_PAGE).forEach((page) => screens.push(boardPage(page, a.curr.maxTotal, a.basis)));
+      screens.push(...highlightScreens(a));
+      screens.push(...topAgentScreens(a.curr.teams, a.curr.maxTotal, '현재'));
+      if (scoring) screens.push({ ...scoring });
+    }
+    screens.push(criteriaScreen());
+    if (view.deadlines.some((d) => d > Date.now())) {
+      const qr = qrScreen(view);
+      if (qr) screens.push(qr);
+      screens.push(remainingScreen(view));
+    }
+    return screens;
+  }
+
+  // Right after a reveal: "새로운 점수를 공개합니다!" (10 s), then the rank-move
+  // pages three times over, all played once; the regular loop follows.
+  function revealScreens(view) {
+    const a = analyse(view);
+    const once = (s) => ({ ...s, once: true });
+    const screens = [once({
+      label: '공개',
+      html: () => `
+        ${deco([['ai', 'd-left'], ['ring', 'd-right-sm'], ['sparkle', 'd-top-right'], ['sparkle', 'd-bottom-left-xs']])}
+        <div class="hero">
+          <div class="eyebrow">NEW LEADERBOARD</div>
+          <h2 class="hero-title">새로운 점수를<br>공개합니다!</h2>
+          <div class="hero-pill">${a.round ? `${a.round}회차 · ` : ''}${a.basis} 점수 기준</div>
+        </div>`,
+    })];
+    // Lower half first, building up to the top of the table.
+    const pages = chunk(a.diff, ROWS_PER_PAGE).reverse();
+    for (let r = 0; r < REVEAL_REPEATS; r++) {
+      pages.forEach((page) => screens.push(once(moveBoardPage(page, a.curr.maxTotal, a.basis))));
+    }
+    return [...screens, ...regularScreens(view, null)];
   }
 
   // Adjacent ranks with the smallest score gap; ties go to the higher pair.
@@ -668,21 +720,7 @@
   }
 
   function statusScreens(view) {
-    const screens = [];
-    if (view.hasBoard) {
-      const { maxTotal, teams } = computeStandings(view.visible);
-      const basis = basisOf(view);
-      chunk(teams, ROWS_PER_PAGE).forEach((page) => screens.push(boardPage(page, maxTotal, basis)));
-      screens.push(...topAgentScreens(teams, maxTotal, '현재'));
-    }
-    screens.push(criteriaScreen());
-    const open = view.deadlines.some((d) => d > Date.now());
-    if (open) {
-      screens.push(remainingScreen(view));
-      const qr = qrScreen(view);
-      if (qr) screens.push(qr);
-    }
-    return screens;
+    return regularScreens(view, null);
   }
 
   function podium(top3, maxTotal) {
@@ -729,7 +767,7 @@
   }
 
   function buildScreens(view) {
-    if (view.mode === 'wait') return [criteriaScreen(), remainingScreen(view), scoringScreen(view)];
+    if (view.mode === 'wait') return regularScreens(view, scoringScreen(view));
     if (view.mode === 'reveal') return revealScreens(view);
     if (view.mode === 'final') return finalScreens(view);
     return statusScreens(view);
@@ -827,11 +865,16 @@
       const modeKey = `${view.mode}|${view.target ?? ''}|${view.revealAt ?? ''}`;
       const dataKey = `${state.rawText}|${JSON.stringify(state.agents)}|${state.scheduleText}`;
       if (modeKey !== state.modeKey) {
+        const fromReveal = state.view && state.view.mode === 'reveal' && view.mode === 'status';
+        const current = state.screens[state.index];
         state.view = view;
         state.modeKey = modeKey;
         state.dataKey = dataKey;
         rebuild(true);
-        state.nextAt = t + SCREEN_MS;
+        const keep = fromReveal && current && !current.once
+          ? state.screens.findIndex((s) => s.label === current.label) : -1;
+        if (keep > 0) { state.index = keep; activate(); } // same loop, so carry on where it was
+        else state.nextAt = t + SCREEN_MS;
       } else if (dataKey !== state.dataKey) {
         state.view = view;
         state.dataKey = dataKey;

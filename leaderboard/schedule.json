@@ -1,17 +1,41 @@
 {
-  "_comment": "실시간 화면의 일정과 안내 문구입니다. date를 비워 두면 매일 같은 시각에 동작합니다(리허설용). final_results_at을 넣으면 그 시각부터 최종 결과 화면만 나옵니다.",
-  "date": "",
-  "deadlines": ["13:30", "14:30", "15:30", "16:30", "17:30", "18:30"],
+  "_comment": "실시간 화면의 일정과 안내 문구입니다. deadlines의 \"HH:MM\"은 date(행사일) 기준이고, 다른 날은 \"YYYY-MM-DD HH:MM\"으로 적습니다. date를 비우면 HH:MM 항목이 매일 같은 시각에 동작합니다(리허설용). final_results_at을 넣으면 그 시각부터 최종 결과 화면만 나옵니다.",
+  "date": "2026-10-14",
+  "deadlines": [
+    "13:30",
+    "14:30",
+    "15:30",
+    "16:30",
+    "17:30",
+    "18:30",
+    "2026-10-15 08:30"
+  ],
   "reveal_delay_minutes": 30,
   "reveal_window_minutes": 5,
   "final_results_at": "",
   "criteria": [
-    { "label": "성능개선", "points": 50 },
-    { "label": "개별미션", "points": 30 },
-    { "label": "크레딧 미션", "points": 20 }
+    {
+      "label": "성능개선",
+      "points": 50
+    },
+    {
+      "label": "개별미션",
+      "points": 30
+    },
+    {
+      "label": "크레딧 미션",
+      "points": 20
+    }
   ],
   "form": {
     "url": "https://forms.cloud.microsoft/r/GVpzV0ibhv",
-    "guide": ["Edge 앱 실행", "햄버거 버튼(메뉴)", "홈", "URL 검색 또는 입력", "카메라 로고", "QR 인식"]
+    "guide": [
+      "Edge 앱 실행",
+      "햄버거 버튼(메뉴)",
+      "홈",
+      "URL 검색 또는 입력",
+      "카메라 로고",
+      "QR 인식"
+    ]
   }
 }
