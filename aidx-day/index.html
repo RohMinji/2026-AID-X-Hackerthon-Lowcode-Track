@@ -815,7 +815,7 @@ const EVENT = {
     },
   },
 
-  // 셔틀: 운행일 하루 (shuttleDay = days의 id). times는 [출발 시각, 대수], out: true면 판교사옥에서 나가는 노선
+  // 셔틀: 운행일 하루 (shuttleDay = days의 id). times는 [출발 시각, 대수(기록용 · 화면에는 안 보여요)], out: true면 판교사옥에서 나가는 노선
   shuttleDay: "d2",
   shuttles: [
     { name: "광화문사옥 → 판교사옥", times: [["09:30", 1], ["10:30", 2], ["11:30", 2], ["13:30", 2]] },
@@ -1363,14 +1363,13 @@ function renderShuttle() {
   rs.forEach(r => {
     const abs = r.times.map(([x]) => at(d.date, x));
     const nextIdx = isToday ? abs.findIndex(x => x > t) : -1;
-    const total = r.times.reduce((n, [, c]) => n + c, 0);
     grid.append(h("div", { class: "card route" },
-      h("div", { class: "route-head" }, h("h3", {}, r.name), h("span", { class: "badge", style: "--c:var(--accent)" }, `총 ${total}대`)),
+      h("div", { class: "route-head" }, h("h3", {}, r.name)),
       isToday ? h("div", { class: "next-bus" },
         nextIdx >= 0 ? [h("span", {}, "다음 출발"), h("span", {}, h("b", {}, r.times[nextIdx][0]), h("span", { class: "muted small" }, ` · ${mins(abs[nextIdx] - t)} 후`))]
                      : [h("span", {}, "오늘 운행이 끝났어요")]) : null,
-      h("div", { class: "times" }, r.times.map(([x, c], i) =>
-        h("span", { class: isToday && abs[i] <= t ? "past" : i === nextIdx ? "next" : "" }, x, c > 1 ? h("small", {}, ` ${c}대`) : null)))));
+      h("div", { class: "times" }, r.times.map(([x], i) =>
+        h("span", { class: isToday && abs[i] <= t ? "past" : i === nextIdx ? "next" : "" }, x)))));
   });
   v.append(grid);
   });
