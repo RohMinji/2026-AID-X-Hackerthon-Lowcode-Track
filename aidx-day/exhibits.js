@@ -36,7 +36,7 @@ const PARTS = {
   works:      { name: "Work",       color: "#6f95ff", icon: "img/cursor.webp" },
 };
 
-const EXHIBIT_PLACE = "KT 판교 빌딩 1F";
+const EXHIBIT_PLACE = "kt판교빌딩 1F";
 const EXHIBIT_HOURS = "10.15 (목) 09:00–16:00";
 
 // 출처: (260923) AID-X DAY 리플릿 아젠다리스트 — 테이블보드 '제목(최종확정)'
@@ -110,7 +110,7 @@ const EXHIBITS = [
 
 // AX Tech Connect (8F) — agenda30~ 상세 페이지가 있어요. place가 있으면 장소 표시
 const TECH_CONNECT = {
-  name: "AX Tech Connect", place: "KT 판교 빌딩 8F", color: "#f2c46d", icon: "img/ring.webp",
+  name: "AX Tech Connect", place: "kt판교빌딩 8F", color: "#f2c46d", icon: "img/ring.webp",
   items: [
     { id: "agenda30", title: "KT AI 경쟁력 믿:음 K 3.0 / Arena", team: "Frontier AI Lab · Agentic AI Lab" },
     { id: "agenda31", title: "차세대 음성 에이전트 Full-Duplex Speech to Speech", team: "Frontier AI Lab" },

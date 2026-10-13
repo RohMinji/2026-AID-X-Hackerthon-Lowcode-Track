@@ -728,7 +728,7 @@
 const EVENT = {
   title: "AID-X Day",
   tagline: "AI 기술을 넘어, 실제 업무의 궤도에 안착하다.",
-  venue: "KT 판교 빌딩",
+  venue: "kt판교빌딩",
   venueAddress: "경기 성남시 수정구 금토로 32",
   mapUrl: "https://map.naver.com/p/search/KT%20%ED%8C%90%EA%B5%90%20%EB%B9%8C%EB%94%A9",
 
@@ -748,7 +748,7 @@ const EVENT = {
     stage:  { name: "시상식 · Lucky Draw", floor: "1F", desc: "오프닝 · 시상식 · Lucky Draw" },
     expo1:  { name: "AID-X Day 전시",     floor: "1F", desc: "Innovation · Biz · Tech · Work 전시 29개" },
     cafe:   { name: "카페",               floor: "1F", desc: "" },
-    bus:    { name: "셔틀버스 하차장",    floor: "1F", desc: "광화문사옥 · 우면사옥 셔틀 하차" },
+    bus:    { name: "셔틀버스 하차장",    floor: "1F", desc: "kt광화문빌딩 · kt우면연구센터 셔틀 하차" },
     pro:    { name: "Hackathon Pro-Code", floor: "2F", desc: "" },
     low:    { name: "Hackathon Low-Code", floor: "8F", desc: "" },
     expo8:  { name: "AX Tech Connect",    floor: "8F", desc: "전시 11개 · 캡슐 뽑기 이벤트" },
@@ -830,15 +830,15 @@ const EVENT = {
     },
   },
 
-  // 셔틀: 운행일 하루 (shuttleDay = days의 id). times는 [출발 시각, 대수(기록용 · 화면에는 안 보여요)], out: true면 판교사옥에서 나가는 노선
+  // 셔틀: 운행일 하루 (shuttleDay = days의 id). times는 [출발 시각, 대수(기록용 · 화면에는 안 보여요)], out: true면 kt판교빌딩에서 나가는 노선
   shuttleDay: "d2",
   shuttleNotice: "원활한 탑승을 위해 ‘KT사원증’ 패용 필수",
   shuttles: [
-    { name: "광화문사옥 → 판교사옥", pickup: { text: "kt광화문WEST빌딩 앞 버스정류장 전방 50M", img: "img/pickup-gwanghwamun.webp" }, times: [["09:30", 1], ["10:30", 2], ["11:30", 2], ["13:30", 2]] },
-    { name: "우면사옥 → 판교사옥", pickup: { text: "kt우면연구센터 정문 앞", img: "img/pickup-umyeon.webp" }, times: [["09:30", 1], ["13:30", 1]] },
-    { name: "KT판교사옥 → 양재역 → 강남역", out: true, times: [["17:10", 2], ["17:20", 2], ["17:30", 2], ["17:35", 1], ["17:40", 1], ["18:10", 1], ["18:40", 1]] },
-    { name: "KT판교사옥 → 판교역", out: true, times: [["17:15", 1], ["17:45", 1], ["18:15", 1], ["18:45", 1], ["19:10", 1]] },
-    { name: "KT판교사옥 → 모란역", out: true, times: [["18:40", 1]] },
+    { name: "kt광화문빌딩 → kt판교빌딩", pickup: { text: "kt광화문WEST빌딩 앞 버스정류장 전방 50M", img: "img/pickup-gwanghwamun.webp" }, times: [["09:30", 1], ["10:30", 2], ["11:30", 2], ["13:30", 2]] },
+    { name: "kt우면연구센터 → kt판교빌딩", pickup: { text: "kt우면연구센터 정문 앞", img: "img/pickup-umyeon.webp" }, times: [["09:30", 1], ["13:30", 1]] },
+    { name: "kt판교빌딩 → 양재역 → 강남역", out: true, times: [["17:10", 2], ["17:20", 2], ["17:30", 2], ["17:35", 1], ["17:40", 1], ["18:10", 1], ["18:40", 1]] },
+    { name: "kt판교빌딩 → 판교역", out: true, times: [["17:15", 1], ["17:45", 1], ["18:15", 1], ["18:45", 1], ["19:10", 1]] },
+    { name: "kt판교빌딩 → 모란역", out: true, times: [["18:40", 1]] },
   ],
 
   // 이벤트 탭: Lucky Draw
@@ -1245,7 +1245,7 @@ function renderExhibits(v) {
   if (!cats.some(c => c.key === state.part)) state.part = cats[0].key;
   const isConnect = state.part === "connect";
   v.append(h("div", { class: "ex-place" },
-    h("div", {}, "📍 KT 판교 빌딩 · ", h("b", {}, isConnect ? TECH_CONNECT.place.replace(/^KT 판교 빌딩 /, "") : "1F")),
+    h("div", {}, "📍 kt판교빌딩 · ", h("b", {}, isConnect ? TECH_CONNECT.place.replace(/^kt판교빌딩 /, "") : "1F")),
     h("div", { class: "faint" }, EXHIBIT_HOURS)));
   v.append(chipScroller(h("div", { class: "chips" }, cats.map(c =>
     h("button", { class: "chip", style: `--c:${c.color}`, "aria-pressed": String(state.part === c.key),
@@ -1389,7 +1389,7 @@ function renderShuttle() {
   const isToday = todayDay() && todayDay().id === d.id;
   v.append(h("div", { class: "section-label", style: "margin-top:8px" }, `셔틀 버스 · ${d.sub} 운행`));
   if (EVENT.shuttleNotice) v.append(h("div", { class: "shuttle-notice" }, "🪪 ", EVENT.shuttleNotice));
-  const groups = [["In · 판교사옥으로", EVENT.shuttles.filter(r => !r.out)], ["Out · 판교사옥에서", EVENT.shuttles.filter(r => r.out)]];
+  const groups = [["In · kt판교빌딩으로", EVENT.shuttles.filter(r => !r.out)], ["Out · kt판교빌딩에서", EVENT.shuttles.filter(r => r.out)]];
   groups.filter(([, rs]) => rs.length).forEach(([label, rs]) => {
   v.append(h("div", { class: "shuttle-dir" }, label));
   const grid = h("div", { class: "stack shuttle-grid", style: "display:grid" });
