@@ -458,6 +458,21 @@
     padding-right: 10px; border-right: 1px solid var(--border);
   }
   .floor-title span { font-size: 15px; font-weight: 700; color: var(--ink-dim); }
+  .shuttle-notice {
+    display: inline-flex; align-items: center; gap: 6px; margin: 0 0 14px; padding: 8px 12px; border-radius: 10px;
+    font-size: 13.5px; font-weight: 700; color: #ffd27a; background: rgba(255, 200, 80, .08); border: 1px solid rgba(255, 200, 80, .22);
+  }
+  .pickup { margin: -2px 0 14px; display: grid; gap: 10px; }
+  .pickup-text { font-size: 14px; font-weight: 600; display: flex; gap: 8px; align-items: baseline; }
+  .pickup-k { flex: none; font-size: 12px; font-weight: 800; color: var(--accent); padding: 2px 8px; border-radius: 999px; background: color-mix(in srgb, var(--accent) 14%, transparent); }
+  .pickup-map { position: relative; display: block; width: 100%; padding: 0; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; background: #fff; cursor: zoom-in; }
+  .pickup-map img { display: block; width: 100%; aspect-ratio: 16 / 8; object-fit: cover; }
+  .pickup-zoom { position: absolute; right: 8px; bottom: 8px; font-size: 12px; font-weight: 800; color: #fff; background: rgba(10, 10, 31, .75); padding: 5px 10px; border-radius: 999px; }
+  .lightbox { position: fixed; inset: 0; z-index: 200; background: rgba(5, 5, 18, .92); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 16px; gap: 10px; touch-action: pinch-zoom; }
+  .lightbox img { max-width: 100%; max-height: calc(100% - 60px); object-fit: contain; border-radius: 8px; background: #fff; }
+  .lb-cap { color: var(--ink); font-size: 14px; font-weight: 700; text-align: center; }
+  .lb-close { position: absolute; top: calc(12px + env(safe-area-inset-top)); right: 12px; width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--border); background: var(--panel); color: var(--ink); font-size: 18px; cursor: pointer; }
+  body.lb-open { overflow: hidden; }
   .shuttle-dir { font-size: 13px; font-weight: 800; color: var(--ink-dim); letter-spacing: .04em; margin: 4px 0 10px; }
   .shuttle-grid + .shuttle-dir { margin-top: 18px; }
   .floor8-cta {
@@ -817,10 +832,13 @@ const EVENT = {
 
   // 셔틀: 운행일 하루 (shuttleDay = days의 id). times는 [출발 시각, 대수(기록용 · 화면에는 안 보여요)], out: true면 판교사옥에서 나가는 노선
   shuttleDay: "d2",
+  shuttleNotice: "원활한 탑승을 위해 ‘KT사원증’ 패용 필수",
   shuttles: [
-    { name: "광화문사옥 → 판교사옥", times: [["09:30", 1], ["10:30", 2], ["11:30", 2], ["13:30", 2]] },
-    { name: "우면사옥 → 판교사옥",   times: [["09:30", 1], ["13:30", 1]] },
-    { name: "판교사옥 → 양재역/강남역", out: true, times: [["17:10", 2], ["17:20", 2], ["17:30", 2], ["17:35", 1]] },
+    { name: "광화문사옥 → 판교사옥", pickup: { text: "kt광화문WEST빌딩 앞 버스정류장 전방 50M", img: "img/pickup-gwanghwamun.webp" }, times: [["09:30", 1], ["10:30", 2], ["11:30", 2], ["13:30", 2]] },
+    { name: "우면사옥 → 판교사옥", pickup: { text: "kt우면연구센터 정문 앞", img: "img/pickup-umyeon.webp" }, times: [["09:30", 1], ["13:30", 1]] },
+    { name: "KT판교사옥 → 양재역 → 강남역", out: true, times: [["17:10", 2], ["17:20", 2], ["17:30", 2], ["17:35", 1], ["17:40", 1], ["18:10", 1], ["18:40", 1]] },
+    { name: "KT판교사옥 → 판교역", out: true, times: [["17:15", 1], ["17:45", 1], ["18:15", 1], ["18:45", 1], ["19:10", 1]] },
+    { name: "KT판교사옥 → 모란역", out: true, times: [["18:40", 1]] },
   ],
 
   // 이벤트 탭: Lucky Draw
@@ -1032,15 +1050,16 @@ function renderHome() {
   // 셔틀 요약 (행사 날짜에만)
   const td = todayDay();
   const homeRow = h("div", { class: "home-grid stack" });
-  if (td && td.id === EVENT.shuttleDay && p.kind !== "after") {
+  if (td && td.id === EVENT.shuttleDay && EVENT.shuttles.some(r => r.times.some(([x]) => at(td.date, x) > now()))) {
     const t = now();
     const card = h("div", { class: "card" }, h("div", { class: "section-label" }, "다음 셔틀"));
     const ul = h("ul", { class: "now-list" });
     EVENT.shuttles.forEach(r => {
       const nextT = r.times.map(([x]) => at(td.date, x)).find(x => x > t);
+      if (!nextT) return;  // 운행이 끝난 노선은 숨겨요
       ul.append(h("li", { class: "now-item" },
         h("div", { class: "t" }, r.name),
-        h("div", { class: "small muted" }, nextT ? `${fmt(nextT)} 출발 · ${mins(nextT - t)} 후` : "오늘 운행이 끝났어요")));
+        h("div", { class: "small muted" }, `${fmt(nextT)} 출발 · ${mins(nextT - t)} 후`)));
     });
     card.append(ul, h("a", { class: "btn", href: "#shuttle" }, "셔틀 시간표"));
     homeRow.append(card);
@@ -1342,6 +1361,19 @@ function copyText(text, btn) {
   else fallback();
 }
 
+// 이미지 크게 보기 (탭/ESC로 닫기, 두 손가락 확대 가능)
+function openLightbox(src, caption) {
+  const close = () => { box.remove(); document.body.classList.remove("lb-open"); document.removeEventListener("keydown", onKey); };
+  const onKey = e => { if (e.key === "Escape") close(); };
+  const box = h("div", { class: "lightbox", role: "dialog", "aria-modal": "true", "aria-label": caption, onclick: close },
+    h("img", { src, alt: caption }),
+    h("div", { class: "lb-cap" }, caption),
+    h("button", { class: "lb-close", type: "button", "aria-label": "닫기" }, "✕"));
+  document.body.append(box);
+  document.body.classList.add("lb-open");
+  document.addEventListener("keydown", onKey);
+}
+
 // ---------- 셔틀 ----------
 function renderShuttle() {
   const v = $("view-shuttle");
@@ -1356,6 +1388,7 @@ function renderShuttle() {
   const d = dayOf(EVENT.shuttleDay), t = now();
   const isToday = todayDay() && todayDay().id === d.id;
   v.append(h("div", { class: "section-label", style: "margin-top:8px" }, `셔틀 버스 · ${d.sub} 운행`));
+  if (EVENT.shuttleNotice) v.append(h("div", { class: "shuttle-notice" }, "🪪 ", EVENT.shuttleNotice));
   const groups = [["In · 판교사옥으로", EVENT.shuttles.filter(r => !r.out)], ["Out · 판교사옥에서", EVENT.shuttles.filter(r => r.out)]];
   groups.filter(([, rs]) => rs.length).forEach(([label, rs]) => {
   v.append(h("div", { class: "shuttle-dir" }, label));
@@ -1365,6 +1398,11 @@ function renderShuttle() {
     const nextIdx = isToday ? abs.findIndex(x => x > t) : -1;
     grid.append(h("div", { class: "card route" },
       h("div", { class: "route-head" }, h("h3", {}, r.name)),
+      r.pickup ? h("div", { class: "pickup" },
+        h("div", { class: "pickup-text" }, h("span", { class: "pickup-k" }, "탑승지"), r.pickup.text),
+        r.pickup.img ? h("button", { class: "pickup-map", type: "button", "aria-label": `${r.pickup.text} 지도 크게 보기`, onclick: () => openLightbox(r.pickup.img, r.pickup.text) },
+          h("img", { src: r.pickup.img, alt: `탑승지 지도: ${r.pickup.text}`, loading: "lazy" }),
+          h("span", { class: "pickup-zoom" }, "크게 보기")) : null) : null,
       isToday ? h("div", { class: "next-bus" },
         nextIdx >= 0 ? [h("span", {}, "다음 출발"), h("span", {}, h("b", {}, r.times[nextIdx][0]), h("span", { class: "muted small" }, ` · ${mins(abs[nextIdx] - t)} 후`))]
                      : [h("span", {}, "오늘 운행이 끝났어요")]) : null,
