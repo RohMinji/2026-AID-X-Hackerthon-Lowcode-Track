@@ -473,6 +473,7 @@
   .lb-cap { color: var(--ink); font-size: 14px; font-weight: 700; text-align: center; }
   .lb-close { position: absolute; top: calc(12px + env(safe-area-inset-top)); right: 12px; width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--border); background: var(--panel); color: var(--ink); font-size: 18px; cursor: pointer; }
   body.lb-open { overflow: hidden; }
+  .shuttle-note { margin: 8px 2px 0; font-size: 12px; color: var(--ink-faint); line-height: 1.5; }
   .shuttle-dir { font-size: 13px; font-weight: 800; color: var(--ink-dim); letter-spacing: .04em; margin: 4px 0 10px; }
   .shuttle-grid + .shuttle-dir { margin-top: 18px; }
   .floor8-cta {
@@ -833,6 +834,7 @@ const EVENT = {
   // 셔틀: 운행일 하루 (shuttleDay = days의 id). times는 [출발 시각, 대수(기록용 · 화면에는 안 보여요)], out: true면 kt판교빌딩에서 나가는 노선
   shuttleDay: "d2",
   shuttleNotice: "원활한 탑승을 위해 ‘KT사원증’ 패용 필수",
+  shuttleOutNote: "Out 셔틀 출발 시간은 행사 종료 시간에 따라 일부 변경될 수 있습니다.",
   shuttles: [
     { name: "kt광화문빌딩 → kt판교빌딩", pickup: { text: "kt광화문WEST빌딩 앞 버스정류장 전방 50M", img: "img/pickup-gwanghwamun.webp" }, times: [["09:30", 1], ["10:30", 2], ["11:30", 2], ["13:30", 2]] },
     { name: "kt우면연구센터 → kt판교빌딩", pickup: { text: "kt우면연구센터 정문 앞", img: "img/pickup-umyeon.webp" }, times: [["09:30", 1], ["13:30", 1]] },
@@ -1389,8 +1391,8 @@ function renderShuttle() {
   const isToday = todayDay() && todayDay().id === d.id;
   v.append(h("div", { class: "section-label", style: "margin-top:8px" }, `셔틀 버스 · ${d.sub} 운행`));
   if (EVENT.shuttleNotice) v.append(h("div", { class: "shuttle-notice" }, "🪪 ", EVENT.shuttleNotice));
-  const groups = [["In · kt판교빌딩으로", EVENT.shuttles.filter(r => !r.out)], ["Out · kt판교빌딩에서", EVENT.shuttles.filter(r => r.out)]];
-  groups.filter(([, rs]) => rs.length).forEach(([label, rs]) => {
+  const groups = [["In · kt판교빌딩으로", EVENT.shuttles.filter(r => !r.out)], ["Out · kt판교빌딩에서", EVENT.shuttles.filter(r => r.out), EVENT.shuttleOutNote]];
+  groups.filter(([, rs]) => rs.length).forEach(([label, rs, note]) => {
   v.append(h("div", { class: "shuttle-dir" }, label));
   const grid = h("div", { class: "stack shuttle-grid", style: "display:grid" });
   rs.forEach(r => {
@@ -1410,6 +1412,7 @@ function renderShuttle() {
         h("span", { class: isToday && abs[i] <= t ? "past" : i === nextIdx ? "next" : "" }, x)))));
   });
   v.append(grid);
+  if (note) v.append(h("p", { class: "shuttle-note" }, "※ " + note));
   });
 }
 
