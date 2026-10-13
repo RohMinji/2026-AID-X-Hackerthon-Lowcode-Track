@@ -830,9 +830,12 @@
 
   function goTo(i) {
     if (!state.screens.length) return;
+    const same = i === state.index;
     state.index = i;
     state.nextAt = Date.now() + SCREEN_MS;
-    activate();
+    // Only one screen to show (e.g. the countdown): keep it as it is rather
+    // than replaying its entrance animation every 10 seconds.
+    if (!same) activate();
   }
 
   // ---------- main loop ----------
@@ -871,6 +874,8 @@
 
     const remain = state.paused ? SCREEN_MS : Math.max(0, state.nextAt - t);
     countdownFillEl.style.transform = `scaleX(${state.screens.length ? remain / SCREEN_MS : 0})`;
+    const single = state.screens.filter((x) => !(x.once && x.shown)).length <= 1;
+    countdownTextEl.parentElement.style.visibility = single ? 'hidden' : '';
     countdownTextEl.textContent = state.paused ? '일시정지됨' : `다음 화면까지 ${Math.ceil(remain / 1000)}초`;
 
     document.querySelectorAll('[data-countdown-to]').forEach((node) => {
