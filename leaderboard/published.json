@@ -1,9 +1,9 @@
 {
   "event": {
     "name": "AID-X 해커톤 Low-Code",
-    "updated_at": "2026-10-14T14:45:00+09:00",
-    "round": 2,
-    "push_id": 2
+    "updated_at": "2026-10-14T16:45:00+09:00",
+    "round": 4,
+    "push_id": 4
   },
   "criteria": [
     {
@@ -94,11 +94,11 @@
       "agent": "케이티데몬헌터스2",
       "agent_type": "workflow",
       "members": [],
-      "total": 62.5,
+      "total": 70.8,
       "scores": {
-        "common": 30.5,
-        "custom": 18.7,
-        "mission": 13.3
+        "common": 36.7,
+        "custom": 19.3,
+        "mission": 14.8
       }
     },
     {
@@ -107,11 +107,11 @@
       "agent": "누수제로",
       "agent_type": "agentic",
       "members": [],
-      "total": 75.3,
+      "total": 79.3,
       "scores": {
-        "common": 37.3,
-        "custom": 23.2,
-        "mission": 14.8
+        "common": 39.8,
+        "custom": 23.3,
+        "mission": 16.2
       }
     },
     {
@@ -120,11 +120,11 @@
       "agent": "플러스알파",
       "agent_type": "agentic",
       "members": [],
-      "total": 73.7,
+      "total": 76.9,
       "scores": {
-        "common": 37.4,
-        "custom": 23.3,
-        "mission": 13
+        "common": 36.8,
+        "custom": 23.8,
+        "mission": 16.3
       }
     },
     {
@@ -133,11 +133,11 @@
       "agent": "MAX",
       "agent_type": "workflow",
       "members": [],
-      "total": 74.2,
+      "total": 83.3,
       "scores": {
-        "common": 37.3,
-        "custom": 22.1,
-        "mission": 14.8
+        "common": 41.5,
+        "custom": 26.1,
+        "mission": 15.7
       }
     },
     {
@@ -146,11 +146,11 @@
       "agent": "역량E",
       "agent_type": "agentic",
       "members": [],
-      "total": 54.7,
+      "total": 69.5,
       "scores": {
-        "common": 27.1,
-        "custom": 15.5,
-        "mission": 12.1
+        "common": 32.8,
+        "custom": 21.5,
+        "mission": 15.2
       }
     },
     {
@@ -159,11 +159,11 @@
       "agent": "REDRED",
       "agent_type": "agentic",
       "members": [],
-      "total": 52.6,
+      "total": 61,
       "scores": {
-        "common": 27.8,
-        "custom": 16.8,
-        "mission": 8
+        "common": 30.5,
+        "custom": 18.9,
+        "mission": 11.6
       }
     },
     {
@@ -172,11 +172,11 @@
       "agent": "SolveIT",
       "agent_type": "workflow",
       "members": [],
-      "total": 37.6,
+      "total": 47.9,
       "scores": {
-        "common": 17.9,
-        "custom": 10.4,
-        "mission": 9.3
+        "common": 22,
+        "custom": 14.9,
+        "mission": 11
       }
     },
     {
@@ -224,21 +224,21 @@
       "agent": "AX-Ray",
       "agent_type": "agentic",
       "members": [],
-      "total": 74.3,
+      "total": 73.2,
       "scores": {
         "common": 36.3,
-        "custom": 21.5,
-        "mission": 16.5
+        "custom": 23.8,
+        "mission": 13.1
       }
     }
   ],
-  "reveal_at": "2026-10-12T12:26:00.000Z",
+  "reveal_at": "2026-10-13T05:15:00.000Z",
   "previous": {
     "event": {
       "name": "AID-X 해커톤 Low-Code",
-      "updated_at": "2026-10-14T13:45:00+09:00",
-      "round": 1,
-      "push_id": 1
+      "updated_at": "2026-10-14T14:45:00+09:00",
+      "round": 2,
+      "push_id": 2
     },
     "criteria": [
       {
@@ -264,11 +264,11 @@
         "agent": "AX프로젝트무물봇",
         "agent_type": "agentic",
         "members": [],
-        "total": 50.5,
+        "total": 66.7,
         "scores": {
-          "common": 25.6,
-          "custom": 15.6,
-          "mission": 9.3
+          "common": 34.8,
+          "custom": 18.5,
+          "mission": 13.4
         }
       },
       {
@@ -290,11 +290,11 @@
         "agent": "퇴근전략실",
         "agent_type": "agentic",
         "members": [],
-        "total": 77.1,
+        "total": 81.1,
         "scores": {
-          "common": 39.1,
-          "custom": 23.3,
-          "mission": 14.7
+          "common": 41.2,
+          "custom": 23.2,
+          "mission": 16.7
         }
       },
       {
@@ -303,11 +303,11 @@
         "agent": "DealFlowAI",
         "agent_type": "agentic",
         "members": [],
-        "total": 60.2,
+        "total": 66.9,
         "scores": {
-          "common": 30.6,
-          "custom": 16.8,
-          "mission": 12.8
+          "common": 31.1,
+          "custom": 21.8,
+          "mission": 14
         }
       },
       {
@@ -329,11 +329,11 @@
         "agent": "케이티데몬헌터스2",
         "agent_type": "workflow",
         "members": [],
-        "total": 58.2,
+        "total": 62.5,
         "scores": {
-          "common": 28.7,
-          "custom": 15.9,
-          "mission": 13.6
+          "common": 30.5,
+          "custom": 18.7,
+          "mission": 13.3
         }
       },
       {
@@ -342,11 +342,11 @@
         "agent": "누수제로",
         "agent_type": "agentic",
         "members": [],
-        "total": 78.5,
+        "total": 75.3,
         "scores": {
-          "common": 41.9,
-          "custom": 22.4,
-          "mission": 14.2
+          "common": 37.3,
+          "custom": 23.2,
+          "mission": 14.8
         }
       },
       {
@@ -355,11 +355,11 @@
         "agent": "플러스알파",
         "agent_type": "agentic",
         "members": [],
-        "total": 67.8,
+        "total": 73.7,
         "scores": {
-          "common": 32.3,
-          "custom": 22.1,
-          "mission": 13.4
+          "common": 37.4,
+          "custom": 23.3,
+          "mission": 13
         }
       },
       {
@@ -368,11 +368,11 @@
         "agent": "MAX",
         "agent_type": "workflow",
         "members": [],
-        "total": 83.7,
+        "total": 74.2,
         "scores": {
-          "common": 41.5,
-          "custom": 24.7,
-          "mission": 17.5
+          "common": 37.3,
+          "custom": 22.1,
+          "mission": 14.8
         }
       },
       {
@@ -381,11 +381,11 @@
         "agent": "역량E",
         "agent_type": "agentic",
         "members": [],
-        "total": 57.3,
+        "total": 54.7,
         "scores": {
-          "common": 28.4,
-          "custom": 17.7,
-          "mission": 11.2
+          "common": 27.1,
+          "custom": 15.5,
+          "mission": 12.1
         }
       },
       {
@@ -394,11 +394,11 @@
         "agent": "REDRED",
         "agent_type": "agentic",
         "members": [],
-        "total": 48.1,
+        "total": 52.6,
         "scores": {
-          "common": 23.6,
-          "custom": 15.1,
-          "mission": 9.4
+          "common": 27.8,
+          "custom": 16.8,
+          "mission": 8
         }
       },
       {
@@ -407,11 +407,11 @@
         "agent": "SolveIT",
         "agent_type": "workflow",
         "members": [],
-        "total": 38.1,
+        "total": 37.6,
         "scores": {
-          "common": 18.5,
-          "custom": 11.8,
-          "mission": 7.8
+          "common": 17.9,
+          "custom": 10.4,
+          "mission": 9.3
         }
       },
       {
@@ -433,11 +433,11 @@
         "agent": "ENG지원팀",
         "agent_type": "agentic",
         "members": [],
-        "total": 52.1,
+        "total": 59.3,
         "scores": {
-          "common": 24.8,
-          "custom": 15.1,
-          "mission": 12.2
+          "common": 31,
+          "custom": 17.2,
+          "mission": 11.1
         }
       },
       {
@@ -446,11 +446,11 @@
         "agent": "AIeS",
         "agent_type": "agentic",
         "members": [],
-        "total": 83.6,
+        "total": 86.5,
         "scores": {
-          "common": 39.6,
-          "custom": 25.5,
-          "mission": 18.5
+          "common": 42,
+          "custom": 26.2,
+          "mission": 18.3
         }
       },
       {
@@ -459,14 +459,14 @@
         "agent": "AX-Ray",
         "agent_type": "agentic",
         "members": [],
-        "total": 74.6,
+        "total": 74.3,
         "scores": {
-          "common": 37.9,
-          "custom": 20.5,
-          "mission": 16.2
+          "common": 36.3,
+          "custom": 21.5,
+          "mission": 16.5
         }
       }
     ],
-    "reveal_at": "2026-10-12T12:20:00.000Z"
+    "reveal_at": "2026-10-12T12:26:00.000Z"
   }
 }
