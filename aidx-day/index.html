@@ -847,18 +847,18 @@ const EVENT = {
   luckyDraw: {
     title: "AID-X DAY Lucky Draw",
     lead: "AID-X DAY 전시와 발표를 관람하며 전시 공간과 발표 장소에 비치된 QR로 만족도 조사에 참여해 주세요.",
-    surveys: { exhibit: 4, talk: 2, need: 3 },
+    surveys: { exhibit: 4, talk: 2, need: 1 },
     surveyNames: [
       { name: "Innovation존 전시" }, { name: "Biz존 전시" }, { name: "Tech존 전시" }, { name: "Work존 전시" },
       { name: "오전 발표", talk: true }, { name: "오후 발표", talk: true },
     ],
     steps: [
       { title: "전시·발표 관람", desc: "전시 공간과 발표 장소에 비치된 QR을 찾아 주세요." },
-      { title: "QR로 만족도 조사 참여", desc: "총 6개(전시 4개 · 발표 2개) 중 3개 이상 참여해 주세요." },
+      { title: "QR로 만족도 조사 참여", desc: "총 6개(전시 4개 · 발표 2개) 중 1개만 참여해도 돼요." },
       { title: "추첨번호 받기", desc: "설문조사 때 입력한 메일 주소로 추첨번호가 발송돼요." },
     ],
     info: [
-      { label: "추첨번호 발급", value: "16:00까지", note: "행사일 16:00 이후에는 발급되지 않아요." },
+      { label: "추첨번호 발급", value: "15:30까지", note: "행사일 15:30 이후에는 발급되지 않아요." },
       { label: "Lucky Draw 추첨", value: "16:30", note: "행사일 16:30부터 진행돼요." },
       { label: "경품 수령", value: "현장 지급", note: "추첨 시 현장에서 본인 확인 후 지급돼요." },
     ],
@@ -1434,7 +1434,7 @@ function renderJoin() {
       h("ol", { class: "steps" }, L.steps.map(x => h("li", {}, h("div", {}, h("h3", {}, x.title), h("p", {}, x.desc))))),
       h("div", { class: "ld-meter" },
         h("div", { class: "ld-tiles" }, tiles),
-        h("p", {}, h("b", {}, `${sv.exhibit + sv.talk}개 중 ${sv.need}개 이상`), " 참여하면 추첨번호가 메일로 발송돼요."))),
+        h("p", {}, h("b", {}, sv.need === 1 ? `${sv.exhibit + sv.talk}개 중 1개만` : `${sv.exhibit + sv.talk}개 중 ${sv.need}개 이상`), " 참여해도 추첨번호가 메일로 발송돼요."))),
 
     h("div", { class: "card" }, h("div", { class: "section-label" }, "📧 당첨 안내"),
       h("div", { class: "ld-info" }, L.info.map(x => h("div", { class: "ld-info-item" },
