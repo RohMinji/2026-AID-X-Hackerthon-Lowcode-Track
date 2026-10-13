@@ -30,7 +30,8 @@
     const full = h("button", { type: "button", class: "pdf-btn pdf-full-btn", "aria-label": "크게 보기" }, "⛶");
     const bar = h("div", { class: "pdf-bar" }, prev, num, next, full);
     box.append(stage, bar);
-    box.addEventListener("contextmenu", e => e.preventDefault());
+    // 꾹 눌러 저장/복사 막기: 메뉴·선택·드래그 차단 (+ CSS의 -webkit-touch-callout)
+    ["contextmenu", "selectstart", "copy"].forEach(ev => box.addEventListener(ev, e => e.preventDefault()));
     box.addEventListener("dragstart", e => e.preventDefault());
 
     let doc = null, pageNo = 1, busy = false, again = false;
@@ -48,6 +49,7 @@
       canvas.width = vp.width; canvas.height = vp.height;
       canvas.style.width = `${base.width * css}px`; canvas.style.height = `${base.height * css}px`;
       await page.render({ canvasContext: canvas.getContext("2d"), viewport: vp }).promise;
+      box.classList.add("ready");
       num.textContent = `${pageNo} / ${doc.numPages}`;
       prev.disabled = pageNo <= 1; next.disabled = pageNo >= doc.numPages;
       busy = false;
@@ -77,18 +79,25 @@
     });
     let rt; window.addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(render, 150); });
 
-    const s = document.createElement("script");
-    s.src = PDFJS + "pdf.min.js";
-    s.onload = async () => {
-      try {
-        pdfjsLib.GlobalWorkerOptions.workerSrc = PDFJS + "pdf.worker.min.js";
-        doc = await pdfjsLib.getDocument({ url, isEvalSupported: false }).promise;
-        stage.querySelector(".pdf-msg").remove();
-        render();
-      } catch (err) { stage.querySelector(".pdf-msg").textContent = "자료를 불러오지 못했어요."; }
-    };
-    s.onerror = () => { stage.querySelector(".pdf-msg").textContent = "자료를 불러오지 못했어요."; };
-    document.head.append(s);
+    const msg = t => { const m = stage.querySelector(".pdf-msg"); if (m) m.textContent = t; };
+    const lockMsg = { before: "🔒 발표 자료는 10.15(목) 09:00–18:00에 공개됩니다.", after: "🔒 발표 자료 공개 시간(10.15 09:00–18:00)이 종료되었습니다." };
+    // 운영진 미리보기: 페이지 주소에 ?key=… 가 있으면 PDF 요청에도 붙여요
+    const key = new URLSearchParams(location.search).get("key");
+    const src = key ? `${url}?key=${encodeURIComponent(key)}` : url;
+    fetch(src, { cache: "no-store" }).then(async res => {
+      if (res.status === 403) { box.classList.add("locked"); msg(lockMsg[res.headers.get("X-PDF-Lock")] || lockMsg.before); return; }
+      if (!res.ok) { box.classList.add("locked"); msg("자료를 불러오지 못했어요."); return; }
+      const data = await res.arrayBuffer();
+      await new Promise((ok, no) => {
+        const s = document.createElement("script");
+        s.src = PDFJS + "pdf.min.js"; s.onload = ok; s.onerror = no;
+        document.head.append(s);
+      });
+      pdfjsLib.GlobalWorkerOptions.workerSrc = PDFJS + "pdf.worker.min.js";
+      doc = await pdfjsLib.getDocument({ data, isEvalSupported: false }).promise;
+      stage.querySelector(".pdf-msg").remove();
+      render();
+    }).catch(() => { box.classList.add("locked"); msg("자료를 불러오지 못했어요."); });
   }
 
   const svgBack = '<svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>';

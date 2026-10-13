@@ -118,7 +118,12 @@ a { color: inherit; }
 }
 
 /* PDF 뷰어 */
-.visual.has-pdf { aspect-ratio: auto; background: #0d0c22; display: flex; flex-direction: column; }
+.visual.has-pdf { aspect-ratio: auto; background: #0d0c22; display: flex; flex-direction: column; -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; }
+.visual.has-pdf canvas { pointer-events: none; -webkit-touch-callout: none; }
+.visual.has-pdf:not(.ready) .pdf-page, .visual.has-pdf:not(.ready) .pdf-bar { display: none; }
+.visual.has-pdf.locked .pdf-bar { display: none; }
+.visual.has-pdf.locked .pdf-stage { min-height: 180px; }
+.visual.has-pdf.locked .pdf-msg { padding: 0 20px; text-align: center; color: var(--ink); font-weight: 700; line-height: 1.6; }
 .visual.has-pdf::after { display: none; }
 .pdf-stage {
   position: relative; display: flex; align-items: center; justify-content: center; min-height: 200px; overflow: hidden;
@@ -126,7 +131,7 @@ a { color: inherit; }
 }
 .pdf-page { position: relative; line-height: 0; }
 .pdf-stage canvas { display: block; background: #fff; }
-.pdf-wm { position: absolute; inset: 0; pointer-events: none; background-repeat: repeat; background-size: 520px 220px; mix-blend-mode: difference; }
+.pdf-wm { position: absolute; inset: 0; pointer-events: auto; -webkit-touch-callout: none; background-repeat: repeat; background-size: 520px 220px; mix-blend-mode: difference; }
 .pdf-msg { position: absolute; inset: 0; display: grid; place-items: center; color: var(--ink-dim); font-size: 14px; }
 .pdf-bar { display: flex; align-items: center; justify-content: center; gap: 10px; padding: 10px; border-top: 1px solid var(--border); }
 .pdf-btn {
