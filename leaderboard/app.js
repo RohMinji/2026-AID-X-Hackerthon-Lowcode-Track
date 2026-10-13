@@ -41,7 +41,8 @@
     sparkle: 'assets/sparkle.png',
   };
 
-  const MODE_LABEL = { wait: '채점 중', reveal: '점수 공개', status: 'LIVE', final: '최종 결과' };
+  const MODE_LABEL = { countdown: 'COMING SOON', wait: '채점 중', reveal: '점수 공개', status: 'LIVE', final: '최종 결과' };
+  const TAGLINE = ['Low-Code부터 Pro-Code까지,', '아이디어를 실제 업무에서 동작하는 AI로 만드는 이틀 간의 도전'];
 
   const el = (id) => document.getElementById(id);
   const stage = el('stage');
@@ -66,7 +67,7 @@
   const params = new URLSearchParams(window.location.search);
   const DEMO = params.has('demo');
   const DEMO_REVEAL_AT = Date.now();
-  const MODE_ALIASES = { scoring: 'wait', wait: 'wait', reveal: 'reveal', status: 'status', final: 'final' };
+  const MODE_ALIASES = { countdown: 'countdown', scoring: 'wait', wait: 'wait', reveal: 'reveal', status: 'status', final: 'final' };
 
   const state = {
     raw: null,
@@ -184,12 +185,15 @@
     return sameDay ? fmtHM(ms) : `${d.getMonth() + 1}/${d.getDate()} ${fmtHM(ms)}`;
   }
 
-  function finalAt() {
-    const s = state.schedule.final_results_at;
+  // "YYYY-MM-DD HH:MM" from schedule.json as a timestamp, or null.
+  function scheduleAt(key) {
+    const s = state.schedule[key];
     if (!s) return null;
-    const ms = new Date(String(s).replace(' ', 'T')).getTime();
+    const ms = new Date(String(s).trim().replace(' ', 'T')).getTime();
     return Number.isFinite(ms) ? ms : null;
   }
+
+  function finalAt() { return scheduleAt('final_results_at'); }
 
   function revealWindowMs() { return (Number(state.schedule.reveal_window_minutes) || 5) * MIN; }
   function revealDelayMs() { return (Number(state.schedule.reveal_delay_minutes) || 30) * MIN; }
@@ -219,12 +223,20 @@
     const final = finalAt();
     const hasBoard = !!(base.visible && (base.visible.teams || []).length);
 
+    const startAt = scheduleAt('start_at');
+    const remainingFrom = scheduleAt('remaining_from');
+    const showRemaining = remainingFrom === null || t >= remainingFrom;
+
     let mode;
     let target = null;
     if (state.override !== 'auto') {
       mode = state.override;
       if (snap.pending) target = snap.revealAt;
       else if (lastDeadline !== null) target = lastDeadline + revealDelayMs();
+    } else if (startAt !== null && t < startAt) {
+      // Before the hackathon opens: only the countdown.
+      mode = 'countdown';
+      target = startAt;
     } else if (final !== null && t >= final) {
       mode = 'final';
     } else if (snap.revealAt !== null && t >= snap.revealAt && t < snap.revealAt + revealWindowMs()) {
@@ -243,7 +255,7 @@
     }
 
     if ((mode === 'reveal' || mode === 'final') && !hasBoard) mode = 'status';
-    return { ...base, mode, target, deadlines, hasBoard };
+    return { ...base, mode, target, deadlines, hasBoard, showRemaining };
   }
 
   // ---------- shared screens ----------
@@ -488,7 +500,7 @@
       if (scoring) screens.push({ ...scoring });
     }
     screens.push(criteriaScreen());
-    if (view.deadlines.some((d) => d > Date.now())) screens.push(remainingScreen(view));
+    if (view.showRemaining && view.deadlines.some((d) => d > Date.now())) screens.push(remainingScreen(view));
     return screens;
   }
 
@@ -715,7 +727,28 @@
     return screens;
   }
 
+  function countdownScreen(view) {
+    const target = view.target ?? scheduleAt('start_at') ?? Date.now();
+    return {
+      label: '카운트다운',
+      html: () => `
+        ${deco([['ai', 'd-left'], ['ring', 'd-right'], ['sparkle', 'd-top-right'], ['sparkle', 'd-bottom-left-xs']])}
+        <div class="hero cd">
+          <p class="cd-tagline">${escapeHtml(TAGLINE[0])}<br>${escapeHtml(TAGLINE[1])}</p>
+          <div class="cd-clock" data-cd-to="${target}">
+            <div class="cd-unit"><span class="cd-num" data-part="h">00</span><span class="cd-label">시간</span></div>
+            <span class="cd-sep">:</span>
+            <div class="cd-unit"><span class="cd-num" data-part="m">00</span><span class="cd-label">분</span></div>
+            <span class="cd-sep">:</span>
+            <div class="cd-unit"><span class="cd-num" data-part="s">00</span><span class="cd-label">초</span></div>
+          </div>
+          <div class="hero-pill">${new Date(target).getMonth() + 1}월 ${new Date(target).getDate()}일 ${fmtHM(target)} 시작</div>
+        </div>`,
+    };
+  }
+
   function buildScreens(view) {
+    if (view.mode === 'countdown') return [countdownScreen(view)];
     if (view.mode === 'wait') return regularScreens(view, scoringScreen(view));
     if (view.mode === 'reveal') return revealScreens(view);
     if (view.mode === 'final') return finalScreens(view);
@@ -811,7 +844,7 @@
 
     if (state.raw) {
       const view = computeView(t);
-      const modeKey = `${view.mode}|${view.target ?? ''}|${view.revealAt ?? ''}`;
+      const modeKey = `${view.mode}|${view.target ?? ''}|${view.revealAt ?? ''}|${view.showRemaining}`;
       const dataKey = `${state.rawText}|${JSON.stringify(state.agents)}|${state.scheduleText}`;
       if (modeKey !== state.modeKey) {
         const fromReveal = state.view && state.view.mode === 'reveal' && view.mode === 'status';
@@ -842,6 +875,11 @@
 
     document.querySelectorAll('[data-countdown-to]').forEach((node) => {
       node.textContent = fmtRemain(Number(node.dataset.countdownTo) - t);
+    });
+    document.querySelectorAll('[data-cd-to]').forEach((node) => {
+      const left = Math.max(0, Math.ceil((Number(node.dataset.cdTo) - t) / 1000));
+      const parts = { h: Math.floor(left / 3600), m: Math.floor((left % 3600) / 60), s: left % 60 };
+      node.querySelectorAll('[data-part]').forEach((n) => { n.textContent = pad2(parts[n.dataset.part]); });
     });
   }
 

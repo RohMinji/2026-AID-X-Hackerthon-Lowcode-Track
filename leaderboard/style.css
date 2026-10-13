@@ -729,6 +729,29 @@ html, body {
 
 .dots span.spent { opacity: 0.25; }
 
+/* ---------------- Opening countdown ---------------- */
+
+.stage[data-mode="countdown"] .footbar { visibility: hidden; }
+.stage[data-mode="countdown"] .mode-dot { background: var(--blue); }
+.cd-tagline { margin: 0; font-size: 4.4rem; line-height: 1.45; font-weight: 800; letter-spacing: -0.02em; color: var(--ink); }
+.cd-clock { margin-top: 5rem; display: flex; align-items: flex-start; gap: 2.4rem; }
+.cd-unit { display: flex; flex-direction: column; align-items: center; gap: 1.2rem; }
+.cd-num {
+  min-width: 2ch;
+  font-size: 20rem;
+  line-height: 1;
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+  background: var(--grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.cd-label { font-size: 2.6rem; font-weight: 800; color: var(--ink-3); letter-spacing: 0.2em; }
+.cd-sep { font-size: 16rem; line-height: 1.1; font-weight: 900; color: #c9cdf0; }
+.cd .hero-pill { margin-top: 4.4rem; }
+
 /* ---------------- Dense leaderboard (8 rows) ---------------- */
 
 .lb-list.dense { gap: 1rem; }

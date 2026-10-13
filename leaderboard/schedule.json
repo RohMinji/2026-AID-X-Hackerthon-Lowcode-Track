@@ -1,6 +1,8 @@
 {
-  "_comment": "실시간 화면의 일정과 안내 문구입니다. deadlines의 \"HH:MM\"은 date(행사일) 기준이고, 다른 날은 \"YYYY-MM-DD HH:MM\"으로 적습니다. date를 비우면 HH:MM 항목이 매일 같은 시각에 동작합니다(리허설용). final_results_at을 넣으면 그 시각부터 최종 결과 화면만 나옵니다.",
+  "_comment": "실시간 화면의 일정과 안내 문구입니다. start_at 전까지는 시작 카운트다운 화면만 나오고, remaining_from부터 남은 접수 화면이 순환에 들어갑니다. deadlines의 \"HH:MM\"은 date(행사일) 기준이고, 다른 날은 \"YYYY-MM-DD HH:MM\"으로 적습니다. final_results_at을 넣으면 그 시각부터 최종 결과 화면만 나옵니다.",
   "date": "2026-10-14",
+  "start_at": "2026-10-14 09:00",
+  "remaining_from": "2026-10-14 10:00",
   "deadlines": [
     "13:30",
     "14:30",
