@@ -32,14 +32,14 @@
     document.body.insertBefore(h("div", { class: "sample-banner" }, EXHIBIT_NOTICE), app);
   }
 
-  if (idx < 0) {
+  const x = idx >= 0 ? LIST[idx] : id === TEST_EXHIBIT.id ? TEST_EXHIBIT : null;
+  if (!x) {
     app.append(h("div", { class: "wrap notfound" },
       h("h1", {}, "전시를 찾을 수 없어요"),
       h("a", { class: "btn", href: LIST_URL, style: "display:inline-block;padding:12px 20px" }, "전시 목록으로")));
     return;
   }
 
-  const x = LIST[idx];
   const isConnect = x.part === "connect";
   const part = isConnect ? { name: TECH_CONNECT.name, color: TECH_CONNECT.color, icon: TECH_CONNECT.icon }
     : PARTS[x.part] || { name: x.part, color: "#35e0ff" };
@@ -89,7 +89,7 @@
 
   // AX Tech Connect는 그 안에서만 이전/다음으로 이동
   const group = LIST.filter(e => (e.part === "connect") === isConnect), gi = group.indexOf(x);
-  const prev = group[gi - 1], next = group[gi + 1];
+  const prev = gi < 0 ? null : group[gi - 1], next = gi < 0 ? null : group[gi + 1];
   const pager = h("nav", { class: "pager", "aria-label": "이전·다음 전시" },
     prev ? h("a", { href: prev.id }, h("small", {}, "← 이전 전시"), h("span", {}, exTitleMain(prev))) : h("span", { class: "empty" }),
     next ? h("a", { class: "next", href: next.id }, h("small", {}, "다음 전시 →"), h("span", {}, exTitleMain(next))) : h("span", { class: "empty" }));

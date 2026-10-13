@@ -124,6 +124,10 @@ const TECH_CONNECT = {
   ],
 };
 
+// 테스트용 상세 페이지 (aidxday.pages.dev/test_agenda) — 목록·번호·이전/다음에는 안 나와요
+const TEST_EXHIBIT = { id: "test_agenda", part: "innovation", test: true, team: "테스트 조직",
+  title: "테스트 전시 제목", sub: "테스트용 부제목입니다" };
+
 // 상세 페이지용 전체 목록: 1F 전시 + AX Tech Connect
 const ALL_EXHIBITS = [...EXHIBITS, ...TECH_CONNECT.items.map(x => ({ ...x, part: "connect", team: x.team || "" }))];
 
@@ -135,6 +139,7 @@ const exTitleText = e => exTitleMain(e) + (e.sub ? " " + flat(e.sub) : "");  // 
 const exTeam = e => e.team;
 // 화면에 보이는 번호 = 분류 안에서의 순서 (Innovation 01, Tech 01 …). 링크 주소(id)와는 별개예요
 const exNo = e => {
+  if (e.test) return "00";
   const part = ALL_EXHIBITS.find(x => x.id === e.id).part;
   return String(ALL_EXHIBITS.filter(x => x.part === part).findIndex(x => x.id === e.id) + 1).padStart(2, "0");
 };
