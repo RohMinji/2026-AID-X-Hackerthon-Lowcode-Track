@@ -20,6 +20,8 @@
    contact : 문의
    link    : 관련 자료 링크
    image   : 대표 이미지 주소 (예: "img/agenda01.jpg")
+   pdf     : 발표 자료 PDF (예: "pdf/agenda01.pdf") — 있으면 이미지 자리에 워터마크와 함께 보여요.
+             올리기 전에 tools/watermark_pdf.py 로 파일에도 워터마크를 새겨 주세요
    ===================================================================== */
 
 // true로 두면 상세 페이지 위쪽에 EXHIBIT_NOTICE 안내 띠가 보여요
@@ -126,7 +128,7 @@ const TECH_CONNECT = {
 
 // 테스트용 상세 페이지 (aidxday.pages.dev/test_agenda) — 목록·번호·이전/다음에는 안 나와요
 const TEST_EXHIBIT = { id: "test_agenda", part: "innovation", test: true, team: "테스트 조직",
-  title: "테스트 전시 제목", sub: "테스트용 부제목입니다" };
+  title: "테스트 전시 제목", sub: "테스트용 부제목입니다", pdf: "pdf/test_agenda.pdf" };
 
 // 상세 페이지용 전체 목록: 1F 전시 + AX Tech Connect
 const ALL_EXHIBITS = [...EXHIBITS, ...TECH_CONNECT.items.map(x => ({ ...x, part: "connect", team: x.team || "" }))];
