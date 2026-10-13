@@ -17,13 +17,33 @@
   // ---- PDF 뷰어 (pdf.js) — 화면 워터마크 + 우클릭/길게 눌러 저장 막기 ----
   const PDFJS = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/";
   const PDF_NOTICE = "본 자료는 kt의 자산으로, 무단 복제·배포 시 법적 조치를 받을 수 있습니다.";
-  function pdfViewer(box, url) {
+  // 열람 가능할 때(서버가 200을 줄 때)만 box를 PDF 뷰어로 바꿔요. 아니면 원래 그림을 그대로 둬요
+  function pdfViewer(box, url, onShow) {
+    // 운영진 미리보기: 페이지 주소에 ?key=… 가 있으면 PDF 요청에도 붙여요
+    const key = new URLSearchParams(location.search).get("key");
+    const src = key ? `${url}?key=${encodeURIComponent(key)}` : url;
+    fetch(src, { cache: "no-store" }).then(async res => {
+      if (!res.ok) return;  // 잠김(403)·없음 → 그대로
+      const data = await res.arrayBuffer();
+      await new Promise((ok, no) => {
+        const s = document.createElement("script");
+        s.src = PDFJS + "pdf.min.js"; s.onload = ok; s.onerror = no;
+        document.head.append(s);
+      });
+      pdfjsLib.GlobalWorkerOptions.workerSrc = PDFJS + "pdf.worker.min.js";
+      const doc = await pdfjsLib.getDocument({ data, isEvalSupported: false }).promise;
+      buildViewer(box, doc);
+      if (onShow) onShow();
+    }).catch(() => {});
+  }
+  function buildViewer(box, doc) {
+    box.textContent = "";
     box.classList.add("has-pdf");
     const canvas = h("canvas", { "aria-label": "발표 자료" });
     const wm = h("div", { class: "pdf-wm", "aria-hidden": "true" });
     wm.style.backgroundImage = `url("data:image/svg+xml,${encodeURIComponent(
       `<svg xmlns='http://www.w3.org/2000/svg' width='520' height='220'><text x='260' y='110' fill='rgba(255,255,255,.13)' font-size='15' font-family='sans-serif' text-anchor='middle' transform='rotate(-28 260 110)'>${PDF_NOTICE}</text></svg>`)}")`;
-    const stage = h("div", { class: "pdf-stage" }, h("div", { class: "pdf-page" }, canvas, wm), h("div", { class: "pdf-msg" }, "자료를 불러오는 중…"));
+    const stage = h("div", { class: "pdf-stage" }, h("div", { class: "pdf-page" }, canvas, wm));
     const prev = h("button", { type: "button", class: "pdf-btn", "aria-label": "이전 페이지" }, "‹");
     const next = h("button", { type: "button", class: "pdf-btn", "aria-label": "다음 페이지" }, "›");
     const num = h("span", { class: "pdf-num" }, "");
@@ -34,7 +54,7 @@
     ["contextmenu", "selectstart", "copy"].forEach(ev => box.addEventListener(ev, e => e.preventDefault()));
     box.addEventListener("dragstart", e => e.preventDefault());
 
-    let doc = null, pageNo = 1, busy = false, again = false;
+    let pageNo = 1, busy = false, again = false;
     async function render() {
       if (!doc) return;
       if (busy) { again = true; return; }
@@ -79,25 +99,7 @@
     });
     let rt; window.addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(render, 150); });
 
-    const msg = t => { const m = stage.querySelector(".pdf-msg"); if (m) m.textContent = t; };
-    const lockMsg = { before: "🔒 발표 자료는 10.15(목) 09:00–18:00에 공개됩니다.", after: "🔒 발표 자료 공개 시간(10.15 09:00–18:00)이 종료되었습니다." };
-    // 운영진 미리보기: 페이지 주소에 ?key=… 가 있으면 PDF 요청에도 붙여요
-    const key = new URLSearchParams(location.search).get("key");
-    const src = key ? `${url}?key=${encodeURIComponent(key)}` : url;
-    fetch(src, { cache: "no-store" }).then(async res => {
-      if (res.status === 403) { box.classList.add("locked"); msg(lockMsg[res.headers.get("X-PDF-Lock")] || lockMsg.before); return; }
-      if (!res.ok) { box.classList.add("locked"); msg("자료를 불러오지 못했어요."); return; }
-      const data = await res.arrayBuffer();
-      await new Promise((ok, no) => {
-        const s = document.createElement("script");
-        s.src = PDFJS + "pdf.min.js"; s.onload = ok; s.onerror = no;
-        document.head.append(s);
-      });
-      pdfjsLib.GlobalWorkerOptions.workerSrc = PDFJS + "pdf.worker.min.js";
-      doc = await pdfjsLib.getDocument({ data, isEvalSupported: false }).promise;
-      stage.querySelector(".pdf-msg").remove();
-      render();
-    }).catch(() => { box.classList.add("locked"); msg("자료를 불러오지 못했어요."); });
+    render();
   }
 
   const svgBack = '<svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>';
@@ -149,8 +151,7 @@
     x.summary ? h("p", { class: "summary" }, x.summary) : null);
 
   const visual = h("div", { class: "visual" });
-  if (x.pdf) pdfViewer(visual, x.pdf);
-  else if (x.image) visual.append(h("img", { src: x.image, alt: exTitleText(x) }));
+  if (x.image) visual.append(h("img", { src: x.image, alt: exTitleText(x) }));
   else visual.append(h("div", { class: "ph" },
     part.icon ? h("img", { src: part.icon, alt: "", "aria-hidden": "true" }) : null,
     h("div", { class: "cap" }, h("b", {}, part.name), h("span", {}, x.booth ? `BOOTH ${x.booth}` : exNo(x)))));
@@ -187,7 +188,7 @@
     h("ul", { class: "same" }, others.map(e => h("li", {}, h("a", { href: e.id }, h("span", { class: "b" }, exNo(e)), h("span", { class: "t" }, exTitleMain(e), e.sub ? h("small", {}, e.sub) : null)))))) : null;
 
   side.append(same);
-  if (x.pdf) main.prepend(h("p", { class: "pdf-notice" }, "🔒 " + PDF_NOTICE));
+  if (x.pdf) pdfViewer(visual, x.pdf, () => main.prepend(h("p", { class: "pdf-notice" }, "🔒 " + PDF_NOTICE)));
   app.append(h("div", { class: "wrap" }, head, visual,
     h("div", { class: "layout" }, h("div", {}, main, pager), side),
     h("footer", {}, "kt AID-X Day & Hackathon")));
