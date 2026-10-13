@@ -15,15 +15,15 @@
   "final_results_at": "",
   "criteria": [
     {
-      "label": "성능개선",
+      "label": "개선미션",
       "points": 50
     },
     {
-      "label": "개별미션",
+      "label": "품질미션",
       "points": 30
     },
     {
-      "label": "크레딧 미션",
+      "label": "크레딧미션",
       "points": 20
     }
   ],

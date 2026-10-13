@@ -153,9 +153,9 @@
   "reveal_window_minutes": 5,      // 공개 직후 모드 유지 시간 (첫 70초 연출 뒤에는 기본 순환이 이어짐)
   "final_results_at": "",          // "2026-10-21 09:00"처럼 넣으면 그 시각부터 최종 결과 화면
   "criteria": [                    // 채점 항목 화면 (desc를 넣으면 설명도 표시)
-    { "label": "성능개선", "points": 50 },
-    { "label": "개별미션", "points": 30 },
-    { "label": "크레딧 미션", "points": 20 }
+    { "label": "개선미션", "points": 50 },
+    { "label": "품질미션", "points": 30 },
+    { "label": "크레딧미션", "points": 20 }
   ],
   "form": {                        // 채점 접수 QR 화면 (url이 비면 화면이 빠짐)
     "url": "https://forms.cloud.microsoft/r/GVpzV0ibhv",

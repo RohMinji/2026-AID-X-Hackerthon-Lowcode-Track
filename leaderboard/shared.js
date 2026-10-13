@@ -90,9 +90,9 @@ window.Leaderboard = (() => {
   // of `max` (the full score) is used on screen; the item names shown on the
   // board come from schedule.json.
   const EVAL_CRITERIA = [
-    { key: 'common', label: '성능개선', max: 50 },
-    { key: 'custom', label: '개별미션', max: 30 },
-    { key: 'mission', label: '크레딧 미션', max: 20 },
+    { key: 'common', label: '개선미션', max: 50 },
+    { key: 'custom', label: '품질미션', max: 30 },
+    { key: 'mission', label: '크레딧미션', max: 20 },
   ];
 
   function isEvalExport(json) {

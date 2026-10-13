@@ -111,15 +111,27 @@ html, body {
   text-shadow: 0 0.1rem 0.3rem rgba(16, 10, 70, 0.35);
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.32) 0%, rgba(255, 255, 255, 0.06) 48%, rgba(255, 255, 255, 0) 52%),
-    linear-gradient(100deg, #1f33d6 0%, #3d3cf2 45%, #7a45f5 85%, #9b4cf3 100%);
-  border: 0.22rem solid #b7b0ff;
+    linear-gradient(100deg, #1238c9 0%, #1d5cf0 45%, #2584ff 80%, #33a6ff 100%);
+  border: 0.22rem solid #a9cbff;
   box-shadow:
-    0 0 0 0.25rem rgba(122, 92, 255, 0.18),
-    0 0.8rem 2.2rem rgba(70, 60, 240, 0.35),
-    inset 0 -0.35rem 0.7rem rgba(20, 10, 90, 0.35);
+    0 0 0 0.25rem rgba(37, 132, 255, 0.18),
+    0 0.8rem 2.2rem rgba(29, 92, 240, 0.35),
+    inset 0 -0.35rem 0.7rem rgba(8, 24, 90, 0.35);
 }
 
 .topbar-right { display: flex; align-items: center; gap: 2rem; }
+
+.basis-chip {
+  padding: 0.8rem 1.8rem;
+  border-radius: 99rem;
+  background: #eef4ff;
+  border: 1px solid #cddcff;
+  font-size: 1.9rem;
+  font-weight: 800;
+  color: #1d4ed8;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
 
 .mode-chip {
   display: inline-flex;

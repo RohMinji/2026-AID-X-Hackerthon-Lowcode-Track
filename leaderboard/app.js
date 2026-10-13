@@ -26,9 +26,9 @@
     reveal_window_minutes: 5,
     final_results_at: '',
     criteria: [
-      { label: '성능개선', points: 50 },
-      { label: '개별미션', points: 30 },
-      { label: '크레딧 미션', points: 20 },
+      { label: '개선미션', points: 50 },
+      { label: '품질미션', points: 30 },
+      { label: '크레딧미션', points: 20 },
     ],
     form: { url: '', guide: [] },
   };
@@ -49,7 +49,7 @@
   const screenDots = el('screenDots');
   const modeLabelEl = el('modeLabel');
   const clockEl = el('clock');
-  const updatedAtEl = el('updatedAt');
+  const basisChipEl = el('basisChip');
   const countdownTextEl = el('countdownText');
   const countdownFillEl = el('countdownFill');
   const fetchStatusEl = el('fetchStatus');
@@ -847,7 +847,8 @@
 
   function updateFooter(view) {
     const basis = view.hasBoard ? basisOf(view) : '';
-    updatedAtEl.textContent = basis ? `${basis} 점수 기준` : '';
+    basisChipEl.textContent = basis ? `${basis} 점수 기준` : '';
+    basisChipEl.hidden = !basis;
     const snap = resolveSnapshots(state.raw);
     scheduleStatusEl.textContent = snap.revealAt === null
       ? '공개 일정: 없음'
