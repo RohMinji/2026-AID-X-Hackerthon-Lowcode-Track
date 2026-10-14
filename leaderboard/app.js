@@ -382,7 +382,7 @@
       label: '안내',
       html: () => `
         <div class="hero notice">
-          <div class="notice-title"><span class="siren">🚨</span>${escapeHtml(n.title)}<span class="siren" style="--d:0.3s">🚨</span></div>
+          <div class="notice-title"><span class="siren">${escapeHtml(n.icon || '🚨')}</span>${escapeHtml(n.title)}<span class="siren" style="--d:0.3s">${escapeHtml(n.icon || '🚨')}</span></div>
           ${lines.map((l, i) => `<p class="notice-line" style="--i:${i}">${escapeHtml(l)}</p>`).join('')}
         </div>`,
     };
