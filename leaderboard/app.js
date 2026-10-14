@@ -500,7 +500,10 @@
       if (scoring) screens.push({ ...scoring });
     }
     screens.push(criteriaScreen());
-    if (view.showRemaining && view.deadlines.some((d) => d > Date.now())) screens.push(remainingScreen(view));
+    if (view.showRemaining && view.deadlines.some((d) => d > Date.now())) {
+      screens.push(deadlineCountdownScreen(view));
+      screens.push(remainingScreen(view));
+    }
     return screens;
   }
 
@@ -727,6 +730,17 @@
     return screens;
   }
 
+  function cdClock(target) {
+    return `
+          <div class="cd-clock" data-cd-to="${target}">
+            <div class="cd-unit"><span class="cd-num" data-part="h">00</span><span class="cd-label">시간</span></div>
+            <span class="cd-sep">:</span>
+            <div class="cd-unit"><span class="cd-num" data-part="m">00</span><span class="cd-label">분</span></div>
+            <span class="cd-sep">:</span>
+            <div class="cd-unit"><span class="cd-num" data-part="s">00</span><span class="cd-label">초</span></div>
+          </div>`;
+  }
+
   function countdownScreen(view) {
     const target = view.target ?? scheduleAt('start_at') ?? Date.now();
     return {
@@ -735,15 +749,31 @@
         ${deco([['ai', 'd-left'], ['ring', 'd-right'], ['sparkle', 'd-top-right'], ['sparkle', 'd-bottom-left-xs']])}
         <div class="hero cd">
           <p class="cd-tagline">${escapeHtml(TAGLINE[0])}<br>${escapeHtml(TAGLINE[1])}</p>
-          <div class="cd-clock" data-cd-to="${target}">
-            <div class="cd-unit"><span class="cd-num" data-part="h">00</span><span class="cd-label">시간</span></div>
-            <span class="cd-sep">:</span>
-            <div class="cd-unit"><span class="cd-num" data-part="m">00</span><span class="cd-label">분</span></div>
-            <span class="cd-sep">:</span>
-            <div class="cd-unit"><span class="cd-num" data-part="s">00</span><span class="cd-label">초</span></div>
-          </div>
+          ${cdClock(target)}
           <div class="hero-pill">${new Date(target).getMonth() + 1}월 ${new Date(target).getDate()}일 ${fmtHM(target)} 시작</div>
         </div>`,
+    };
+  }
+
+  // Big countdown to the next submission deadline. The html is rebuilt each
+  // time the screen comes round, so it moves on to the next deadline by itself.
+  function deadlineCountdownScreen(view) {
+    return {
+      label: '접수 마감 카운트다운',
+      html: () => {
+        const now = Date.now();
+        const i = view.deadlines.findIndex((d) => d > now);
+        if (i < 0) return '<div class="hero cd"><p class="cd-tagline">모든 접수가 마감되었습니다</p></div>';
+        const next = view.deadlines[i];
+        return `
+        ${deco([['ai', 'd-left'], ['ring', 'd-right'], ['sparkle', 'd-top-right'], ['sparkle', 'd-bottom-left-xs']])}
+        <div class="hero cd">
+          <div class="eyebrow">COUNTDOWN</div>
+          <p class="cd-tagline">${i + 1}회차 접수 마감까지</p>
+          ${cdClock(next)}
+          <div class="hero-pill">${fmtWhen(next)} 접수 마감</div>
+        </div>`;
+      },
     };
   }
 
