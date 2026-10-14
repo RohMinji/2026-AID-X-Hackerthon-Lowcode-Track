@@ -356,7 +356,7 @@
 
   // Board right after a reveal: rows start where each team stood last round
   // and slide to their new place (see animateMoves).
-  function moveBoardPage(page, maxTotal, basis) {
+  function moveBoardPage(page, maxTotal, basis, first) {
     const start = page[0].rank;
     return {
       label: rangeLabel(page),
@@ -364,7 +364,7 @@
       html: () => `
         <div class="screen-head compact">
           <div class="eyebrow">LEADERBOARD · ${escapeHtml(basis)} 기준</div>
-          <h2 class="screen-title">순위 변동 <span>${rangeLabel(page)}</span></h2>
+          <h2 class="screen-title">${first ? '순위' : '순위 변동'} <span>${rangeLabel(page)}</span></h2>
         </div>
         <div class="mv-list" data-size="${page.length}">
           ${page.map((t, i) => `
@@ -524,8 +524,10 @@
     })];
     // Lower half first, building up to the top of the table.
     const pages = chunk(a.diff, ROWS_PER_PAGE).reverse();
+    // The first reveal has nothing to compare with: "순위", not "순위 변동".
+    const first = !(view.previous && (view.previous.teams || []).length);
     for (let r = 0; r < REVEAL_REPEATS; r++) {
-      pages.forEach((page) => screens.push(once(moveBoardPage(page, a.curr.maxTotal, a.basis))));
+      pages.forEach((page) => screens.push(once(moveBoardPage(page, a.curr.maxTotal, a.basis, first))));
     }
     return [...screens, ...regularScreens(view, null)];
   }
