@@ -1,9 +1,9 @@
 {
   "event": {
     "name": "AID-X 해커톤 Low-Code",
-    "updated_at": "2026-10-14T15:54:00+09:00",
-    "round": 4,
-    "push_id": 15
+    "updated_at": "2026-10-14T17:26:00+09:00",
+    "round": 5,
+    "push_id": 17
   },
   "criteria": [
     {
@@ -29,11 +29,11 @@
       "agent": "AIeS",
       "agent_type": "agentic",
       "members": [],
-      "total": 50.61,
+      "total": 76.84,
       "scores": {
         "common": 0,
-        "custom": 12.61,
-        "mission": 18
+        "custom": 14.84,
+        "mission": 42
       }
     },
     {
@@ -42,11 +42,11 @@
       "agent": "AX-Ray",
       "agent_type": "workflow",
       "members": [],
-      "total": 57.56,
+      "total": 93.44,
       "scores": {
         "common": 0,
-        "custom": 12.56,
-        "mission": 25
+        "custom": 12.44,
+        "mission": 61
       }
     },
     {
@@ -55,11 +55,11 @@
       "agent": "AX프로젝트무물봇",
       "agent_type": "agentic",
       "members": [],
-      "total": 54.8,
+      "total": 85.8,
       "scores": {
         "common": 0,
-        "custom": 16.8,
-        "mission": 18
+        "custom": 19.8,
+        "mission": 46
       }
     },
     {
@@ -94,10 +94,10 @@
       "agent": "DealFlowAI",
       "agent_type": "agentic",
       "members": [],
-      "total": 80.8,
+      "total": 77.46,
       "scores": {
         "common": 0,
-        "custom": 14.8,
+        "custom": 11.46,
         "mission": 46
       }
     },
@@ -120,11 +120,11 @@
       "agent": "Entron",
       "agent_type": "agentic",
       "members": [],
-      "total": 74.89,
+      "total": 74.41,
       "scores": {
         "common": 0,
-        "custom": 12.89,
-        "mission": 42
+        "custom": 18.41,
+        "mission": 36
       }
     },
     {
@@ -146,10 +146,10 @@
       "agent": "REDRED",
       "agent_type": "agentic",
       "members": [],
-      "total": 84.07,
+      "total": 87.63,
       "scores": {
         "common": 0,
-        "custom": 18.07,
+        "custom": 21.63,
         "mission": 46
       }
     },
@@ -159,11 +159,11 @@
       "agent": "SolveIT",
       "agent_type": "workflow",
       "members": [],
-      "total": 71.88,
+      "total": 85.03,
       "scores": {
         "common": 0,
-        "custom": 0.88,
-        "mission": 51
+        "custom": 2.03,
+        "mission": 63
       }
     },
     {
@@ -172,11 +172,11 @@
       "agent": "Team길잡이",
       "agent_type": "agentic",
       "members": [],
-      "total": 75.23,
+      "total": 81.88,
       "scores": {
         "common": 0,
-        "custom": 17.23,
-        "mission": 38
+        "custom": 11.88,
+        "mission": 50
       }
     },
     {
@@ -198,11 +198,11 @@
       "agent": "관쟁이",
       "agent_type": "workflow",
       "members": [],
-      "total": 71.14,
+      "total": 85.68,
       "scores": {
         "common": 0,
-        "custom": 2.14,
-        "mission": 49
+        "custom": 4.68,
+        "mission": 61
       }
     },
     {
@@ -211,10 +211,10 @@
       "agent": "누수제로",
       "agent_type": "workflow",
       "members": [],
-      "total": 80.25,
+      "total": 73.29,
       "scores": {
         "common": 0,
-        "custom": 11.25,
+        "custom": 4.29,
         "mission": 49
       }
     },
@@ -237,11 +237,11 @@
       "agent": "케이티데몬헌터스2",
       "agent_type": "workflow",
       "members": [],
-      "total": 53.33,
+      "total": 54.44,
       "scores": {
         "common": 0,
-        "custom": 12.33,
-        "mission": 21
+        "custom": 7.44,
+        "mission": 27
       }
     },
     {
@@ -250,11 +250,11 @@
       "agent": "퇴근전략실",
       "agent_type": "workflow",
       "members": [],
-      "total": 58.04,
+      "total": 96.25,
       "scores": {
         "common": 0,
-        "custom": 13.04,
-        "mission": 25
+        "custom": 11.25,
+        "mission": 65
       }
     },
     {
@@ -271,13 +271,13 @@
       }
     }
   ],
-  "reveal_at": "2026-10-14T07:00:00.000Z",
+  "reveal_at": "2026-10-14T08:30:00.000Z",
   "previous": {
     "event": {
       "name": "AID-X 해커톤 Low-Code",
-      "updated_at": "2026-10-14T15:13:00+09:00",
-      "round": 3,
-      "push_id": 13
+      "updated_at": "2026-10-14T15:54:00+09:00",
+      "round": 4,
+      "push_id": 15
     },
     "criteria": [
       {
@@ -368,11 +368,11 @@
         "agent": "DealFlowAI",
         "agent_type": "agentic",
         "members": [],
-        "total": 55.84,
+        "total": 80.8,
         "scores": {
           "common": 0,
-          "custom": 17.84,
-          "mission": 18
+          "custom": 14.8,
+          "mission": 46
         }
       },
       {
@@ -394,11 +394,11 @@
         "agent": "Entron",
         "agent_type": "agentic",
         "members": [],
-        "total": 50.57,
+        "total": 74.89,
         "scores": {
           "common": 0,
-          "custom": 10.57,
-          "mission": 20
+          "custom": 12.89,
+          "mission": 42
         }
       },
       {
@@ -420,11 +420,11 @@
         "agent": "REDRED",
         "agent_type": "agentic",
         "members": [],
-        "total": 50.5,
+        "total": 84.07,
         "scores": {
           "common": 0,
-          "custom": 16.5,
-          "mission": 14
+          "custom": 18.07,
+          "mission": 46
         }
       },
       {
@@ -433,11 +433,11 @@
         "agent": "SolveIT",
         "agent_type": "workflow",
         "members": [],
-        "total": 58.46,
+        "total": 71.88,
         "scores": {
           "common": 0,
-          "custom": 13.46,
-          "mission": 25
+          "custom": 0.88,
+          "mission": 51
         }
       },
       {
@@ -472,11 +472,11 @@
         "agent": "관쟁이",
         "agent_type": "workflow",
         "members": [],
-        "total": 54.32,
+        "total": 71.14,
         "scores": {
           "common": 0,
-          "custom": 9.32,
-          "mission": 25
+          "custom": 2.14,
+          "mission": 49
         }
       },
       {
@@ -545,6 +545,6 @@
         }
       }
     ],
-    "reveal_at": "2026-10-14T06:14:00.000Z"
+    "reveal_at": "2026-10-14T07:00:00.000Z"
   }
 }
