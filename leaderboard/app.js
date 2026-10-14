@@ -193,6 +193,18 @@
     return Number.isFinite(ms) ? ms : null;
   }
 
+  // When a round's scores are expected: deadline + reveal_delay_minutes, or a
+  // delayed time from schedule.json "reveal_overrides": {"17:45": "18:30"}.
+  function expectedReveal(deadline) {
+    const over = state.schedule.reveal_overrides || {};
+    for (const [key, at] of Object.entries(over)) {
+      const [d] = deadlinesOf({ date: state.schedule.date, deadlines: [key] });
+      const [r] = deadlinesOf({ date: state.schedule.date, deadlines: [at] });
+      if (d === deadline && Number.isFinite(r)) return r;
+    }
+    return deadline + revealDelayMs();
+  }
+
   function finalAt() { return scheduleAt('final_results_at'); }
 
   function revealWindowMs() { return (Number(state.schedule.reveal_window_minutes) || 5) * MIN; }
@@ -232,7 +244,7 @@
     if (state.override !== 'auto') {
       mode = state.override;
       if (snap.pending) target = snap.revealAt;
-      else if (lastDeadline !== null) target = lastDeadline + revealDelayMs();
+      else if (lastDeadline !== null) target = expectedReveal(lastDeadline);
     } else if (startAt !== null && t < startAt) {
       // Before the hackathon opens: only the countdown.
       mode = 'countdown';
@@ -249,7 +261,7 @@
     } else if (lastDeadline !== null && (snap.revealAt === null || snap.revealAt < lastDeadline)) {
       // Deadline passed and this round has not been published yet.
       mode = 'wait';
-      target = lastDeadline + revealDelayMs();
+      target = expectedReveal(lastDeadline);
     } else {
       mode = 'status';
     }

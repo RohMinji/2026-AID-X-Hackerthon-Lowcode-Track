@@ -14,11 +14,14 @@
   ],
   "notice": {
     "title": "채점 접수 폭주",
-    "until": "2026-10-14 17:30",
+    "until": "2026-10-14 18:30",
     "lines": [
       "채점 접수 폭주로 인해 수합이 길어지고 있습니다.",
       "빠르게 채점해서 다시 안내해 드리겠습니다"
     ]
+  },
+  "reveal_overrides": {
+    "17:45": "18:30"
   },
   "reveal_delay_minutes": 30,
   "reveal_window_minutes": 5,
