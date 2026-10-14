@@ -349,6 +349,22 @@
     };
   }
 
+  // Ad-hoc announcement from schedule.json, shown first in the loop while set:
+  // "notice": {"title": "채점 접수 폭주", "lines": ["...", "..."]}.
+  function noticeScreen() {
+    const n = state.schedule.notice;
+    if (!n || !n.title) return null;
+    const lines = Array.isArray(n.lines) ? n.lines : [];
+    return {
+      label: '안내',
+      html: () => `
+        <div class="hero notice">
+          <div class="notice-title"><span class="siren">🚨</span>${escapeHtml(n.title)}<span class="siren" style="--d:0.3s">🚨</span></div>
+          ${lines.map((l, i) => `<p class="notice-line" style="--i:${i}">${escapeHtml(l)}</p>`).join('')}
+        </div>`,
+    };
+  }
+
   function scoringScreen(view) {
     return {
       label: '채점 중',
@@ -516,6 +532,8 @@
   // first and again after the agents while a round is being scored.
   function regularScreens(view, scoring) {
     const screens = [];
+    const notice = noticeScreen();
+    if (notice) screens.push(notice);
     if (scoring) screens.push(scoring);
     if (view.hasBoard) {
       const a = analyse(view);
@@ -906,7 +924,7 @@
 
     if (state.raw) {
       const view = computeView(t);
-      const modeKey = `${view.mode}|${view.target ?? ''}|${view.revealAt ?? ''}|${view.showRemaining}`;
+      const modeKey = `${view.mode}|${view.target ?? ''}|${view.revealAt ?? ''}|${view.showRemaining}|${JSON.stringify(state.schedule.notice || '')}`;
       const dataKey = `${state.rawText}|${JSON.stringify(state.agents)}|${state.scheduleText}`;
       if (modeKey !== state.modeKey) {
         const fromReveal = state.view && state.view.mode === 'reveal' && view.mode === 'status';

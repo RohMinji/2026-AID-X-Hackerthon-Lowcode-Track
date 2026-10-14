@@ -903,3 +903,16 @@ html, body {
 @keyframes codingDot { 0%, 80%, 100% { opacity: 0.15; } 40% { opacity: 1; } }
 @keyframes codingBob { 0%, 100% { transform: translateY(0) rotate(0); } 50% { transform: translateY(-1.6rem) rotate(-4deg); } }
 @keyframes codingFlame { from { transform: scale(1) rotate(-4deg); } to { transform: scale(1.15) rotate(4deg); } }
+
+/* Ad-hoc notice ("🚨 채점 접수 폭주 🚨") */
+.notice { gap: 0; }
+.notice-title {
+  display: flex; align-items: center; gap: 3rem;
+  font-size: 12rem; line-height: 1.1; font-weight: 900; letter-spacing: -0.04em; color: #e5262d;
+}
+.siren { font-size: 10rem; display: inline-block; animation: siren 0.8s ease-in-out infinite alternate; animation-delay: var(--d, 0s); }
+.notice-line { margin: 0; font-size: 5rem; line-height: 1.5; font-weight: 800; color: var(--ink); letter-spacing: -0.02em; }
+.notice-title + .notice-line { margin-top: 5rem; }
+.screen.enter .notice-line { animation: rise 0.7s both; animation-delay: calc(0.3s + var(--i) * 0.2s); }
+@keyframes siren { from { transform: rotate(-12deg) scale(1); filter: drop-shadow(0 0 0 rgba(229, 38, 45, 0)); } to { transform: rotate(12deg) scale(1.12); filter: drop-shadow(0 0 2.4rem rgba(229, 38, 45, 0.7)); } }
+
