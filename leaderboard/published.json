@@ -1,9 +1,9 @@
 {
   "event": {
     "name": "AID-X 해커톤 Low-Code",
-    "updated_at": "2026-10-14T11:47:00+09:00",
-    "round": 1,
-    "push_id": 12
+    "updated_at": "2026-10-14T15:13:00+09:00",
+    "round": 3,
+    "push_id": 13
   },
   "criteria": [
     {
@@ -55,10 +55,10 @@
       "agent": "AX프로젝트무물봇",
       "agent_type": "agentic",
       "members": [],
-      "total": 59.19,
+      "total": 54.8,
       "scores": {
         "common": 0,
-        "custom": 21.19,
+        "custom": 16.8,
         "mission": 18
       }
     },
@@ -172,11 +172,11 @@
       "agent": "Team길잡이",
       "agent_type": "agentic",
       "members": [],
-      "total": 55.54,
+      "total": 75.23,
       "scores": {
         "common": 0,
-        "custom": 17.54,
-        "mission": 18
+        "custom": 17.23,
+        "mission": 38
       }
     },
     {
@@ -211,11 +211,11 @@
       "agent": "누수제로",
       "agent_type": "workflow",
       "members": [],
-      "total": 56.25,
+      "total": 80.25,
       "scores": {
         "common": 0,
         "custom": 11.25,
-        "mission": 25
+        "mission": 49
       }
     },
     {
@@ -271,6 +271,280 @@
       }
     }
   ],
-  "reveal_at": "2026-10-14T04:00:00.000Z",
-  "previous": null
+  "reveal_at": "2026-10-14T06:14:00.000Z",
+  "previous": {
+    "event": {
+      "name": "AID-X 해커톤 Low-Code",
+      "updated_at": "2026-10-14T11:47:00+09:00",
+      "round": 1,
+      "push_id": 12
+    },
+    "criteria": [
+      {
+        "key": "common",
+        "label": "개선미션",
+        "max": 50
+      },
+      {
+        "key": "custom",
+        "label": "품질미션",
+        "max": 30
+      },
+      {
+        "key": "mission",
+        "label": "크레딧미션",
+        "max": 20
+      }
+    ],
+    "teams": [
+      {
+        "appid": "ee588188-3955-4255-bcbd-3aab467c31ac",
+        "team": "AIeS",
+        "agent": "AIeS",
+        "agent_type": "agentic",
+        "members": [],
+        "total": 50.61,
+        "scores": {
+          "common": 0,
+          "custom": 12.61,
+          "mission": 18
+        }
+      },
+      {
+        "appid": "de86c5e7-488a-45dd-87f4-e8ebf6fe863d",
+        "team": "AX-Ray",
+        "agent": "AX-Ray",
+        "agent_type": "workflow",
+        "members": [],
+        "total": 57.56,
+        "scores": {
+          "common": 0,
+          "custom": 12.56,
+          "mission": 25
+        }
+      },
+      {
+        "appid": "46fa38cc-46c1-f111-aaad-7ced8dff5c1a",
+        "team": "AX프로젝트무물봇",
+        "agent": "AX프로젝트무물봇",
+        "agent_type": "agentic",
+        "members": [],
+        "total": 59.19,
+        "scores": {
+          "common": 0,
+          "custom": 21.19,
+          "mission": 18
+        }
+      },
+      {
+        "appid": "03b5f8b0-b214-49d7-a1a6-89c6772c999c",
+        "team": "CFO",
+        "agent": "CFO",
+        "agent_type": "agentic",
+        "members": [],
+        "total": 20,
+        "scores": {
+          "common": 0,
+          "custom": 0,
+          "mission": 0
+        }
+      },
+      {
+        "appid": "03b5f8b0-b214-49d7-a1a6-89c6777c6f6c",
+        "team": "CR",
+        "agent": "CR",
+        "agent_type": "workflow",
+        "members": [],
+        "total": 20,
+        "scores": {
+          "common": 0,
+          "custom": 0,
+          "mission": 0
+        }
+      },
+      {
+        "appid": "082df3d8-21c1-f111-aaad-002248ecf2a5",
+        "team": "DealFlowAI",
+        "agent": "DealFlowAI",
+        "agent_type": "agentic",
+        "members": [],
+        "total": 55.84,
+        "scores": {
+          "common": 0,
+          "custom": 17.84,
+          "mission": 18
+        }
+      },
+      {
+        "appid": "7106de51-acc2-f111-a05a-000d3a82743f",
+        "team": "ENG지원팀",
+        "agent": "ENG지원팀",
+        "agent_type": "workflow",
+        "members": [],
+        "total": 46.06,
+        "scores": {
+          "common": 0,
+          "custom": 5.06,
+          "mission": 21
+        }
+      },
+      {
+        "appid": "ddead4bc-a937-4001-bde3-7956a5077759",
+        "team": "Entron",
+        "agent": "Entron",
+        "agent_type": "agentic",
+        "members": [],
+        "total": 50.57,
+        "scores": {
+          "common": 0,
+          "custom": 10.57,
+          "mission": 20
+        }
+      },
+      {
+        "appid": "7f4ee2f3-1fbe-f111-aaad-002248ee0781",
+        "team": "MAX",
+        "agent": "MAX",
+        "agent_type": "workflow",
+        "members": [],
+        "total": 56,
+        "scores": {
+          "common": 0,
+          "custom": 15,
+          "mission": 21
+        }
+      },
+      {
+        "appid": "3599cafd-67c1-f111-aaad-002248edbba9",
+        "team": "REDRED",
+        "agent": "REDRED",
+        "agent_type": "agentic",
+        "members": [],
+        "total": 50.5,
+        "scores": {
+          "common": 0,
+          "custom": 16.5,
+          "mission": 14
+        }
+      },
+      {
+        "appid": "8d092d68-04e5-4afd-91e5-1c3cb5799a34",
+        "team": "SolveIT",
+        "agent": "SolveIT",
+        "agent_type": "workflow",
+        "members": [],
+        "total": 58.46,
+        "scores": {
+          "common": 0,
+          "custom": 13.46,
+          "mission": 25
+        }
+      },
+      {
+        "appid": "85ade485-5e8d-f011-b4cc-6045bd1df16d",
+        "team": "Team길잡이",
+        "agent": "Team길잡이",
+        "agent_type": "agentic",
+        "members": [],
+        "total": 55.54,
+        "scores": {
+          "common": 0,
+          "custom": 17.54,
+          "mission": 18
+        }
+      },
+      {
+        "appid": "03b5f8b0-b214-49d7-a1a6-89c6772c6f6c",
+        "team": "계약EZ",
+        "agent": "계약EZ",
+        "agent_type": "agentic",
+        "members": [],
+        "total": 20,
+        "scores": {
+          "common": 0,
+          "custom": 0,
+          "mission": 0
+        }
+      },
+      {
+        "appid": "40cea5e1-42ce-4582-af9e-33e94d0e26b4",
+        "team": "관쟁이",
+        "agent": "관쟁이",
+        "agent_type": "workflow",
+        "members": [],
+        "total": 54.32,
+        "scores": {
+          "common": 0,
+          "custom": 9.32,
+          "mission": 25
+        }
+      },
+      {
+        "appid": "c3afcff0-3771-4abd-8572-b6b5841b7e10",
+        "team": "누수제로",
+        "agent": "누수제로",
+        "agent_type": "workflow",
+        "members": [],
+        "total": 56.25,
+        "scores": {
+          "common": 0,
+          "custom": 11.25,
+          "mission": 25
+        }
+      },
+      {
+        "appid": "0e7b5b42-5f5a-47f6-8319-31b59395a12e",
+        "team": "역량E",
+        "agent": "역량E",
+        "agent_type": "workflow",
+        "members": [],
+        "total": 68.67,
+        "scores": {
+          "common": 0,
+          "custom": 11.67,
+          "mission": 37
+        }
+      },
+      {
+        "appid": "9972f1f0-be01-43c5-acb1-cb00c082671d",
+        "team": "케이티데몬헌터스2",
+        "agent": "케이티데몬헌터스2",
+        "agent_type": "workflow",
+        "members": [],
+        "total": 53.33,
+        "scores": {
+          "common": 0,
+          "custom": 12.33,
+          "mission": 21
+        }
+      },
+      {
+        "appid": "96b889ee-f85c-4f12-9cbe-0d7510c5b695",
+        "team": "퇴근전략실",
+        "agent": "퇴근전략실",
+        "agent_type": "workflow",
+        "members": [],
+        "total": 58.04,
+        "scores": {
+          "common": 0,
+          "custom": 13.04,
+          "mission": 25
+        }
+      },
+      {
+        "appid": "ab98c29b-43e1-4da7-a719-fe64183b9297",
+        "team": "플러스알파",
+        "agent": "플러스알파",
+        "agent_type": "agentic",
+        "members": [],
+        "total": 60.34,
+        "scores": {
+          "common": 0,
+          "custom": 18.34,
+          "mission": 22
+        }
+      }
+    ],
+    "reveal_at": "2026-10-14T04:00:00.000Z"
+  }
 }
