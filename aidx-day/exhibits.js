@@ -95,18 +95,19 @@ const EXHIBITS = [
     title: "고객·네트워크 보호" },
 
   // ---------------- Work (6) ----------------
+  // 화면 순서: 리플릿 기준 (04 장애 분석 → 05 Metis.AI → 06 Auto Builder). 링크 번호(id)는 그대로
   { id: "agenda24", part: "works", org: "IT부문", team: "IT전략본부",
     title: "kode: series- 기획부터 설계/개발 그리고 자산화까지,\nAI 네이티브 개발 플랫폼" },
   { id: "agenda25", part: "works", org: "IT부문", team: "AX플랫폼본부",
     title: "AI로 하는 디자인", sub: "KDS(KT Design System) 기반 기획-디자인-개발을\nAI로 연계해 생산성 향상" },
   { id: "agenda26", part: "works", org: "IT부문", team: "AX플랫폼본부",
     title: "AX Works, 전사 AI·Agent 활용을 위한 통합 플랫폼" },
+  { id: "agenda29", part: "works", org: "IT부문", team: "IT플랫폼본부",
+    title: "AI Agent 기반 장애 분석 플랫폼" },
   { id: "agenda27", part: "works", org: "그룹사", team: "kt ds",
     title: "AgentOps 거버넌스플랫폼 Metis.AI" },
   { id: "agenda28", part: "works", org: "그룹사", team: "kt ds",
     title: "AI로 완성하는 코드 전환, Auto Builder" },
-  { id: "agenda29", part: "works", org: "IT부문", team: "IT플랫폼본부",
-    title: "AI Agent 기반 장애 분석 플랫폼" },
 ];
 
 // AX Tech Connect (8F) — agenda30~ 상세 페이지가 있어요. place가 있으면 장소 표시
