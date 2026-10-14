@@ -18,7 +18,7 @@
   const PDFJS = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/";
   const PDF_NOTICE = "본 자료는 kt의 자산으로, 무단 복제, 배포 시 법적 조치를 받을 수 있습니다.";
   // 열람 가능할 때(서버가 200을 줄 때)만 box를 PDF 뷰어로 바꿔요. 아니면 원래 그림을 그대로 둬요
-  function pdfViewer(box, url, onShow) {
+  function pdfViewer(box, url, onShow, onDone) {
     // 운영진 미리보기: 페이지 주소에 ?key=… 가 있으면 PDF 요청에도 붙여요
     const key = new URLSearchParams(location.search).get("key");
     const src = key ? `${url}?key=${encodeURIComponent(key)}` : url;
@@ -34,10 +34,11 @@
       const doc = await pdfjsLib.getDocument({ data, isEvalSupported: false }).promise;
       buildViewer(box, pdfSource(doc));
       if (onShow) onShow();
-    }).catch(() => {});
+      return true;
+    }).catch(() => false).then(ok => onDone && onDone(!!ok));
   }
   // 이미지 자료: slides/<id>/list.json 순서대로 (열람 가능할 때만)
-  function slidesViewer(box, id, onShow) {
+  function slidesViewer(box, id, onShow, onDone) {
     const key = new URLSearchParams(location.search).get("key");
     const q = key ? `?key=${encodeURIComponent(key)}` : "";
     fetch(`slides/${id}/list.json${q}`, { cache: "no-store" }).then(async res => {
@@ -48,7 +49,8 @@
       await src.page(1);  // 첫 장이 실제로 열리는지 확인한 뒤에 바꿔요
       buildViewer(box, src);
       if (onShow) onShow();
-    }).catch(() => {});
+      return true;
+    }).catch(() => false).then(ok => onDone && onDone(!!ok));
   }
   // 페이지 공급자: { numPages, page(n) → { w, h, draw(ctx, scale) } }
   function pdfSource(doc) {
@@ -193,9 +195,18 @@
     part.icon ? h("img", { src: part.icon, alt: "", "aria-hidden": "true" }) : null,
     h("div", { class: "cap" }, h("b", {}, part.name), h("span", {}, x.booth ? `BOOTH ${x.booth}` : exNo(x)))));
 
+  // 소개 칸: 자료(이미지) 게시 시각(10.15 00:00) 전에는 '준비 중', 이후에는
+  //  - 이미지가 보이는 페이지 → 소개 칸을 없애요
+  //  - 이미지가 없는 페이지 → '현장에서 확인 가능' 안내
+  const SLIDES_OPEN = Date.parse("2026-10-15T00:00:00+09:00");
+  const nowQ = new URLSearchParams(location.search).get("now");  // 미리보기: ?now=2026-10-15T10:00
+  const nowMs = nowQ ? Date.parse(nowQ + (/[+Z]/.test(nowQ.slice(10)) ? "" : "+09:00")) : Date.now();
+  const hasDesc = !!(x.desc && x.desc.length);
+  const pendingText = nowMs >= SLIDES_OPEN ? "이 전시의 내용은 전시 부스 현장에서 확인 가능합니다." : "상세 소개를 준비하고 있어요. 곧 업데이트돼요.";
+  const introCard = h("section", { class: "card" + (hasDesc ? "" : " intro-wait") }, h("h2", { class: "label" }, "소개"),
+    hasDesc ? x.desc.map(p => h("p", {}, p)) : h("p", { class: "pending" }, pendingText));
   const main = h("div", { class: "grid" },
-    h("section", { class: "card" }, h("h2", { class: "label" }, "소개"),
-      x.desc && x.desc.length ? x.desc.map(p => h("p", {}, p)) : h("p", { class: "pending" }, "상세 소개를 준비하고 있어요. 곧 업데이트돼요.")),
+    introCard,
     x.points && x.points.length ? h("section", { class: "card" }, h("h2", { class: "label" }, "핵심 포인트"),
       h("ul", { class: "points" }, x.points.map(p => h("li", {}, p)))) : null);
 
@@ -226,8 +237,13 @@
 
   side.append(same);
   const showNotice = () => main.prepend(h("p", { class: "pdf-notice" }, "🔒 " + PDF_NOTICE));
-  if (x.pdf) pdfViewer(visual, x.pdf, showNotice);
-  else slidesViewer(visual, x.id, showNotice);
+  // 자료 확인이 끝나면: 보이면 소개 칸 제거(설명이 없을 때), 아니면 안내를 드러내요
+  const onDone = shown => {
+    if (shown && !hasDesc) introCard.remove();
+    else introCard.classList.remove("intro-wait");
+  };
+  if (x.pdf) pdfViewer(visual, x.pdf, showNotice, onDone);
+  else slidesViewer(visual, x.id, showNotice, onDone);
   app.append(h("div", { class: "wrap" }, head, visual,
     h("div", { class: "layout" }, h("div", {}, main, pager), side),
     h("footer", {}, "kt AID-X Day & Hackathon")));

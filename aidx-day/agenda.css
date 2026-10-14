@@ -90,6 +90,7 @@ a { color: inherit; }
 .head h1.multi span { display: block; }
 .head h1.multi span + span { margin-top: 6px; }
 .card p.pending { color: var(--ink-dim); }
+.card.intro-wait { visibility: hidden; }  /* 자료 확인 전 깜빡임 방지 */
 .head .subtitle { white-space: pre-line; margin: -2px 0 12px; font-size: clamp(17px, 4.6vw, 22px); font-weight: 500; line-height: 1.45; opacity: .82; }
 .head .team { color: var(--ink-dim); font-size: 15px; margin-bottom: 12px; }
 .head .summary { font-size: 17px; margin: 0; }
