@@ -1,9 +1,9 @@
 // /slides/* (상세 페이지 이미지 자료) 요청을 먼저 받아서 공개 시간에만 내줘요 (Cloudflare Pages Functions)
-// - 공개 시간: 2026-10-15 00:00 ~ 18:00 (한국 시간), 서버 시계 기준
+// - 공개 시간: 2026-10-15 00:00 ~ 21:00 (한국 시간), 서버 시계 기준
 // - 운영진 미리보기: ?key=<PDF_PREVIEW_KEY>  (Cloudflare 설정 > Variables and Secrets 에 저장)
 // - ALWAYS_OPEN 폴더는 시간과 상관없이 열려요 (테스트용)
 const OPEN = Date.parse("2026-10-15T00:00:00+09:00");
-const CLOSE = Date.parse("2026-10-15T18:00:00+09:00");
+const CLOSE = Date.parse("2026-10-15T21:00:00+09:00");
 const ALWAYS_OPEN = ["test_agenda"];
 
 export async function onRequest({ request, env, next }) {

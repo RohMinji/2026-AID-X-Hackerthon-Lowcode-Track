@@ -16,7 +16,7 @@
   }
   // ---- 자료 뷰어 (이미지 slides/ 또는 PDF) — 화면 워터마크 + 우클릭/길게 눌러 저장 막기 ----
   const PDFJS = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/";
-  const PDF_NOTICE = "본 자료는 kt의 자산으로, 무단 복제·배포 시 법적 조치를 받을 수 있습니다.";
+  const PDF_NOTICE = "본 자료는 kt의 자산으로, 무단 복제, 배포 시 법적 조치를 받을 수 있습니다.";
   // 열람 가능할 때(서버가 200을 줄 때)만 box를 PDF 뷰어로 바꿔요. 아니면 원래 그림을 그대로 둬요
   function pdfViewer(box, url, onShow) {
     // 운영진 미리보기: 페이지 주소에 ?key=… 가 있으면 PDF 요청에도 붙여요
@@ -88,6 +88,7 @@
     const full = h("button", { type: "button", class: "pdf-btn pdf-full-btn", "aria-label": "크게 보기" }, "⛶");
     const bar = h("div", { class: "pdf-bar" }, prev, num, next, full);
     box.append(stage, bar);
+    if (doc.numPages <= 1) box.classList.add("single");  // 한 장이면 페이지 넘김 숨김
     // 꾹 눌러 저장/복사 막기: 메뉴·선택·드래그 차단 (+ CSS의 -webkit-touch-callout)
     ["contextmenu", "selectstart", "copy"].forEach(ev => box.addEventListener(ev, e => e.preventDefault()));
     box.addEventListener("dragstart", e => e.preventDefault());

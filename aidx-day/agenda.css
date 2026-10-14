@@ -139,6 +139,7 @@ a { color: inherit; }
 .pdf-btn:disabled { opacity: .35; cursor: default; }
 .pdf-num { min-width: 64px; text-align: center; font-size: 14px; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--ink-dim); }
 .pdf-full-btn { position: absolute; right: 10px; font-size: 16px; }
+.visual.has-pdf.single .pdf-bar > :not(.pdf-full-btn) { visibility: hidden; }
 .pdf-bar { position: relative; }
 .visual.has-pdf.full {
   position: fixed; inset: 0; z-index: 100; margin: 0; border-radius: 0; border: 0;
