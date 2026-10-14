@@ -162,10 +162,10 @@
       "app_name": "공사기간 산정&유사시설 금액검토 Agent_해커톤",
       "team": "ENG지원팀",
       "org": "kt estate",
-      "leader": "천대영",
+      "leader": "황의석",
       "members": [
-        "임영빈",
-        "김효은"
+        "김현호",
+        "추종민"
       ],
       "tagline": "시설·엔지니어링 업무를 자동화하는 현장 지원 AI 파트너"
     },
@@ -174,10 +174,10 @@
       "app_name": "시스템 도입 요청 검토 에이전트",
       "team": "AIeS",
       "org": "kt estate",
-      "leader": "황의석",
+      "leader": "이동훈",
       "members": [
-        "김현호",
-        "추종민"
+        "김준환",
+        "김영조"
       ],
       "tagline": "보안과 인프라 운영을 더 스마트하게 만드는 AI Assistant"
     },
@@ -200,10 +200,10 @@
       "agent_name": "AX-Ray",
       "team": "AX-Ray",
       "org": "kt commerce",
-      "leader": "이동훈",
+      "leader": "천대영",
       "members": [
-        "추종민",
-        "황수한"
+        "임영빈",
+        "김효은"
       ],
       "tagline": "보안 리스크를 탐지하고 개선 포인트를 제시하는 AI 진단 에이전트",
       "note": "appid 없음 (KT 테넌트 아님, 직접 테스트). 결과에 없어도 0점으로 항상 표시됩니다. 점수를 result.json에 넣을 때는 키를 \"AX-Ray\" 또는 agent_name을 \"AX-Ray\"로 하면 이 팀으로 연결됩니다."
