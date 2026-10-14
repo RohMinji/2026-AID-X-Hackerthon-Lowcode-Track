@@ -367,26 +367,70 @@
       const d = new Date(at);
       return d.toDateString() === today ? fmtHM(at) : `${d.getMonth() + 1}/${d.getDate()} ${fmtHM(at)}`;
     };
+    const n = curr.length;
+    const rankAt = (t, j) => cols[j].ranks.get(teamKey(t));
+    // Story numbers: how often the lead changed, and the biggest climb.
+    const leaders = cols.map((c) => [...c.ranks.entries()].find(([, r]) => r === 1)?.[0]);
+    const leadChanges = leaders.filter((k, j) => j && k !== leaders[j - 1]).length;
+    const climb = curr
+      .map((t) => ({ t, from: rankAt(t, 0), to: rankAt(t, cols.length - 1) }))
+      .filter((x) => x.from && x.to)
+      .sort((x, y) => (y.from - y.to) - (x.from - x.to))[0];
+    // Colour only the current Top 3 and the biggest climber; everyone else
+    // stays a quiet grey line. Colours follow these teams, not the rank.
+    const palette = ['#2f45ff', '#e0398a', '#f08c00', '#12a67a'];
+    const hot = curr.slice(0, 3).map((t) => teamKey(t));
+    if (climb && !hot.includes(teamKey(climb.t)) && climb.from - climb.to > 0) hot.push(teamKey(climb.t));
+    const colorOf = (t) => palette[hot.indexOf(teamKey(t))];
+
+    const W = 1800; const H = 720; const padL = 70; const padR = 300; const padT = 20; const padB = 20;
+    const x = (j) => padL + (cols.length === 1 ? 0 : (j * (W - padL - padR)) / (cols.length - 1));
+    const y = (r) => padT + ((r - 1) * (H - padT - padB)) / Math.max(1, n - 1);
+    const lineOf = (t) => {
+      const pts = cols.map((c, j) => [j, rankAt(t, j)]).filter(([, r]) => r);
+      // Smooth S-curves between rounds, like a bump chart.
+      return pts.map(([j, r], i) => {
+        if (!i) return `M${x(j)},${y(r)}`;
+        const [pj, pr] = pts[i - 1];
+        const mx = (x(pj) + x(j)) / 2;
+        return `C${mx},${y(pr)} ${mx},${y(r)} ${x(j)},${y(r)}`;
+      }).join(' ');
+    };
+    const order = [...curr].sort((p, q) => (colorOf(p) ? 1 : 0) - (colorOf(q) ? 1 : 0)); // highlighted drawn last, on top
     return {
       label: '순위 흐름',
       html: () => `
-        <div class="screen-head compact">
-          <div class="eyebrow">RANK HISTORY · ${cols.length}번의 점수 공개</div>
-          <h2 class="screen-title">이틀간의 <span>순위 흐름</span></h2>
+        <div class="screen-head compact trend-head">
+          <div>
+            <div class="eyebrow">RANK HISTORY · ${cols.length}번의 점수 공개</div>
+            <h2 class="screen-title">이틀간의 <span>순위 흐름</span></h2>
+          </div>
+          <div class="trend-facts">
+            ${climb && climb.from - climb.to > 0 ? `<div class="tf"><span class="tf-k">🚀 최대 역전</span><span class="tf-v"><i style="background:${colorOf(climb.t)}"></i>${escapeHtml(climb.t.team)} <b>${climb.from}위 → ${climb.to}위</b></span></div>` : ''}
+            <div class="tf"><span class="tf-k">👑 1위 교체</span><span class="tf-v"><b>${leadChanges}번</b></span></div>
+          </div>
         </div>
-        <div class="trend" style="--cols:${cols.length}">
-          <div class="tr-row tr-head"><span></span><span>팀</span>${cols.map((c) => `<span>${head(c.at)}</span>`).join('')}</div>
-          ${curr.map((t, i) => `
-            <div class="tr-row" style="--i:${i}">
-              <span class="tr-rank">${t.rank}</span>
-              <span class="tr-team">${escapeHtml(t.team)}</span>
-              ${cols.map((c, j) => {
-                const r = c.ranks.get(teamKey(t));
-                const p = j ? cols[j - 1].ranks.get(teamKey(t)) : undefined;
-                const mv = r && p ? (r < p ? 'up' : r > p ? 'down' : '') : '';
-                return `<span class="tr-cell ${r && r <= 3 ? `top top${r}` : ''} ${mv} ${j === cols.length - 1 ? 'last' : ''}">${r ?? '–'}</span>`;
-              }).join('')}
-            </div>`).join('')}
+        <div class="bump">
+          <div class="bump-cols">${cols.map((c, j) => `<span style="left:${(x(j) / W) * 100}%">${head(c.at)}</span>`).join('')}</div>
+          <svg viewBox="0 0 ${W} ${H}" aria-label="회차별 순위 흐름">
+            ${cols.map((c, j) => `<line class="bump-grid" x1="${x(j)}" y1="${padT - 10}" x2="${x(j)}" y2="${H - padB + 10}"/>`).join('')}
+            ${order.map((t, i) => {
+              const col = colorOf(t);
+              return `<path class="bump-line ${col ? 'hot' : ''}" d="${lineOf(t)}" pathLength="1"
+                style="${col ? `stroke:${col};` : ''}--d:${col ? 0.8 + hot.indexOf(teamKey(t)) * 0.35 : i * 0.03}s"/>`;
+            }).join('')}
+            ${order.filter((t) => colorOf(t)).map((t) => cols.map((c, j) => {
+              const r = rankAt(t, j);
+              return r ? `<circle class="bump-dot" cx="${x(j)}" cy="${y(r)}" r="9" style="fill:${colorOf(t)};--d:${0.8 + hot.indexOf(teamKey(t)) * 0.35 + (j / cols.length) * 2.2}s"/>` : '';
+            }).join('')).join('')}
+          </svg>
+          <div class="bump-labels">
+            ${curr.map((t) => `<div class="bl ${colorOf(t) ? 'hot' : ''}" style="top:${(y(t.rank) / H) * 100}%">
+              <span class="bl-r">${t.rank}</span>${colorOf(t) ? `<i style="background:${colorOf(t)}"></i>` : ''}<span class="bl-n">${escapeHtml(t.team)}</span></div>`).join('')}
+          </div>
+          <div class="bump-start">
+            ${curr.map((t) => { const r = rankAt(t, 0); return r ? `<span style="top:${(y(r) / H) * 100}%">${r}</span>` : ''; }).join('')}
+          </div>
         </div>`,
     };
   }
