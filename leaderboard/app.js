@@ -349,11 +349,22 @@
     };
   }
 
+  // The notice, unless its "until" ("YYYY-MM-DD HH:MM") has passed.
+  function activeNotice() {
+    const n = state.schedule.notice;
+    if (!n || !n.title) return null;
+    if (n.until) {
+      const end = new Date(String(n.until).trim().replace(' ', 'T')).getTime();
+      if (Number.isFinite(end) && Date.now() >= end) return null;
+    }
+    return n;
+  }
+
   // Ad-hoc announcement from schedule.json, shown first in the loop while set:
   // "notice": {"title": "채점 접수 폭주", "lines": ["...", "..."]}.
   function noticeScreen() {
-    const n = state.schedule.notice;
-    if (!n || !n.title) return null;
+    const n = activeNotice();
+    if (!n) return null;
     const lines = Array.isArray(n.lines) ? n.lines : [];
     return {
       label: '안내',
@@ -924,7 +935,7 @@
 
     if (state.raw) {
       const view = computeView(t);
-      const modeKey = `${view.mode}|${view.target ?? ''}|${view.revealAt ?? ''}|${view.showRemaining}|${JSON.stringify(state.schedule.notice || '')}`;
+      const modeKey = `${view.mode}|${view.target ?? ''}|${view.revealAt ?? ''}|${view.showRemaining}|${JSON.stringify(activeNotice() || '')}`;
       const dataKey = `${state.rawText}|${JSON.stringify(state.agents)}|${state.scheduleText}`;
       if (modeKey !== state.modeKey) {
         const fromReveal = state.view && state.view.mode === 'reveal' && view.mode === 'status';
