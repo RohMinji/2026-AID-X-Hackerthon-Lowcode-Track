@@ -916,3 +916,29 @@ html, body {
 .screen.enter .notice-line { animation: rise 0.7s both; animation-delay: calc(0.3s + var(--i) * 0.2s); }
 @keyframes siren { from { transform: rotate(-12deg) scale(1); filter: drop-shadow(0 0 0 rgba(229, 38, 45, 0)); } to { transform: rotate(12deg) scale(1.12); filter: drop-shadow(0 0 2.4rem rgba(229, 38, 45, 0.7)); } }
 
+/* Day 2: "결과를 기다리는 중" variant of the coding screen */
+.coding-now.sm { font-size: 7.2rem; }
+.coding-pill { margin-top: 3.2rem; }
+
+/* 순위 흐름: rank after each published round */
+.trend { position: relative; z-index: 1; margin-top: 1.6rem; display: flex; flex-direction: column; gap: 0.5rem; }
+.tr-row {
+  display: grid; grid-template-columns: 5rem minmax(0, 1fr) repeat(var(--cols), 11rem);
+  align-items: center; gap: 1rem; height: 4.1rem; padding: 0 2rem;
+  background: rgba(255, 255, 255, 0.85); border: 1px solid var(--line, #e6e8f5); border-radius: 1.2rem;
+  font-size: 2.1rem; font-weight: 700; color: var(--ink);
+}
+.tr-head { background: none; border: none; height: 3.2rem; font-size: 1.7rem; color: var(--ink-3); font-weight: 800; }
+.tr-head span:nth-child(n+3) { text-align: center; }
+.tr-rank { font-weight: 900; color: var(--ink-2); text-align: center; }
+.tr-team { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 800; }
+.tr-cell { text-align: center; font-variant-numeric: tabular-nums; color: var(--ink-2); border-radius: 0.8rem; padding: 0.3rem 0; }
+.tr-cell.up::after { content: ' ▲'; font-size: 1.3rem; color: #e5262d; vertical-align: 0.3rem; }
+.tr-cell.down::after { content: ' ▼'; font-size: 1.3rem; color: #2f6bff; vertical-align: 0.3rem; }
+.tr-cell.top { font-weight: 900; color: var(--ink); }
+.tr-cell.top1 { background: #fff1c4; }
+.tr-cell.top2 { background: #eef0f6; }
+.tr-cell.top3 { background: #f8e3d4; }
+.tr-cell.last { outline: 2px solid #c9cdf0; font-weight: 900; color: var(--ink); }
+.screen.enter .tr-row:not(.tr-head) { animation: slideIn 0.5s cubic-bezier(.2, .8, .2, 1) both; animation-delay: calc(var(--i) * 0.04s); }
+

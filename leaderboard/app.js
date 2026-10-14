@@ -1,7 +1,7 @@
 (() => {
   const {
     escapeHtml, computeStandings, diffStandings, resolveSnapshots, withRoster, rosterEntry, sameName, peopleOf,
-    deadlinesOf,
+    deadlinesOf, teamKey,
   } = window.Leaderboard;
 
   // The board reads published.json (written by the admin page). Scores in it
@@ -10,6 +10,7 @@
   // schedule.json the submission deadlines, scoring items and the form link.
   const RESULTS_URL = './published.json';
   const AGENTS_URL = './agents.json';
+  const HISTORY_URL = './history.json';
   const SCHEDULE_URL = './schedule.json';
   const POLL_MS = 15000;
   const SCREEN_MS = 10000;
@@ -73,6 +74,7 @@
     raw: null,
     rawText: '',
     agents: {},
+    history: [],
     schedule: DEFAULT_SCHEDULE,
     scheduleText: '',
     override: MODE_ALIASES[params.get('mode')] || 'auto',
@@ -335,9 +337,63 @@
     };
   }
 
+  function deadlineCount() { return deadlinesAt(Date.now()).length; }
+
+  // True once the last submission deadline has passed.
+  function closedAll(view) {
+    return view.deadlines.length > 0 && !view.deadlines.some((d) => d > Date.now());
+  }
+
+  // Rank of every team after each published round (history.json), only
+  // rounds already revealed. Columns are the "HH:MM 점수 기준" times.
+  function trendScreen(view) {
+    const now = Date.now();
+    const timeOf = (e) => new Date(e.reveal_at || (e.event && e.event.updated_at) || e.published_at).getTime();
+    const seen = new Map();
+    state.history
+      .filter((e) => (e.teams || []).length && timeOf(e) <= now)
+      .sort((x, y) => timeOf(x) - timeOf(y))
+      .forEach((e) => seen.set(timeOf(e), e)); // a re-publish for the same time replaces the earlier one
+    const rounds = [...seen.entries()].slice(-8);
+    if (rounds.length < 2) return null;
+    const cols = rounds.map(([at, e]) => {
+      const ranks = new Map();
+      computeStandings(withRoster(e, state.agents)).teams.forEach((t) => ranks.set(teamKey(t), t.rank));
+      return { at, ranks };
+    });
+    const curr = computeStandings(view.visible).teams;
+    const today = new Date(now).toDateString();
+    const head = (at) => {
+      const d = new Date(at);
+      return d.toDateString() === today ? fmtHM(at) : `${d.getMonth() + 1}/${d.getDate()} ${fmtHM(at)}`;
+    };
+    return {
+      label: '순위 흐름',
+      html: () => `
+        <div class="screen-head compact">
+          <div class="eyebrow">RANK HISTORY · ${cols.length}번의 점수 공개</div>
+          <h2 class="screen-title">이틀간의 <span>순위 흐름</span></h2>
+        </div>
+        <div class="trend" style="--cols:${cols.length}">
+          <div class="tr-row tr-head"><span></span><span>팀</span>${cols.map((c) => `<span>${head(c.at)}</span>`).join('')}</div>
+          ${curr.map((t, i) => `
+            <div class="tr-row" style="--i:${i}">
+              <span class="tr-rank">${t.rank}</span>
+              <span class="tr-team">${escapeHtml(t.team)}</span>
+              ${cols.map((c, j) => {
+                const r = c.ranks.get(teamKey(t));
+                const p = j ? cols[j - 1].ranks.get(teamKey(t)) : undefined;
+                const mv = r && p ? (r < p ? 'up' : r > p ? 'down' : '') : '';
+                return `<span class="tr-cell ${r && r <= 3 ? `top top${r}` : ''} ${mv} ${j === cols.length - 1 ? 'last' : ''}">${r ?? '–'}</span>`;
+              }).join('')}
+            </div>`).join('')}
+        </div>`,
+    };
+  }
+
   // A light-hearted "how long have we been at it" screen, counting up from
   // start_at.
-  function codingScreen() {
+  function codingScreen(closed) {
     const from = scheduleAt('start_at');
     if (from === null) return null;
     const people = ['🧑🏻‍💻', '👨🏻‍💻', '👩🏻‍💻'];
@@ -346,12 +402,15 @@
       html: () => `
         ${deco([['sparkle', 'd-top-left-sm'], ['sparkle', 'd-top-right'], ['cursor', 'd-bottom-right-sm']])}
         <div class="hero coding">
-          <p class="coding-where">지금 <b>kt 판교 빌딩 2층, 8층</b> Hackathon 존은</p>
+          <p class="coding-where">${closed ? '<b>AID-X 해커톤</b> 시작한 지' : '지금 <b>kt 판교 빌딩 2층, 8층</b> Hackathon 존은'}</p>
           <div class="coding-time" data-elapsed-from="${from}">
             <span class="ct-num" data-part="h">0</span><span class="ct-unit">시간</span>
             <span class="ct-num" data-part="m">00</span><span class="ct-unit">분째</span>
           </div>
-          <div class="coding-now">열띤 개발 중<span class="coding-dots"><i>.</i><i>.</i><i>.</i></span></div>
+          ${closed
+            ? `<div class="coding-now sm">최종 결과를 기다리는 중<span class="coding-dots"><i>.</i><i>.</i><i>.</i></span></div>
+               <div class="hero-pill coding-pill">채점 접수 ${deadlineCount()}회 모두 마감</div>`
+            : '<div class="coding-now">열띤 개발 중<span class="coding-dots"><i>.</i><i>.</i><i>.</i></span></div>'}
           <div class="coding-crew">
             <span class="fire">🔥</span>
             ${people.map((e, i) => `<span class="dev" style="--i:${i}">${e}</span>`).join('')}
@@ -562,11 +621,18 @@
       const a = analyse(view);
       // Lower ranks first, everywhere.
       chunk(a.curr.teams, ROWS_PER_PAGE).reverse().forEach((page) => screens.push(boardPage(page, a.curr.maxTotal, a.basis)));
+      // Once every submission round has closed, the latest rank changes stay
+      // in the loop instead of playing only right after the reveal.
+      if (closedAll(view) && view.previous && (view.previous.teams || []).length) {
+        chunk(a.diff, ROWS_PER_PAGE).reverse().forEach((page) => screens.push(moveBoardPage(page, a.curr.maxTotal, a.basis, false)));
+      }
       screens.push(...highlightScreens(a));
+      const trend = trendScreen(view);
+      if (trend) screens.push(trend);
       screens.push(...topAgentScreens(a.curr.teams, a.curr.maxTotal, '현재'));
       if (scoring) screens.push({ ...scoring });
     }
-    screens.push(codingScreen());
+    screens.push(codingScreen(closedAll(view)));
     screens.push(criteriaScreen());
     if (view.showRemaining && view.deadlines.some((d) => d > Date.now())) {
       screens.push(deadlineCountdownScreen(view));
@@ -947,7 +1013,7 @@
 
     if (state.raw) {
       const view = computeView(t);
-      const modeKey = `${view.mode}|${view.target ?? ''}|${view.revealAt ?? ''}|${view.showRemaining}|${JSON.stringify(activeNotice() || '')}`;
+      const modeKey = `${state.history.length}|${closedAll(view)}|${view.mode}|${view.target ?? ''}|${view.revealAt ?? ''}|${view.showRemaining}|${JSON.stringify(activeNotice() || '')}`;
       const dataKey = `${state.rawText}|${JSON.stringify(state.agents)}|${state.scheduleText}`;
       if (modeKey !== state.modeKey) {
         const fromReveal = state.view && state.view.mode === 'reveal' && view.mode === 'status';
@@ -1029,16 +1095,18 @@
 
   async function fetchAll() {
     try {
-      const [text, agentsText, scheduleText] = await Promise.all([
+      const [text, agentsText, scheduleText, historyText] = await Promise.all([
         fetchText(RESULTS_URL),
         fetchText(AGENTS_URL).catch(() => '{}'),
         fetchText(SCHEDULE_URL).catch(() => ''),
+        fetchText(HISTORY_URL).catch(() => ''),
       ]);
       let json = JSON.parse(text);
       if (DEMO) json = makeDemo(json);
       state.raw = json;
       state.rawText = DEMO ? JSON.stringify(json) : text;
       try { state.agents = JSON.parse(agentsText).agents || {}; } catch { state.agents = {}; }
+      try { if (historyText) state.history = JSON.parse(historyText).entries || []; } catch { /* keep the last good history */ }
       try {
         state.schedule = scheduleText ? { ...DEFAULT_SCHEDULE, ...JSON.parse(scheduleText) } : DEFAULT_SCHEDULE;
         state.scheduleText = scheduleText;
