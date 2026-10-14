@@ -12,6 +12,9 @@
     "18:30",
     "2026-10-15 08:30"
   ],
+  "submissions": {
+    "13:30": 0
+  },
   "reveal_delay_minutes": 30,
   "reveal_window_minutes": 5,
   "final_results_at": "",

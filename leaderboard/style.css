@@ -881,3 +881,12 @@ html, body {
 .vs-gap b { font-size: 4.4rem; color: var(--down); font-variant-numeric: tabular-nums; }
 
 @keyframes slideInRight { from { opacity: 0; transform: translateX(4rem); } to { opacity: 1; transform: none; } }
+
+/* "13:30 채점 접수 N건" */
+.sub-count {
+  margin-top: 2.4rem; font-size: 22rem; line-height: 1; font-weight: 900; letter-spacing: -0.04em;
+  background: var(--grad); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+  font-variant-numeric: tabular-nums;
+}
+.sub-count small { font-size: 7rem; margin-left: 1rem; -webkit-text-fill-color: var(--ink-2); }
+.sub-count + .hero-pill { margin-top: 3.6rem; }

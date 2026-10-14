@@ -195,6 +195,17 @@
 
   function finalAt() { return scheduleAt('final_results_at'); }
 
+  // Number of submissions received by a deadline, from schedule.json
+  // "submissions": {"13:30": 0, "2026-10-15 08:30": 5}. null when not entered.
+  function submissionCount(deadline) {
+    const subs = state.schedule.submissions || {};
+    for (const [key, n] of Object.entries(subs)) {
+      const [at] = deadlinesOf({ date: state.schedule.date, deadlines: [key] });
+      if (at === deadline && Number.isFinite(Number(n))) return Number(n);
+    }
+    return null;
+  }
+
   function revealWindowMs() { return (Number(state.schedule.reveal_window_minutes) || 5) * MIN; }
   function revealDelayMs() { return (Number(state.schedule.reveal_delay_minutes) || 30) * MIN; }
 
@@ -246,7 +257,8 @@
       const cycleDeadline = [...deadlines].reverse().find((d) => d < snap.revealAt) ?? snap.revealAt - revealDelayMs();
       mode = t >= cycleDeadline ? 'wait' : 'status';
       target = snap.revealAt;
-    } else if (lastDeadline !== null && (snap.revealAt === null || snap.revealAt < lastDeadline)) {
+    } else if (lastDeadline !== null && (snap.revealAt === null || snap.revealAt < lastDeadline) && submissionCount(lastDeadline) !== 0) {
+      // (A round with no submissions has nothing to score: stay on status.)
       // Deadline passed and this round has not been published yet.
       mode = 'wait';
       target = lastDeadline + revealDelayMs();
@@ -255,7 +267,7 @@
     }
 
     if ((mode === 'reveal' || mode === 'final') && !hasBoard) mode = 'status';
-    return { ...base, mode, target, deadlines, hasBoard, showRemaining };
+    return { ...base, mode, target, deadlines, hasBoard, showRemaining, lastDeadline };
   }
 
   // ---------- shared screens ----------
@@ -318,6 +330,28 @@
                 </div>`;
               }).join('')}
             </div>
+          </div>`;
+      },
+    };
+  }
+
+  // "13:30 채점 접수 N건" for the latest deadline, once its count is entered.
+  function submissionsScreen(view) {
+    const at = view.lastDeadline;
+    const n = at === null ? null : submissionCount(at);
+    if (n === null) return null;
+    const round = view.deadlines.indexOf(at) + 1;
+    return {
+      label: '채점 접수',
+      html: () => {
+        const next = view.deadlines.find((d) => d > Date.now());
+        return `
+          ${deco([['layers', 'd-left'], ['sparkle', 'd-top-right'], ['cursor', 'd-bottom-right-sm']])}
+          <div class="hero">
+            <div class="eyebrow">SUBMISSIONS · ${round}회차</div>
+            <h2 class="hero-title sm">${fmtWhen(at)} 채점 접수</h2>
+            <div class="sub-count">${count(0, n, { dec: false })}<small>건</small></div>
+            ${next ? `<div class="hero-pill">다음 접수 마감 ${fmtWhen(next)}</div>` : ''}
           </div>`;
       },
     };
@@ -490,6 +524,8 @@
   // first and again after the agents while a round is being scored.
   function regularScreens(view, scoring) {
     const screens = [];
+    const subs = submissionsScreen(view);
+    if (subs) screens.push(subs);
     if (scoring) screens.push(scoring);
     if (view.hasBoard) {
       const a = analyse(view);
@@ -879,7 +915,7 @@
 
     if (state.raw) {
       const view = computeView(t);
-      const modeKey = `${view.mode}|${view.target ?? ''}|${view.revealAt ?? ''}|${view.showRemaining}`;
+      const modeKey = `${view.mode}|${view.target ?? ''}|${view.revealAt ?? ''}|${view.showRemaining}|${view.lastDeadline ?? ''}:${view.lastDeadline === null ? '' : submissionCount(view.lastDeadline)}`;
       const dataKey = `${state.rawText}|${JSON.stringify(state.agents)}|${state.scheduleText}`;
       if (modeKey !== state.modeKey) {
         const fromReveal = state.view && state.view.mode === 'reveal' && view.mode === 'status';
