@@ -14,7 +14,7 @@
     }
     return el;
   }
-  // ---- PDF 뷰어 (pdf.js) — 화면 워터마크 + 우클릭/길게 눌러 저장 막기 ----
+  // ---- 자료 뷰어 (이미지 slides/ 또는 PDF) — 화면 워터마크 + 우클릭/길게 눌러 저장 막기 ----
   const PDFJS = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/";
   const PDF_NOTICE = "본 자료는 kt의 자산으로, 무단 복제·배포 시 법적 조치를 받을 수 있습니다.";
   // 열람 가능할 때(서버가 200을 줄 때)만 box를 PDF 뷰어로 바꿔요. 아니면 원래 그림을 그대로 둬요
@@ -32,9 +32,47 @@
       });
       pdfjsLib.GlobalWorkerOptions.workerSrc = PDFJS + "pdf.worker.min.js";
       const doc = await pdfjsLib.getDocument({ data, isEvalSupported: false }).promise;
-      buildViewer(box, doc);
+      buildViewer(box, pdfSource(doc));
       if (onShow) onShow();
     }).catch(() => {});
+  }
+  // 이미지 자료: slides/<id>/list.json 순서대로 (열람 가능할 때만)
+  function slidesViewer(box, id, onShow) {
+    const key = new URLSearchParams(location.search).get("key");
+    const q = key ? `?key=${encodeURIComponent(key)}` : "";
+    fetch(`slides/${id}/list.json${q}`, { cache: "no-store" }).then(async res => {
+      if (!res.ok || !/json/.test(res.headers.get("Content-Type") || "")) return;  // 잠김·없음 → 그대로
+      const list = await res.json();
+      if (!Array.isArray(list) || !list.length) return;
+      const src = imageSource(list.map(f => `slides/${id}/${encodeURIComponent(f)}${q}`));
+      await src.page(1);  // 첫 장이 실제로 열리는지 확인한 뒤에 바꿔요
+      buildViewer(box, src);
+      if (onShow) onShow();
+    }).catch(() => {});
+  }
+  // 페이지 공급자: { numPages, page(n) → { w, h, draw(ctx, scale) } }
+  function pdfSource(doc) {
+    return {
+      numPages: doc.numPages,
+      async page(n) {
+        const p = await doc.getPage(n), b = p.getViewport({ scale: 1 });
+        return { w: b.width, h: b.height, draw: (ctx, s) => p.render({ canvasContext: ctx, viewport: p.getViewport({ scale: s }) }).promise };
+      },
+    };
+  }
+  function imageSource(urls) {
+    const cache = {};
+    const load = n => cache[n] || (cache[n] = fetch(urls[n - 1], { cache: "no-store" })
+      .then(r => { if (!r.ok) throw new Error(r.status); return r.blob(); })
+      .then(b => createImageBitmap(b)));
+    return {
+      numPages: urls.length,
+      async page(n) {
+        const bmp = await load(n);
+        if (n < urls.length) load(n + 1).catch(() => {});  // 다음 장 미리 받기
+        return { w: bmp.width, h: bmp.height, draw: (ctx, s) => { ctx.imageSmoothingQuality = "high"; ctx.drawImage(bmp, 0, 0, bmp.width * s, bmp.height * s); } };
+      },
+    };
   }
   function buildViewer(box, doc) {
     box.textContent = "";
@@ -59,16 +97,14 @@
       if (!doc) return;
       if (busy) { again = true; return; }
       busy = true;
-      const page = await doc.getPage(pageNo);
-      const base = page.getViewport({ scale: 1 });
+      const pg = await doc.page(pageNo);
       const isFull = box.classList.contains("full");
       const maxW = stage.clientWidth, maxH = isFull ? stage.clientHeight : Infinity;
-      const css = Math.min(maxW / base.width, maxH / base.height);
+      const css = Math.min(maxW / pg.w, maxH / pg.h);
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      const vp = page.getViewport({ scale: css * dpr });
-      canvas.width = vp.width; canvas.height = vp.height;
-      canvas.style.width = `${base.width * css}px`; canvas.style.height = `${base.height * css}px`;
-      await page.render({ canvasContext: canvas.getContext("2d"), viewport: vp }).promise;
+      canvas.width = Math.round(pg.w * css * dpr); canvas.height = Math.round(pg.h * css * dpr);
+      canvas.style.width = `${pg.w * css}px`; canvas.style.height = `${pg.h * css}px`;
+      await pg.draw(canvas.getContext("2d"), css * dpr);
       box.classList.add("ready");
       num.textContent = `${pageNo} / ${doc.numPages}`;
       prev.disabled = pageNo <= 1; next.disabled = pageNo >= doc.numPages;
@@ -188,7 +224,9 @@
     h("ul", { class: "same" }, others.map(e => h("li", {}, h("a", { href: e.id }, h("span", { class: "b" }, exNo(e)), h("span", { class: "t" }, exTitleMain(e), e.sub ? h("small", {}, e.sub) : null)))))) : null;
 
   side.append(same);
-  if (x.pdf) pdfViewer(visual, x.pdf, () => main.prepend(h("p", { class: "pdf-notice" }, "🔒 " + PDF_NOTICE)));
+  const showNotice = () => main.prepend(h("p", { class: "pdf-notice" }, "🔒 " + PDF_NOTICE));
+  if (x.pdf) pdfViewer(visual, x.pdf, showNotice);
+  else slidesViewer(visual, x.id, showNotice);
   app.append(h("div", { class: "wrap" }, head, visual,
     h("div", { class: "layout" }, h("div", {}, main, pager), side),
     h("footer", {}, "kt AID-X Day & Hackathon")));
