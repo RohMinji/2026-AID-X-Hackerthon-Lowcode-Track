@@ -323,6 +323,32 @@
     };
   }
 
+  // A light-hearted "how long have we been at it" screen, counting up from
+  // start_at.
+  function codingScreen() {
+    const from = scheduleAt('start_at');
+    if (from === null) return null;
+    const people = ['🧑🏻‍💻', '👨🏻‍💻', '👩🏻‍💻'];
+    return {
+      label: '개발 중',
+      html: () => `
+        ${deco([['sparkle', 'd-top-left-sm'], ['sparkle', 'd-top-right'], ['cursor', 'd-bottom-right-sm']])}
+        <div class="hero coding">
+          <p class="coding-where">지금 <b>kt 판교 빌딩 2층, 8층</b> Hackathon 존은</p>
+          <div class="coding-time" data-elapsed-from="${from}">
+            <span class="ct-num" data-part="h">0</span><span class="ct-unit">시간</span>
+            <span class="ct-num" data-part="m">00</span><span class="ct-unit">분째</span>
+          </div>
+          <div class="coding-now">열띤 개발 중<span class="coding-dots"><i>.</i><i>.</i><i>.</i></span></div>
+          <div class="coding-crew">
+            <span class="fire">🔥</span>
+            ${people.map((e, i) => `<span class="dev" style="--i:${i}">${e}</span>`).join('')}
+            <span class="fire" style="--i:1">🔥</span>
+          </div>
+        </div>`,
+    };
+  }
+
   function scoringScreen(view) {
     return {
       label: '채점 중',
@@ -499,6 +525,7 @@
       screens.push(...topAgentScreens(a.curr.teams, a.curr.maxTotal, '현재'));
       if (scoring) screens.push({ ...scoring });
     }
+    screens.push(codingScreen());
     screens.push(criteriaScreen());
     if (view.showRemaining && view.deadlines.some((d) => d > Date.now())) {
       screens.push(deadlineCountdownScreen(view));
@@ -910,6 +937,11 @@
     countdownTextEl.parentElement.style.visibility = single ? 'hidden' : '';
     countdownTextEl.textContent = state.paused ? '일시정지됨' : `다음 화면까지 ${Math.ceil(remain / 1000)}초`;
 
+    document.querySelectorAll('[data-elapsed-from]').forEach((node) => {
+      const mins = Math.max(0, Math.floor((t - Number(node.dataset.elapsedFrom)) / 60000));
+      const parts = { h: String(Math.floor(mins / 60)), m: pad2(mins % 60) };
+      node.querySelectorAll('[data-part]').forEach((n) => { if (n.textContent !== parts[n.dataset.part]) n.textContent = parts[n.dataset.part]; });
+    });
     document.querySelectorAll('[data-countdown-to]').forEach((node) => {
       node.textContent = fmtRemain(Number(node.dataset.countdownTo) - t);
     });
