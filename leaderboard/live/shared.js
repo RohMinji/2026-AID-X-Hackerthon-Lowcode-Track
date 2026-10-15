@@ -1,0 +1,231 @@
+// Shared helpers used by app.js (live board), admin.js, and status.js.
+window.Leaderboard = (() => {
+  function escapeHtml(str) {
+    return String(str).replace(/[&<>"']/g, (c) => ({
+      '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
+    }[c]));
+  }
+
+  function fmtDateTime(iso) {
+    if (!iso) return '-';
+    try {
+      return new Date(iso).toLocaleString('ko-KR', {
+        hour12: false, month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit',
+      });
+    } catch {
+      return iso;
+    }
+  }
+
+  function medalFor(rank) {
+    return rank === 1 ? '🥇' : rank === 2 ? '🥈' : '🥉';
+  }
+
+  // Ranks teams by total score, descending; ties broken by earlier
+  // submitted_at, then team name. A team's `total` is taken as given when the
+  // data carries one (evaluation exports do), otherwise it is the criteria
+  // sum. Adds `total`, `pct`, `rank`.
+  function computeStandings(json) {
+    const criteria = json.criteria || [];
+    const maxTotal = criteria.reduce((s, c) => s + (c.max || 0), 0);
+    const teams = (json.teams || []).map((t) => {
+      const given = Number(t.total);
+      const total = t.total !== undefined && Number.isFinite(given)
+        ? given
+        : criteria.reduce((s, c) => s + (Number(t.scores?.[c.key]) || 0), 0);
+      return { ...t, total, pct: maxTotal ? (total / maxTotal) * 100 : 0 };
+    });
+    teams.sort((a, b) => {
+      if (b.total !== a.total) return b.total - a.total;
+      const at = a.submitted_at ? new Date(a.submitted_at).getTime() : Infinity;
+      const bt = b.submitted_at ? new Date(b.submitted_at).getTime() : Infinity;
+      if (at !== bt) return at - bt;
+      return a.team.localeCompare(b.team);
+    });
+    teams.forEach((t, i) => { t.rank = i + 1; });
+    return { criteria, maxTotal, teams };
+  }
+
+  // Compares a previous standings list against the current one (both from
+  // computeStandings) and annotates each current team with how its rank
+  // moved: 'up' | 'down' | 'same' | 'new'.
+  function diffStandings(prevTeams, currTeams) {
+    const prevByTeam = new Map((prevTeams || []).map((t) => [teamKey(t), t]));
+    return currTeams.map((t) => {
+      const prev = prevByTeam.get(teamKey(t));
+      if (!prev) {
+        return { ...t, prevRank: null, prevTotal: null, rankDiff: null, change: 'new' };
+      }
+      const rankDiff = prev.rank - t.rank; // positive = moved up (lower rank number)
+      const change = rankDiff > 0 ? 'up' : rankDiff < 0 ? 'down' : 'same';
+      return { ...t, prevRank: prev.rank, prevTotal: prev.total, rankDiff, change };
+    });
+  }
+
+  // published.json may carry `reveal_at` (when its scores go on screen) and
+  // `previous` (the snapshot that was on screen before it, written by the
+  // admin page on publish). Until reveal_at passes, every screen keeps
+  // showing `previous`, so scores can be published ahead of the reveal.
+  // Returns { visible, previous, revealAt, pending }: `visible` is the raw
+  // JSON to show right now (null when nothing has been revealed yet), and
+  // `previous` is what `visible` should be compared against.
+  function resolveSnapshots(json, now = Date.now()) {
+    const parsed = json && json.reveal_at ? new Date(json.reveal_at).getTime() : NaN;
+    const revealAt = Number.isFinite(parsed) ? parsed : null;
+    const pending = revealAt !== null && now < revealAt;
+    if (pending) return { visible: json.previous || null, previous: null, revealAt, pending };
+    return { visible: json || null, previous: (json && json.previous) || null, revealAt, pending };
+  }
+
+  // A team is tracked across rounds by its appid; older data only has names.
+  function teamKey(t) {
+    return t.appid || t.team;
+  }
+
+  // Event name shown on every page (header, status table, admin) and written
+  // into published.json.
+  const EVENT_NAME = 'AID-X 해커톤 Low-Code';
+
+  // Score items of the evaluation export (result/result.json). Only the sum
+  // of `max` (the full score) is used on screen; the item names shown on the
+  // board come from schedule.json.
+  const EVAL_CRITERIA = [
+    { key: 'common', label: '개선미션', max: 50 },
+    { key: 'custom', label: '품질미션', max: 30 },
+    { key: 'mission', label: '크레딧미션', max: 20 },
+  ];
+
+  function isEvalExport(json) {
+    return !!(json && json.push_results && typeof json.push_results === 'object');
+  }
+
+  // "20261008T09:32" -> ISO string in Korean time, or null.
+  function parsePushDate(s) {
+    const m = /^(\d{4})(\d{2})(\d{2})T(\d{2}):(\d{2})/.exec(String(s || ''));
+    return m ? `${m[1]}-${m[2]}-${m[3]}T${m[4]}:${m[5]}:00+09:00` : null;
+  }
+
+  // Converts an evaluation export into the board's own shape
+  // ({ event, criteria, teams }). push_results.eval_n is scoring round n and
+  // lists every team (a team that skipped round n keeps its round n-1 score),
+  // so the standings come from the last eval alone. `team` starts out as the
+  // agent name; withRoster() swaps in the real team name and members.
+  function fromEvalExport(json, eventName) {
+    const evals = Object.keys(json.push_results || {})
+      .map((k) => ({ key: k, n: Number((/^eval_(\d+)$/.exec(k) || [])[1]) }))
+      .filter((e) => Number.isFinite(e.n))
+      .sort((a, b) => a.n - b.n);
+    if (!evals.length) throw new Error('push_results에 eval_n 항목이 없습니다.');
+    const last = evals[evals.length - 1];
+    const entries = json.push_results[last.key] || {};
+    const teams = Object.entries(entries).map(([appid, e]) => ({
+      appid,
+      team: e.agent_name || appid,
+      agent: e.agent_name || '',
+      agent_type: e.agent_type || '',
+      members: [],
+      total: Number(e.total) || 0,
+      scores: Object.fromEntries(EVAL_CRITERIA.map((c) => [c.key, Number(e[c.key]) || 0])),
+    }));
+    return {
+      event: {
+        name: eventName || EVENT_NAME,
+        updated_at: parsePushDate(json.push_date),
+        round: last.n,
+        push_id: json.push_ID ?? null,
+      },
+      criteria: EVAL_CRITERIA,
+      teams,
+    };
+  }
+
+  // Overlays team names, members and intro copy from agents.json (keyed by
+  // appid) onto a board snapshot, so names can be fixed without re-publishing.
+  // "DealFlow AI" and "DealFlowAI" are the same team.
+  function sameName(a, b) {
+    const norm = (s) => String(s || '').toLowerCase().replace(/[\s\-_.·]/g, '');
+    return !!norm(a) && norm(a) === norm(b);
+  }
+
+  // agents.json entry for a team: by appid, or else by name (agent_name or
+  // team written in agents.json against the agent name in the results), so a
+  // team listed before its appid is known still gets its name and intro.
+  function rosterEntry(roster, t) {
+    if (!roster || !t) return null;
+    if (roster[teamKey(t)]) return roster[teamKey(t)];
+    const names = [t.agent, t.team].filter(Boolean);
+    return Object.values(roster).find((r) => r && names.some((n) => sameName(n, r.agent_name) || sameName(n, r.team))) || null;
+  }
+
+  // Overlays agents.json onto a snapshot: team name, org, leader, members.
+  // Teams marked "hidden" (test teams) are dropped, so rankings are computed
+  // without them. Teams listed in agents.json but missing from the results
+  // (e.g. scored outside the pipeline, no appid yet) are added with 0 points
+  // so every team is always on the board.
+  function withRoster(json, roster) {
+    if (!json || !roster) return json;
+    const used = new Set();
+    const teams = (json.teams || [])
+      .filter((t) => { const r = rosterEntry(roster, t); return !(r && r.hidden); })
+      .map((t) => {
+        const r = rosterEntry(roster, t);
+        if (!r) return t;
+        used.add(r);
+        return {
+          ...t,
+          team: r.team || t.team,
+          org: r.org || t.org || '',
+          leader: r.leader || t.leader || '',
+          members: Array.isArray(r.members) && r.members.length ? r.members : t.members,
+        };
+      });
+    if ((json.teams || []).length) {
+      Object.entries(roster).forEach(([key, r]) => {
+        if (!r || r.hidden || used.has(r) || !(r.team || r.agent_name)) return;
+        teams.push({
+          appid: key,
+          team: r.team || r.agent_name,
+          agent: r.agent_name || r.team,
+          agent_type: r.agent_type || '',
+          org: r.org || '',
+          leader: r.leader || '',
+          members: Array.isArray(r.members) ? r.members : [],
+          total: 0,
+          scores: {},
+        });
+      });
+    }
+    return { ...json, teams };
+  }
+
+  // Leader first, then the other members.
+  function peopleOf(t) {
+    return [t.leader, ...(t.members || [])].filter(Boolean);
+  }
+
+  // schedule.json deadlines as sorted timestamps. "HH:MM" entries fall on
+  // schedule.date (or on the day of `t` when no date is set, so the schedule
+  // can be rehearsed on any day); "YYYY-MM-DD HH:MM" entries are absolute
+  // (e.g. a next-morning round).
+  function deadlinesOf(schedule, t = Date.now()) {
+    const sch = schedule || {};
+    const day = sch.date ? new Date(`${sch.date}T00:00:00`) : new Date(t);
+    return (sch.deadlines || [])
+      .map((d) => {
+        const str = String(d).trim();
+        if (/^\d{4}-\d{2}-\d{2}/.test(str)) return new Date(str.replace(' ', 'T')).getTime();
+        const [h, m] = str.split(':').map(Number);
+        const at = new Date(day);
+        at.setHours(h, m, 0, 0);
+        return at.getTime();
+      })
+      .filter(Number.isFinite)
+      .sort((x, y) => x - y);
+  }
+
+  return {
+    deadlinesOf,
+    escapeHtml, fmtDateTime, medalFor, computeStandings, diffStandings, resolveSnapshots,
+    teamKey, isEvalExport, fromEvalExport, withRoster, rosterEntry, sameName, peopleOf, EVAL_CRITERIA, EVENT_NAME,
+  };
+})();

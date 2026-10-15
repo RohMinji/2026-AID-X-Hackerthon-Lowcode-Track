@@ -1,0 +1,212 @@
+{
+  "_comment": "appid(result.json의 키)별 팀 정보와 에이전트 소개입니다. team·org(소속)·leader(팀장)·members(팀원)·tagline(소개)이 화면에 나옵니다. app_name은 참고용 메모로 화면에는 쓰지 않습니다. \"hidden\": true인 팀(테스트용)은 화면과 순위에서 빠집니다. appid를 모르는 팀은 result.json의 agent_name과 이름이 같으면(띄어쓰기·대소문자 무시) 자동으로 연결됩니다.",
+  "agents": {
+    "46fa38cc-46c1-f111-aaad-7ced8dff5c1a": {
+      "agent_name": "AX프로젝트무물봇",
+      "app_name": "AX프로젝트무물봇",
+      "team": "AX프로젝트무물봇",
+      "org": "AX사업부문",
+      "leader": "모효경",
+      "members": [
+        "김설란",
+        "이미진"
+      ],
+      "tagline": "프로젝트 수행 과정의 궁금증을 AI가 즉시 해결하는 업무지원 에이전트"
+    },
+    "ddead4bc-a937-4001-bde3-7956a5077759": {
+      "agent_name": "Entron",
+      "app_name": "Entron",
+      "team": "Entron",
+      "org": "Enterprise부문",
+      "leader": "김현우",
+      "members": [
+        "이정욱",
+        "김윤형"
+      ],
+      "tagline": "영업 현장의 정보를 연결해 더 빠른 의사결정을 지원하는 AI 파트너"
+    },
+    "96b889ee-f85c-4f12-9cbe-0d7510c5b695": {
+      "agent_name": "퇴근전략실",
+      "app_name": "RFP분석 에이전트",
+      "team": "퇴근전략실",
+      "org": "Enterprise부문",
+      "leader": "박종하",
+      "members": [
+        "홍소영",
+        "이혜미"
+      ],
+      "tagline": "RFP 분석과 검증을 자동화해 제안 업무 생산성을 높이는 에이전트"
+    },
+    "082df3d8-21c1-f111-aaad-002248ecf2a5": {
+      "agent_name": "DealFlowAI",
+      "app_name": "투자척척 (Investment Task Agent)_Develop",
+      "team": "DealFlow AI",
+      "org": "전략실",
+      "leader": "김정훈",
+      "members": [
+        "황설욱",
+        "오삼수"
+      ],
+      "tagline": "사업 기회 발굴부터 검토까지 AI로 지원하는 Deal 관리 에이전트"
+    },
+    "85ade485-5e8d-f011-b4cc-6045bd1df16d": {
+      "agent_name": "Team길잡이",
+      "app_name": "M365 코파일럿",
+      "team": "Team 길잡이",
+      "org": "Enterprise부문",
+      "leader": "김동우",
+      "members": [
+        "조현배",
+        "예영실"
+      ],
+      "tagline": "영업 기회 발굴을 지원하고 영업 전문성을 강화하는 AI 에이전트"
+    },
+    "9972f1f0-be01-43c5-acb1-cb00c082671d": {
+      "agent_name": "케이티데몬헌터스2",
+      "app_name": "VOC One-View AI Agent_3",
+      "team": "케이티데몬헌터스2",
+      "org": "네트워크부문",
+      "leader": "문지영",
+      "members": [
+        "신민지",
+        "여규민"
+      ],
+      "tagline": "주소 하나로 완성하는 네트워크 VoC One-View 에이전트"
+    },
+    "c3afcff0-3771-4abd-8572-b6b5841b7e10": {
+      "agent_name": "누수제로",
+      "app_name": "NUSUZero_Agent",
+      "team": "누수제로",
+      "org": "네트워크부문",
+      "leader": "원은숙",
+      "members": [
+        "김정빈",
+        "고성원"
+      ],
+      "tagline": "미결, 이메일 품질 데이터를 기반으로 고지,접수,결의,회계처리 누락을 사전 탐지하고, 담당자,공급자 안내를 자동화하는 AI Agent"
+    },
+    "ab98c29b-43e1-4da7-a719-fe64183b9297": {
+      "agent_name": "플러스알파",
+      "app_name": "준법AI톡",
+      "team": "플러스알파",
+      "org": "준법지원실",
+      "leader": "임나리",
+      "members": [
+        "박영선",
+        "이현하"
+      ],
+      "tagline": "준법 문의 대응, 준법 점검 업무의 정확성과 효율성을 높이는 AI 컴플라이언스 파트너"
+    },
+    "7f4ee2f3-1fbe-f111-aaad-002248ee0781": {
+      "agent_name": "MAX",
+      "app_name": "RootKit 악성코드 자동진단 Agent",
+      "team": "MAX",
+      "org": "Customer부문",
+      "leader": "강부진",
+      "members": [
+        "문성수",
+        "윤소연"
+      ],
+      "tagline": "전사 Rootkit 악성코드 진단 /분석/결과 입력을 자동으로 처리해주는 AI Agent"
+    },
+    "0e7b5b42-5f5a-47f6-8319-31b59395a12e": {
+      "agent_name": "역량E",
+      "app_name": "B2B역량E",
+      "team": "역량E",
+      "org": "Enterprise부문",
+      "leader": "원재희",
+      "members": [
+        "장새영",
+        "이충환"
+      ],
+      "tagline": "구성원의 성장과 역량 개발을 돕는 AI 러닝 코치"
+    },
+    "3599cafd-67c1-f111-aaad-002248edbba9": {
+      "agent_name": "REDRED",
+      "app_name": "AX WorkMate",
+      "team": "REDRED",
+      "org": "AX사업부문",
+      "leader": "홍준호",
+      "members": [
+        "한석현",
+        "김보원"
+      ],
+      "tagline": "분산된 투자 절차, 양식, 사례를 찾아헤매는 불편을 해소하고, 단계별 실행 가이드/ 문안 초안 제공 에이전트"
+    },
+    "8d092d68-04e5-4afd-91e5-1c3cb5799a34": {
+      "agent_name": "SolveIT",
+      "app_name": "Solve IT",
+      "team": "Solve IT",
+      "org": "네트워크부문",
+      "leader": "김경수",
+      "members": [
+        "김자겸",
+        "박경호"
+      ],
+      "tagline": "장애 원인 분석과 해결 방안을 제안하는 문제 해결 AI"
+    },
+    "40cea5e1-42ce-4582-af9e-33e94d0e26b4": {
+      "agent_name": "관쟁이",
+      "app_name": "관쟁이_test",
+      "team": "관쟁이",
+      "org": "네트워크부문",
+      "leader": "이훈하",
+      "members": [
+        "이환우",
+        "권예지"
+      ],
+      "tagline": "네트워크 관제 업무를 지능화하는 AI 관제 지원 에이전트"
+    },
+    "7106de51-acc2-f111-a05a-000d3a82743f": {
+      "agent_name": "ENG지원팀",
+      "app_name": "공사기간 산정&유사시설 금액검토 Agent_해커톤",
+      "team": "ENG지원팀",
+      "org": "kt estate",
+      "leader": "황의석",
+      "members": [
+        "김현호",
+        "추종민"
+      ],
+      "tagline": "시설·엔지니어링 업무를 자동화하는 현장 지원 AI 파트너"
+    },
+    "ee588188-3955-4255-bcbd-3aab467c31ac": {
+      "agent_name": "AIeS",
+      "app_name": "시스템 도입 요청 검토 에이전트",
+      "team": "AIeS",
+      "org": "kt estate",
+      "leader": "이동훈",
+      "members": [
+        "김준환",
+        "김영조"
+      ],
+      "tagline": "보안과 인프라 운영을 더 스마트하게 만드는 AI Assistant"
+    },
+    "03b5f8b0-b214-49d7-a1a6-89c6772c999c": {
+      "agent_name": "CFO",
+      "hidden": true,
+      "note": "테스트용 팀 — 화면과 순위에서 제외"
+    },
+    "03b5f8b0-b214-49d7-a1a6-89c6777c6f6c": {
+      "agent_name": "CR",
+      "hidden": true,
+      "note": "테스트용 팀 — 화면과 순위에서 제외"
+    },
+    "03b5f8b0-b214-49d7-a1a6-89c6772c6f6c": {
+      "agent_name": "계약EZ",
+      "hidden": true,
+      "note": "테스트용 팀 — 화면과 순위에서 제외"
+    },
+    "AX-Ray": {
+      "agent_name": "AX-Ray",
+      "team": "AX-Ray",
+      "org": "kt commerce",
+      "leader": "천대영",
+      "members": [
+        "임영빈",
+        "김효은"
+      ],
+      "tagline": "보안 리스크를 탐지하고 개선 포인트를 제시하는 AI 진단 에이전트",
+      "note": "appid 없음 (KT 테넌트 아님, 직접 테스트). 결과에 없어도 0점으로 항상 표시됩니다. 점수를 result.json에 넣을 때는 키를 \"AX-Ray\" 또는 agent_name을 \"AX-Ray\"로 하면 이 팀으로 연결됩니다."
+    }
+  }
+}
