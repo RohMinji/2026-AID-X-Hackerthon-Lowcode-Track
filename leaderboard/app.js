@@ -346,7 +346,7 @@
 
   // Rank of every team after each published round (history.json), only
   // rounds already revealed. Columns are the "HH:MM 점수 기준" times.
-  function trendScreen(view) {
+  function trendScreen(view, focus = null) {
     const now = Date.now();
     const timeOf = (e) => new Date(e.reveal_at || (e.event && e.event.updated_at) || e.published_at).getTime();
     const seen = new Map();
@@ -379,8 +379,10 @@
     // Colour only the current Top 3 and the biggest climber; everyone else
     // stays a quiet grey line. Colours follow these teams, not the rank.
     const palette = ['#2f45ff', '#e0398a', '#f08c00', '#12a67a'];
-    const hot = curr.slice(0, 3).map((t) => teamKey(t));
-    if (climb && !hot.includes(teamKey(climb.t)) && climb.from - climb.to > 0) hot.push(teamKey(climb.t));
+    const hot = focus ? [teamKey(focus)] : curr.slice(0, 3).map((t) => teamKey(t));
+    if (!focus && climb && !hot.includes(teamKey(climb.t)) && climb.from - climb.to > 0) hot.push(teamKey(climb.t));
+    const me = focus && curr.find((t) => teamKey(t) === teamKey(focus));
+    const myRanks = me ? cols.map((c, j) => rankAt(me, j)).filter(Boolean) : [];
     const colorOf = (t) => palette[hot.indexOf(teamKey(t))];
 
     const W = 1800; const H = 720; const padL = 70; const padR = 300; const padT = 20; const padB = 20;
@@ -403,12 +405,15 @@
         <div class="screen-head compact trend-head">
           <div>
             <div class="eyebrow">RANK HISTORY · ${cols.length}번의 점수 공개</div>
-            <h2 class="screen-title">이틀간의 <span>순위 흐름</span></h2>
+            <h2 class="screen-title">${me ? `${escapeHtml(me.team)}의 ` : ''}이틀간 <span>순위 흐름</span></h2>
           </div>
-          <div class="trend-facts">
+          ${me ? `<div class="trend-facts">
+            <div class="tf"><span class="tf-k">📈 첫 공개 → 지금</span><span class="tf-v"><i style="background:${palette[0]}"></i><b>${myRanks[0]}위 → ${me.rank}위</b></span></div>
+            <div class="tf"><span class="tf-k">🏅 최고 순위</span><span class="tf-v"><b>${Math.min(...myRanks)}위</b></span></div>
+          </div>` : `<div class="trend-facts">
             ${climb && climb.from - climb.to > 0 ? `<div class="tf"><span class="tf-k">🚀 최대 역전</span><span class="tf-v"><i style="background:${colorOf(climb.t)}"></i>${escapeHtml(climb.t.team)} <b>${climb.from}위 → ${climb.to}위</b></span></div>` : ''}
             <div class="tf"><span class="tf-k">👑 1위 교체</span><span class="tf-v"><b>${leadChanges}번</b></span></div>
-          </div>
+          </div>`}
         </div>
         <div class="bump">
           <div class="bump-cols">${cols.map((c, j) => `<span style="left:${(x(j) / W) * 100}%">${head(c.at)}</span>`).join('')}</div>
@@ -433,6 +438,72 @@
           </div>
         </div>`,
     };
+  }
+
+  // Day-2 presentation timetable from schedule.json "presentations":
+  // [{"team": "ENG지원팀", "from": "2026-10-15 09:20", "to": "2026-10-15 09:26"},
+  //  {"label": "휴식", "from": ..., "to": ...}]. Returns the slot running now.
+  function presentationSlots() {
+    const at = (v) => { const [ms] = deadlinesOf({ date: state.schedule.date, deadlines: [v] }); return ms; };
+    return (state.schedule.presentations || [])
+      .map((p, i) => ({ ...p, i, from: at(p.from), to: at(p.to) }))
+      .filter((p) => Number.isFinite(p.from) && Number.isFinite(p.to));
+  }
+
+  function currentSlot() {
+    const now = Date.now();
+    return presentationSlots().find((p) => p.from <= now && now < p.to) || null;
+  }
+
+  // 이/가 after a team name: Hangul by its final consonant, Latin by whether
+  // the name ends in a consonant sound (Entron이, Solve IT이, MAX가).
+  function subjectOf(name) {
+    const ch = name.trim().slice(-1);
+    const code = ch.charCodeAt(0) - 0xac00;
+    if (code >= 0 && code < 11172) return `${name}${code % 28 ? '이' : '가'}`;
+    return `${name}${/[lmntkpbg]/i.test(ch) ? '이' : '가'}`;
+  }
+
+  // "지금 8층은... ENG지원팀이 발표 중😎" then that team's rank history.
+  function presentingScreens(view) {
+    const slot = currentSlot();
+    if (!slot) return [];
+    if (!slot.team) {
+      const next = presentationSlots().find((p) => p.team && p.from >= slot.to);
+      return [{
+        label: slot.label || '휴식',
+        html: () => `
+          ${deco([['sparkle', 'd-top-left-sm'], ['sparkle', 'd-top-right'], ['ring', 'd-right-sm']])}
+          <div class="hero present">
+            <p class="present-where">지금 8층은...</p>
+            <h2 class="present-title"><span class="present-grad">${escapeHtml(slot.label || '휴식')} 중</span><span class="present-emoji">☕</span></h2>
+            ${next ? `<div class="hero-pill">다음 발표 ${escapeHtml(next.team)} · ${fmtHM(next.from)}</div>` : ''}
+          </div>`,
+      }];
+    }
+    const teams = computeStandings(view.visible).teams;
+    const t = teams.find((x) => sameName(x.team, slot.team)) || null;
+    const entry = rosterEntry(state.agents, t || { team: slot.team });
+    const name = t ? t.team : slot.team;
+    const people = t ? members(t) : '';
+    const tagline = entry && entry.tagline;
+    const screens = [{
+      label: `발표 · ${name}`,
+      html: () => `
+        ${deco([['ai', 'd-left'], ['sparkle', 'd-top-right'], ['cursor', 'd-bottom-right-sm']])}
+        <div class="hero present">
+          <p class="present-where">지금 8층은...</p>
+          <h2 class="present-title"><span class="present-grad">${escapeHtml(subjectOf(name))} 발표 중</span><span class="present-emoji">😎</span></h2>
+          ${people ? `<div class="present-people">${people}</div>` : ''}
+          ${tagline ? `<p class="present-tagline">${escapeHtml(tagline)}</p>` : ''}
+          <div class="hero-pill">${fmtHM(slot.from)} ~ ${fmtHM(slot.to)}</div>
+        </div>`,
+    }];
+    if (t) {
+      const trend = trendScreen(view, t);
+      if (trend) screens.push({ ...trend, label: `순위 흐름 · ${name}` });
+    }
+    return screens;
   }
 
   // A light-hearted "how long have we been at it" screen, counting up from
@@ -660,6 +731,7 @@
     const screens = [];
     const notice = noticeScreen();
     if (notice) screens.push(notice);
+    if (view.hasBoard) screens.push(...presentingScreens(view));
     if (scoring) screens.push(scoring);
     if (view.hasBoard) {
       const a = analyse(view);
@@ -1057,7 +1129,7 @@
 
     if (state.raw) {
       const view = computeView(t);
-      const modeKey = `${state.history.length}|${closedAll(view)}|${view.mode}|${view.target ?? ''}|${view.revealAt ?? ''}|${view.showRemaining}|${JSON.stringify(activeNotice() || '')}`;
+      const modeKey = `${(currentSlot() || {}).i ?? ''}|${state.history.length}|${closedAll(view)}|${view.mode}|${view.target ?? ''}|${view.revealAt ?? ''}|${view.showRemaining}|${JSON.stringify(activeNotice() || '')}`;
       const dataKey = `${state.rawText}|${JSON.stringify(state.agents)}|${state.scheduleText}`;
       if (modeKey !== state.modeKey) {
         const fromReveal = state.view && state.view.mode === 'reveal' && view.mode === 'status';
