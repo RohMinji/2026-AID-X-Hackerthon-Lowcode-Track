@@ -346,6 +346,113 @@
 
   // Rank of every team after each published round (history.json), only
   // rounds already revealed. Columns are the "HH:MM 점수 기준" times.
+  // Every published round already revealed (history.json), oldest first,
+  // with each team's rank and total. A re-publish for the same reveal time
+  // replaces the earlier one.
+  function historyCols() {
+    const now = Date.now();
+    const timeOf = (e) => new Date(e.reveal_at || (e.event && e.event.updated_at) || e.published_at).getTime();
+    const seen = new Map();
+    state.history
+      .filter((e) => (e.teams || []).length && timeOf(e) <= now)
+      .sort((x, y) => timeOf(x) - timeOf(y))
+      .forEach((e) => seen.set(timeOf(e), e));
+    return [...seen.entries()].slice(-8).map(([at, e]) => {
+      const ranks = new Map();
+      const totals = new Map();
+      computeStandings(withRoster(e, state.agents)).teams.forEach((t) => {
+        ranks.set(teamKey(t), t.rank);
+        totals.set(teamKey(t), t.total);
+      });
+      return { at, ranks, totals };
+    });
+  }
+
+  function trendHead(at) {
+    const d = new Date(at);
+    return d.toDateString() === new Date().toDateString() ? fmtHM(at) : `${d.getMonth() + 1}/${d.getDate()} ${fmtHM(at)}`;
+  }
+
+  // Total score of every team after each published round: grey lines, with
+  // the current Top 3 and the biggest gainer in colour.
+  function scoreTrendScreen(view) {
+    const cols = historyCols();
+    if (cols.length < 2) return null;
+    const curr = computeStandings(view.visible).teams;
+    const scoreAt = (t, j) => cols[j].totals.get(teamKey(t));
+    const last = cols.length - 1;
+    const gain = curr
+      .map((t) => ({ t, from: scoreAt(t, 0), to: scoreAt(t, last) }))
+      .filter((x) => x.from !== undefined && x.to !== undefined)
+      .sort((x, y) => (y.to - y.from) - (x.to - x.from))[0];
+    const avg = (j) => {
+      const v = curr.map((t) => scoreAt(t, j)).filter((x) => x !== undefined);
+      return v.length ? v.reduce((a, b) => a + b, 0) / v.length : 0;
+    };
+    const palette = ['#2f45ff', '#e0398a', '#f08c00', '#12a67a'];
+    const hot = curr.slice(0, 3).map((t) => teamKey(t));
+    if (gain && !hot.includes(teamKey(gain.t)) && gain.to > gain.from) hot.push(teamKey(gain.t));
+    const colorOf = (t) => palette[hot.indexOf(teamKey(t))];
+
+    const all = cols.flatMap((c) => [...c.totals.values()]);
+    const lo = Math.max(0, Math.floor(Math.min(...all) / 10) * 10);
+    const hi = 100;
+    const W = 1800; const H = 720; const padL = 70; const padR = 300; const padT = 20; const padB = 20;
+    const x = (j) => padL + (j * (W - padL - padR)) / last;
+    const y = (v) => padT + ((hi - v) * (H - padT - padB)) / (hi - lo);
+    const lineOf = (t) => {
+      const pts = cols.map((c, j) => [j, scoreAt(t, j)]).filter(([, v]) => v !== undefined);
+      return pts.map(([j, v], i) => {
+        if (!i) return `M${x(j)},${y(v)}`;
+        const [pj, pv] = pts[i - 1];
+        const mx = (x(pj) + x(j)) / 2;
+        return `C${mx},${y(pv)} ${mx},${y(v)} ${x(j)},${y(v)}`;
+      }).join(' ');
+    };
+    const order = [...curr].sort((p, q) => (colorOf(p) ? 1 : 0) - (colorOf(q) ? 1 : 0));
+    // End labels for the coloured teams only, nudged apart so they never overlap.
+    const labels = curr.filter((t) => colorOf(t) && scoreAt(t, last) !== undefined)
+      .map((t) => ({ t, y: y(scoreAt(t, last)) }))
+      .sort((a, b) => a.y - b.y);
+    labels.forEach((l, i) => { if (i && l.y - labels[i - 1].y < 46) l.y = labels[i - 1].y + 46; });
+    const ticks = [];
+    for (let v = lo; v <= hi; v += lo <= 40 ? 20 : 10) ticks.push(v);
+    return {
+      label: '점수 흐름',
+      html: () => `
+        <div class="screen-head compact trend-head">
+          <div>
+            <div class="eyebrow">SCORE HISTORY · ${cols.length}번의 점수 공개</div>
+            <h2 class="screen-title">이틀간의 <span>점수 흐름</span></h2>
+          </div>
+          <div class="trend-facts">
+            ${gain && gain.to > gain.from ? `<div class="tf"><span class="tf-k">🔥 최대 상승</span><span class="tf-v"><i style="background:${colorOf(gain.t)}"></i>${escapeHtml(gain.t.team)} <b>+${fmtScore(gain.to - gain.from)}점</b></span></div>` : ''}
+            <div class="tf"><span class="tf-k">📊 16팀 평균</span><span class="tf-v"><b>${fmtScore(avg(0))} → ${fmtScore(avg(last))}점</b></span></div>
+          </div>
+        </div>
+        <div class="bump">
+          <div class="bump-cols">${cols.map((c, j) => `<span style="left:${(x(j) / W) * 100}%">${trendHead(c.at)}</span>`).join('')}</div>
+          <svg viewBox="0 0 ${W} ${H}" aria-label="회차별 점수 흐름">
+            ${ticks.map((v) => `<line class="bump-grid h" x1="${padL}" y1="${y(v)}" x2="${W - padR}" y2="${y(v)}"/>`).join('')}
+            ${order.map((t, i) => {
+              const col = colorOf(t);
+              return `<path class="bump-line ${col ? 'hot' : ''}" d="${lineOf(t)}" pathLength="1"
+                style="${col ? `stroke:${col};` : ''}--d:${col ? 0.8 + hot.indexOf(teamKey(t)) * 0.35 : i * 0.03}s"/>`;
+            }).join('')}
+            ${order.filter((t) => colorOf(t)).map((t) => cols.map((c, j) => {
+              const v = scoreAt(t, j);
+              return v !== undefined ? `<circle class="bump-dot" cx="${x(j)}" cy="${y(v)}" r="9" style="fill:${colorOf(t)};--d:${0.8 + hot.indexOf(teamKey(t)) * 0.35 + (j / cols.length) * 2.2}s"/>` : '';
+            }).join('')).join('')}
+          </svg>
+          <div class="bump-start">${ticks.map((v) => `<span style="top:${(y(v) / H) * 100}%">${v}</span>`).join('')}</div>
+          <div class="bump-labels">
+            ${labels.map((l) => `<div class="bl hot" style="top:${(l.y / H) * 100}%">
+              <i style="background:${colorOf(l.t)}"></i><span class="bl-n">${escapeHtml(l.t.team)}</span><span class="bl-s">${fmtScore(scoreAt(l.t, last))}</span></div>`).join('')}
+          </div>
+        </div>`,
+    };
+  }
+
   function trendScreen(view, focus = null) {
     const now = Date.now();
     const timeOf = (e) => new Date(e.reveal_at || (e.event && e.event.updated_at) || e.published_at).getTime();
@@ -755,6 +862,8 @@
       screens.push(...highlightScreens(a));
       const trend = trendScreen(view);
       if (trend) screens.push(trend);
+      const scores = scoreTrendScreen(view);
+      if (scores) screens.push(scores);
       screens.push(...topAgentScreens(a.curr.teams, a.curr.maxTotal, '현재'));
       if (scoring) screens.push({ ...scoring });
     }
