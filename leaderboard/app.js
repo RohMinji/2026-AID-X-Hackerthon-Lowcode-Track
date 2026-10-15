@@ -375,7 +375,7 @@
 
   // Total score of every team after each published round: grey lines, with
   // the current Top 3 and the biggest gainer in colour.
-  function scoreTrendScreen(view) {
+  function scoreTrendScreen(view, focus = null) {
     const cols = historyCols();
     if (cols.length < 2) return null;
     const curr = computeStandings(view.visible).teams;
@@ -390,9 +390,20 @@
       return v.length ? v.reduce((a, b) => a + b, 0) / v.length : 0;
     };
     const palette = ['#2f45ff', '#e0398a', '#f08c00', '#12a67a'];
-    const hot = curr.slice(0, 3).map((t) => teamKey(t));
-    if (gain && !hot.includes(teamKey(gain.t)) && gain.to > gain.from) hot.push(teamKey(gain.t));
+    const hot = focus ? [teamKey(focus)] : curr.slice(0, 3).map((t) => teamKey(t));
+    if (!focus && gain && !hot.includes(teamKey(gain.t)) && gain.to > gain.from) hot.push(teamKey(gain.t));
     const colorOf = (t) => palette[hot.indexOf(teamKey(t))];
+    const me = focus && curr.find((t) => teamKey(t) === teamKey(focus));
+    const mine = me ? cols.map((c, j) => scoreAt(me, j)).filter((v) => v !== undefined) : [];
+    // Biggest single jump between two consecutive publishes, for the focus team.
+    let jump = null;
+    if (me) {
+      cols.forEach((c, j) => {
+        const a = j ? scoreAt(me, j - 1) : undefined;
+        const b = scoreAt(me, j);
+        if (a !== undefined && b !== undefined && b - a > 0 && (!jump || b - a > jump.d)) jump = { d: b - a, at: c.at };
+      });
+    }
 
     const all = cols.flatMap((c) => [...c.totals.values()]);
     const lo = Math.max(0, Math.floor(Math.min(...all) / 10) * 10);
@@ -423,12 +434,15 @@
         <div class="screen-head compact trend-head">
           <div>
             <div class="eyebrow">SCORE HISTORY · ${cols.length}번의 점수 공개</div>
-            <h2 class="screen-title">이틀간의 <span>점수 흐름</span></h2>
+            <h2 class="screen-title">${me ? `${escapeHtml(me.team)}의 이틀간` : '이틀간의'} <span>점수 흐름</span></h2>
           </div>
-          <div class="trend-facts">
+          ${me ? `<div class="trend-facts">
+            <div class="tf"><span class="tf-k">📈 첫 공개 → 지금</span><span class="tf-v"><i style="background:${palette[0]}"></i><b>${fmtScore(mine[0])} → ${fmtScore(mine[mine.length - 1])}점</b></span></div>
+            ${jump ? `<div class="tf"><span class="tf-k">🚀 가장 크게 오른 공개</span><span class="tf-v"><b>${trendHead(jump.at)} +${fmtScore(jump.d)}점</b></span></div>` : ''}
+          </div>` : `<div class="trend-facts">
             ${gain && gain.to > gain.from ? `<div class="tf"><span class="tf-k">🔥 최대 상승</span><span class="tf-v"><i style="background:${colorOf(gain.t)}"></i>${escapeHtml(gain.t.team)} <b>+${fmtScore(gain.to - gain.from)}점</b></span></div>` : ''}
             <div class="tf"><span class="tf-k">📊 16팀 평균</span><span class="tf-v"><b>${fmtScore(avg(0))} → ${fmtScore(avg(last))}점</b></span></div>
-          </div>
+          </div>`}
         </div>
         <div class="bump">
           <div class="bump-cols">${cols.map((c, j) => `<span style="left:${(x(j) / W) * 100}%">${trendHead(c.at)}</span>`).join('')}</div>
@@ -597,6 +611,8 @@
     if (t) {
       const trend = trendScreen(view, t);
       if (trend) screens.push({ ...trend, label: `순위 흐름 · ${name}` });
+      const scores = scoreTrendScreen(view, t);
+      if (scores) screens.push({ ...scores, label: `점수 흐름 · ${name}` });
     }
     return screens;
   }
@@ -862,8 +878,6 @@
       screens.push(...highlightScreens(a));
       const trend = trendScreen(view);
       if (trend) screens.push(trend);
-      const scores = scoreTrendScreen(view);
-      if (scores) screens.push(scores);
       screens.push(...topAgentScreens(a.curr.teams, a.curr.maxTotal, '현재'));
       if (scoring) screens.push({ ...scoring });
     }
