@@ -468,19 +468,7 @@
   function presentingScreens(view) {
     const slot = currentSlot();
     if (!slot) return [];
-    if (!slot.team) {
-      const next = presentationSlots().find((p) => p.team && p.from >= slot.to);
-      return [{
-        label: slot.label || '휴식',
-        html: () => `
-          ${deco([['sparkle', 'd-top-left-sm'], ['sparkle', 'd-top-right'], ['ring', 'd-right-sm']])}
-          <div class="hero present">
-            <p class="present-where">지금 8층은...</p>
-            <h2 class="present-title"><span class="present-grad">${escapeHtml(slot.label || '휴식')} 중</span><span class="present-emoji">☕</span></h2>
-            ${next ? `<div class="hero-pill">다음 발표 ${escapeHtml(next.team)} · ${fmtHM(next.from)}</div>` : ''}
-          </div>`,
-      }];
-    }
+    if (!slot.team) return [];
     const teams = computeStandings(view.visible).teams;
     const t = teams.find((x) => sameName(x.team, slot.team)) || null;
     const entry = rosterEntry(state.agents, t || { team: slot.team });
@@ -493,7 +481,7 @@
         ${deco([['ai', 'd-left'], ['sparkle', 'd-top-right'], ['cursor', 'd-bottom-right-sm']])}
         <div class="hero present">
           <p class="present-where">지금 8층은...</p>
-          <h2 class="present-title"><span class="present-grad">${escapeHtml(subjectOf(name))} 발표 중</span><span class="present-emoji">😎</span></h2>
+          <h2 class="present-title"><span class="present-grad">${escapeHtml(name)}</span>${subjectOf(name).slice(name.length)} 발표 중<span class="present-emoji">😎</span></h2>
           ${people ? `<div class="present-people">${people}</div>` : ''}
           ${tagline ? `<p class="present-tagline">${escapeHtml(tagline)}</p>` : ''}
           <div class="hero-pill">${fmtHM(slot.from)} ~ ${fmtHM(slot.to)}</div>

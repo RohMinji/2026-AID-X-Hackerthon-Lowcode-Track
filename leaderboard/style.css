@@ -954,7 +954,7 @@ html, body {
 
 /* Day 2: "지금 8층은... ○○팀이 발표 중😎" */
 .present-where { margin: 0; font-size: 4.4rem; font-weight: 800; color: var(--ink-2); }
-.present-title { margin: 1.6rem 0 0; font-size: 11rem; line-height: 1.1; font-weight: 900; letter-spacing: -0.04em; }
+.present-title { color: var(--ink); margin: 1.6rem 0 0; font-size: 11rem; line-height: 1.1; font-weight: 900; letter-spacing: -0.04em; }
 .present-grad { background: var(--grad); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
 .present-emoji { font-weight: 400; font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif; display: inline-block; margin-left: 1.6rem; animation: codingBob 1.4s ease-in-out infinite; }
 .present-people { margin-top: 3.2rem; font-size: 3.4rem; font-weight: 800; color: var(--ink); }
