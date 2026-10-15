@@ -1187,7 +1187,7 @@
   function updateFooter(view) {
     const basis = view.hasBoard ? basisOf(view) : '';
     basisChipEl.textContent = basis ? `${basis} 점수 기준` : '';
-    basisChipEl.hidden = !basis;
+    basisChipEl.hidden = true; // taken off the top bar on day 2
     const snap = resolveSnapshots(state.raw);
     scheduleStatusEl.textContent = snap.revealAt === null
       ? '공개 일정: 없음'
