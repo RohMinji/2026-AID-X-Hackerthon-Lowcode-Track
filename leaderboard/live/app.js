@@ -42,7 +42,7 @@
     sparkle: 'assets/sparkle.png',
   };
 
-  const MODE_LABEL = { countdown: 'COMING SOON', wait: '채점 중', reveal: '점수 공개', status: 'LIVE', final: '최종 결과' };
+  const MODE_LABEL = { replay: '점수 공개', countdown: 'COMING SOON', wait: '채점 중', reveal: '점수 공개', status: 'LIVE', final: '최종 결과' };
   const TAGLINE = ['Low-Code부터 Pro-Code까지,', '아이디어를 실제 업무에서 동작하는 AI로 만드는 이틀 간의 도전'];
 
   const el = (id) => document.getElementById(id);
@@ -269,6 +269,8 @@
     }
 
     if ((mode === 'reveal' || mode === 'final') && !hasBoard) mode = 'status';
+    // This copy (1st-floor screen) replays every published round in order.
+    if (window.REPLAY_ROUNDS && state.history.length) mode = 'replay';
     return { ...base, mode, target, deadlines, hasBoard, showRemaining };
   }
 
@@ -1161,7 +1163,49 @@
     };
   }
 
+  // Every round published so far, oldest first: "N차 점수를 공개합니다!",
+  // its rank changes against the round before, then that round's dark horse,
+  // rising stars and closest race. Each round is labelled with the time it
+  // was actually published. The current Top 7 intros close the loop.
+  function replayScreens(view) {
+    const timeOf = (e) => new Date(e.reveal_at || (e.event && e.event.updated_at) || e.published_at).getTime();
+    const seen = new Map();
+    state.history
+      .filter((e) => (e.teams || []).length && timeOf(e) <= Date.now())
+      .sort((x, y) => timeOf(x) - timeOf(y))
+      .forEach((e) => seen.set(timeOf(e), e));
+    const rounds = [...seen.values()];
+    const screens = [];
+    rounds.forEach((e, i) => {
+      const visible = withRoster(e, state.agents);
+      const previous = i ? withRoster(rounds[i - 1], state.agents) : null;
+      const a = analyse({ visible, previous });
+      const when = trendHead(timeOf(e));
+      const round = (e.event && e.event.round) || i + 1;
+      screens.push({
+        label: `${round}차 공개`,
+        html: () => `
+          ${deco([['ai', 'd-left'], ['ring', 'd-right-sm'], ['sparkle', 'd-top-right'], ['sparkle', 'd-bottom-left-xs']])}
+          <div class="hero">
+            <div class="eyebrow">LEADERBOARD · ROUND ${round}</div>
+            <h2 class="hero-title">${round}차 점수를<br>공개합니다!</h2>
+            <div class="hero-pill">${when} 점수 기준</div>
+          </div>`,
+      });
+      chunk(a.diff, ROWS_PER_PAGE).reverse().forEach((page) => screens.push({ ...moveBoardPage(page, a.curr.maxTotal, when, !previous), label: `${round}차 ${rangeLabel(page)}` }));
+      screens.push(...highlightScreens(a).map((x) => ({ ...x, label: `${round}차 ${x.label}` })));
+    });
+    if (view.hasBoard) {
+      const curr = computeStandings(view.visible);
+      const trend = trendScreen(view);
+      if (trend) screens.push(trend);
+      screens.push(...topAgentScreens(curr.teams, curr.maxTotal, '현재'));
+    }
+    return screens;
+  }
+
   function buildScreens(view) {
+    if (view.mode === 'replay') return replayScreens(view);
     if (view.mode === 'countdown') return [countdownScreen(view)];
     if (view.mode === 'wait') return regularScreens(view, scoringScreen(view));
     if (view.mode === 'reveal') return revealScreens(view);

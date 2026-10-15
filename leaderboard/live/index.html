@@ -125,6 +125,7 @@
 
 </div>
 
+<script>window.REPLAY_ROUNDS = true;</script>
 <script src="shared.js?v=20261014"></script>
 <script>
 (() => {
@@ -145,7 +146,7 @@
     if (left === 0) {
       clearInterval(timer);
       const app = document.createElement('script');
-      app.src = 'app.js?v=20261015d';
+      app.src = 'app.js?v=20261015r';
       app.onload = () => setTimeout(() => document.getElementById('intro').classList.add('done'), 600);
       document.body.appendChild(app);
     }
