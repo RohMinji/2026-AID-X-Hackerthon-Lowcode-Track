@@ -2092,6 +2092,24 @@
           }
         },
         {
+          "appid": "ee588188-3955-4255-bcbd-3aab467c31ac",
+          "team": "AIeS",
+          "agent": "AIeS",
+          "org": "kt estate",
+          "leader": "이동훈",
+          "members": [
+            "김준환",
+            "김영조"
+          ],
+          "rank": 10,
+          "total": 90.5,
+          "scores": {
+            "common": 0,
+            "custom": 20.5,
+            "mission": 48
+          }
+        },
+        {
           "appid": "8d092d68-04e5-4afd-91e5-1c3cb5799a34",
           "team": "Solve IT",
           "agent": "SolveIT",
@@ -2101,7 +2119,7 @@
             "김자겸",
             "박경호"
           ],
-          "rank": 10,
+          "rank": 11,
           "total": 88.42,
           "scores": {
             "common": 0,
@@ -2119,7 +2137,7 @@
             "이환우",
             "권예지"
           ],
-          "rank": 11,
+          "rank": 12,
           "total": 87.44,
           "scores": {
             "common": 0,
@@ -2137,30 +2155,12 @@
             "황설욱",
             "오삼수"
           ],
-          "rank": 12,
+          "rank": 13,
           "total": 85.16,
           "scores": {
             "common": 0,
             "custom": 15.16,
             "mission": 50
-          }
-        },
-        {
-          "appid": "ee588188-3955-4255-bcbd-3aab467c31ac",
-          "team": "AIeS",
-          "agent": "AIeS",
-          "org": "kt estate",
-          "leader": "이동훈",
-          "members": [
-            "김준환",
-            "김영조"
-          ],
-          "rank": 13,
-          "total": 80.02,
-          "scores": {
-            "common": 0,
-            "custom": 12.02,
-            "mission": 48
           }
         },
         {
