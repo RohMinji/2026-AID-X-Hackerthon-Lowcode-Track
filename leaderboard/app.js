@@ -496,10 +496,36 @@
 
   // A light-hearted "how long have we been at it" screen, counting up from
   // start_at.
+  // True from the first presentation slot until the last one ends.
+  function presenting() {
+    const slots = presentationSlots();
+    if (!slots.length) return false;
+    const now = Date.now();
+    return now >= Math.min(...slots.map((p) => p.from)) && now < Math.max(...slots.map((p) => p.to));
+  }
+
   function codingScreen(closed) {
     const from = scheduleAt('start_at');
     if (from === null) return null;
-    const people = ['🧑🏻‍💻', '👨🏻‍💻', '👩🏻‍💻'];
+    const crew = (people) => `
+          <div class="coding-crew">
+            <span class="fire">🔥</span>
+            ${people.map((e, i) => `<span class="dev" style="--i:${i}">${e}</span>`).join('')}
+            <span class="fire" style="--i:1">🔥</span>
+          </div>`;
+    const dots = '<span class="coding-dots"><i>.</i><i>.</i><i>.</i></span>';
+    if (presenting()) {
+      return {
+        label: '발표 중',
+        html: () => `
+        ${deco([['sparkle', 'd-top-left-sm'], ['sparkle', 'd-top-right'], ['cursor', 'd-bottom-right-sm']])}
+        <div class="hero coding">
+          <p class="coding-where">지금 <b>kt 판교 빌딩 2층, 8층</b> Hackathon 존은</p>
+          <div class="coding-now">Presentation 중${dots}</div>
+          ${crew(['🤵‍♀️', '🤵', '🤵‍♀️'])}
+        </div>`,
+      };
+    }
     return {
       label: '개발 중',
       html: () => `
@@ -511,14 +537,10 @@
             <span class="ct-num" data-part="m">00</span><span class="ct-unit">분째</span>
           </div>
           ${closed
-            ? `<div class="coding-now sm">최종 결과를 기다리는 중<span class="coding-dots"><i>.</i><i>.</i><i>.</i></span></div>
+            ? `<div class="coding-now sm">최종 결과를 기다리는 중${dots}</div>
                <div class="hero-pill coding-pill">채점 접수 ${deadlineCount()}회 모두 마감</div>`
-            : '<div class="coding-now">열띤 개발 중<span class="coding-dots"><i>.</i><i>.</i><i>.</i></span></div>'}
-          <div class="coding-crew">
-            <span class="fire">🔥</span>
-            ${people.map((e, i) => `<span class="dev" style="--i:${i}">${e}</span>`).join('')}
-            <span class="fire" style="--i:1">🔥</span>
-          </div>
+            : `<div class="coding-now">열띤 개발 중${dots}</div>`}
+          ${crew(['🧑🏻‍💻', '👨🏻‍💻', '👩🏻‍💻'])}
         </div>`,
     };
   }
@@ -737,7 +759,6 @@
       if (scoring) screens.push({ ...scoring });
     }
     screens.push(codingScreen(closedAll(view)));
-    screens.push(criteriaScreen());
     if (view.showRemaining && view.deadlines.some((d) => d > Date.now())) {
       screens.push(deadlineCountdownScreen(view));
       screens.push(remainingScreen(view));
@@ -1117,7 +1138,7 @@
 
     if (state.raw) {
       const view = computeView(t);
-      const modeKey = `${(currentSlot() || {}).i ?? ''}|${state.history.length}|${closedAll(view)}|${view.mode}|${view.target ?? ''}|${view.revealAt ?? ''}|${view.showRemaining}|${JSON.stringify(activeNotice() || '')}`;
+      const modeKey = `${presenting()}|${(currentSlot() || {}).i ?? ''}|${state.history.length}|${closedAll(view)}|${view.mode}|${view.target ?? ''}|${view.revealAt ?? ''}|${view.showRemaining}|${JSON.stringify(activeNotice() || '')}`;
       const dataKey = `${state.rawText}|${JSON.stringify(state.agents)}|${state.scheduleText}`;
       if (modeKey !== state.modeKey) {
         const fromReveal = state.view && state.view.mode === 'reveal' && view.mode === 'status';
